@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+    <title>18章 注意すべき比較の文</title>
+    <style>
+        :root {
+            --primary-color: #4A90E2;
+            --bg-color: #f0f7ff;
+            --correct-color: #28a745;
+            --incorrect-color: #dc3545;
+            /* 英語フォントの設定 */
+            --en-font: "Chalkboard SE", "Chalkboard", "Comic Neue", "Comic Sans MS", cursive, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: "Hiragino Maru Gothic ProN", "Yu Gothic", sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .container {
+            background-color: white;
+            width: 100%;
+            max-width: 800px;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h1 { 
+            text-align: center; 
+            color: var(--primary-color); 
+            font-size: 1.5rem; 
+            margin: 0 0 10px 0;
+            border-bottom: 3px solid var(--primary-color);
+            padding-bottom: 10px;
+        }
+
+        .instructions { text-align: center; font-size: 0.85rem; color: #555; margin-bottom: 20px; }
+
+        .game-layout {
+            display: flex;
+            gap: 20px;
+            flex-wrap: nowrap;
+        }
+
+        .questions-section { flex: 2.5; min-width: 300px; }
+        
+        .words-section { 
+            flex: 1; 
+            min-width: 160px; 
+            background: #f9f9f9; 
+            padding: 15px; 
+            border-radius: 10px; 
+            border: 2px dashed var(--primary-color);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        /* ブラウザ版ではワードリストを横並び(折り返し)に */
+        #words-root {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .question-row {
+            margin-bottom: 25px;
+            padding-bottom: 0px;
+            border-bottom: none !important;
+        }
+
+        .jp-text { font-size: 0.9rem; font-weight: bold; color: #333; margin-bottom: 7px; }
+        
+        .en-sentence { 
+            font-family: var(--en-font);
+            font-size: 1.2rem; 
+            line-height: 1.9; 
+            display: flex; 
+            flex-wrap: wrap; 
+            align-items: center;
+            gap: 6px;
+        }
+
+        .drop-zone {
+            display: inline-flex;
+            width: 75px;
+            height: 38px;
+            border-bottom: 2px solid var(--primary-color);
+            background: #fdfdfd;
+            vertical-align: middle;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .word-chip {
+            font-family: var(--en-font);
+            padding: 4px 12px;
+            background-color: white;
+            border: 2px solid var(--primary-color);
+            border-radius: 8px;
+            cursor: grab;
+            user-select: none;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            touch-action: none;
+            box-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .word-chip.selected { background-color: #ffeb3b; border-color: #fbc02d; color: #000; }
+        .dragging { opacity: 0.7; transform: scale(1.1); z-index: 1000 !important; }
+
+        .controls { margin-bottom: 20px; display: flex; gap: 15px; justify-content: center; }
+        button {
+            padding: 10px 30px; font-size: 1rem; cursor: pointer; border: none; border-radius: 50px;
+            color: white; font-weight: bold;
+        }
+        .reset-btn { background-color: #888; }
+        .check-btn { background-color: var(--correct-color); }
+
+        .result-mark { font-weight: bold; font-size: 1.2rem; margin-left: 10px; }
+        .correct { color: var(--correct-color); }
+        .incorrect { color: var(--incorrect-color); }
+
+        /* --- PDF・印刷用設定（枠線なし・右側縦一列・オール黒） --- */
+        @media print {
+            body { background: white; padding: 0; color: black !important; font-family: "Comic Neue", "Chalkboard SE", "Hiragino Maru Gothic ProN", "Yu Gothic", sans-serif !important;}
+            .container { box-shadow: none; border: none; width: 100%; max-width: 100%; padding: 0; }
+            .controls, .instructions { display: none !important; }
+            h1 { color: black !important; border-bottom: 2px solid black !important; font-family: "Hiragino Maru Gothic ProN", "Yu Gothic", sans-serif !important; margin-bottom: 40px !important;}
+            
+            /* レイアウトを確実に 左:問題 / 右:ワードリスト に固定 */
+            .game-layout { 
+                display: flex !important; 
+                flex-direction: row !important; 
+                justify-content: space-between !important;
+                gap: 30px !important; 
+            }
+            .questions-section { 
+                   flex: 4 !important; 
+                   order: 1 !important; /* 問題を 1番目（左）に固定 */}
+
+            .words-section { 
+                flex: 0.4 !important; /* 数値を小さくして幅を絞りました */
+                order: 2 !important; 
+                border: 1px solid black !important; background: white !important; position: static !important;}
+            
+            /* 印刷時のみ縦一列に強制 */
+            #words-root { 
+                display: flex !important; 
+                flex-direction: column !important; 
+                align-items: center !important; 
+                gap: 5px !important;
+            }
+            
+            /* 枠線を撤去 */
+            .word-chip { 
+                border: none !important; 
+                color: black !important; 
+                background: transparent !important; 
+                box-shadow: none !important;
+                padding: 2px 0 !important;
+                width: auto !important;
+                font-size: 14pt !important;
+            }
+            
+            .drop-zone { border-bottom: 1px solid black !important; background: transparent !important; }
+            .jp-text, .en-sentence { color: black !important; }
+            .jp-text { font-family: "Hiragino Sans", sans-serif; }
+            * { -webkit-print-color-adjust: exact; }
+        }
+
+        /* スマホ用レスポンシブ（ブラウザ閲覧時のみ） */
+        @media (max-width: 800px) {
+            .game-layout { flex-direction: column; }
+            .words-section { position: static; order: -1; margin-bottom: 20px; max-height: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>18章 注意すべき比較の文</h1>
+    <p class="instructions">リストから単語を空所に移動させましょう。印刷時は枠線なしの縦一列になります。</p>
+
+    <div class="controls">
+        <button class="reset-btn" onclick="initGame()">リセット</button>
+        <button class="check-btn" onclick="checkAnswers()">答え合わせ</button>
+    </div>
+
+    <div class="game-layout">
+        <div class="questions-section" id="questions-root"></div>
+        <div class="words-section">
+            <div style="font-weight: bold; margin-bottom: 12px; text-align: center; border-bottom: 1px solid #ccc;">WORD LIST</div>
+            <div id="words-root"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+// 文法の統一 (like the best) [cite: 3-55]
+const questions = [
+    { jp: "1. 私の犬はあなたの犬と同じくらい大きいです。", en: "My dog is", after: "your dog.", answers: ["as", "big", "as"] },
+    { jp: "2. オレンジよりリンゴの方が好きです。", en: "I like apples", after: "oranges.", answers: ["better", "than"] },
+    { jp: "3. すべての動物の中でライオンが一番好きです。", en: "I like lions", after: "all animals.", answers: ["the", "best", "of"] },
+    { jp: "4. 牛乳はジュースほど甘くありません。", en: "Milk is", after: "sweet as juice.", answers: ["not", "as"] },
+    { jp: "5. ケンはバスと同じくらい速く走ることができます。", en: "Ken can run", after: "a bus.", answers: ["as", "fast", "as"] },
+    { jp: "6. 夏より冬の方が好きです。", en: "I like winter", after: "summer.", answers: ["better", "than"] },
+    { jp: "7. この木はあの家と同じくらい高いです。", en: "This tree is", after: "that house.", answers: ["as", "tall", "as"] },
+    { jp: "8. あなたはどの季節が一番好きですか。", en: "Which season do you like", after: "?", answers: ["the", "best"] },
+    { jp: "9. 姉は学校で一番上手に歌うことができます。", en: "My sister can sing", after: "in her school.", answers: ["the", "best"] },
+    { jp: "10. このカバンはあのカバンと同じくらい小さいです。", en: "This bag is", after: "that one.", answers: ["as", "small", "as"] }
+];
+
+// 単語の在庫（グループ化）[cite: 4, 8-10, 20, 21, 23, 26, 27, 29, 35, 38, 39, 41, 42, 45, 46, 48]
+const groupedWords = [
+    "as", "as", "as", "as", "as", "as", "as", "as", "as",
+    "the", "the", "the",
+    "better", "better",
+    "than", "than",
+    "best", "best", "best",
+    "of", "not", "big", "fast", "tall", "small"
+];
+
+let selectedChip = null;
+
+function initGame() {
+    const qRoot = document.getElementById('questions-root');
+    const wRoot = document.getElementById('words-root');
+    qRoot.innerHTML = '';
+    wRoot.innerHTML = '';
+    selectedChip = null;
+
+    questions.forEach((q, qIdx) => {
+        const div = document.createElement('div');
+        div.className = 'question-row';
+        let blanksHtml = q.answers.map((ans, aIdx) => 
+            `<div class="drop-zone" data-correct="${ans}" id="drop-${qIdx}-${aIdx}" onclick="handleZoneClick(event)" ondrop="drop(event)" ondragover="allowDrop(event)"></div>`
+        ).join(' ');
+        div.innerHTML = `<div class="jp-text">${q.jp}</div><div class="en-sentence">${q.en} ${blanksHtml} ${q.after}<span class="result-mark" id="mark-${qIdx}"></span></div>`;
+        qRoot.appendChild(div);
+    });
+
+    groupedWords.forEach((word, wIdx) => {
+        const chip = document.createElement('div');
+        chip.className = 'word-chip';
+        chip.draggable = true;
+        chip.textContent = word;
+        chip.id = `word-${wIdx}`;
+        chip.onclick = handleChipClick;
+        chip.ondragstart = drag;
+        chip.addEventListener('touchstart', handleTouchStart, {passive: false});
+        chip.addEventListener('touchmove', handleTouchMove, {passive: false});
+        chip.addEventListener('touchend', handleTouchEnd, {passive: false});
+        wRoot.appendChild(chip);
+    });
+}
+
+// --- 操作ロジック ---
+function handleChipClick(e) {
+    e.stopPropagation();
+    if (selectedChip) selectedChip.classList.remove('selected');
+    selectedChip = e.currentTarget;
+    selectedChip.classList.add('selected');
+}
+function handleZoneClick(e) {
+    const zone = e.currentTarget;
+    if (selectedChip) {
+        moveElement(selectedChip, zone);
+        selectedChip.classList.remove('selected');
+        selectedChip = null;
+    }
+}
+function moveElement(chip, target) {
+    if (target.children.length > 0) document.getElementById('words-root').appendChild(target.children[0]);
+    target.appendChild(chip);
+}
+function allowDrop(e) { e.preventDefault(); }
+function drag(e) { e.dataTransfer.setData("text", e.target.id); }
+function drop(e) {
+    e.preventDefault();
+    const id = e.dataTransfer.getData("text");
+    const chip = document.getElementById(id);
+    moveElement(chip, e.currentTarget);
+}
+
+// スマホタッチ操作
+let tX = 0, tY = 0;
+function handleTouchStart(e) {
+    const c = e.currentTarget; const t = e.touches[0]; const r = c.getBoundingClientRect();
+    tX = t.clientX - r.left; tY = t.clientY - r.top;
+    c.classList.add('dragging');
+}
+function handleTouchMove(e) {
+    e.preventDefault(); const c = e.currentTarget; const t = e.touches[0];
+    c.style.position = 'fixed'; c.style.left = (t.clientX - tX) + 'px'; c.style.top = (t.clientY - tY) + 'px';
+}
+function handleTouchEnd(e) {
+    const c = e.currentTarget; c.classList.remove('dragging');
+    c.style.position = ''; c.style.left = ''; c.style.top = '';
+    const t = e.changedTouches[0];
+    const target = document.elementFromPoint(t.clientX, t.clientY);
+    const zone = target ? target.closest('.drop-zone, .words-section') : null;
+    if (zone) {
+        if (zone.id === 'words-root' || zone.classList.contains('words-section')) document.getElementById('words-root').appendChild(c);
+        else moveElement(c, zone);
+    }
+}
+function checkAnswers() {
+    questions.forEach((q, qIdx) => {
+        let ok = true;
+        q.answers.forEach((ans, aIdx) => {
+            const z = document.getElementById(`drop-${qIdx}-${aIdx}`);
+            const chip = z.querySelector('.word-chip');
+            if (!chip || chip.textContent.trim() !== ans) ok = false;
+        });
+        const m = document.getElementById(`mark-${qIdx}`);
+        m.textContent = ok ? "◯ Correct!" : "×";
+        m.className = `result-mark ${ok ? 'correct' : 'incorrect'}`;
+    });
+}
+initGame();
+</script>
+
+</body>
+</html>
