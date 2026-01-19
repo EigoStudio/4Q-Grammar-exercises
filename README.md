@@ -3,7 +3,7 @@
  Grammar exercises for students preparing for the Eiken Grade 4 exam. 
 
 ## 🚀 サイト（ゲーム）はこちら
-([[https://eigostudio.github.io/4Q-vocab-quiz/](https://eigostudio.github.io/4Q-vocab-quiz/)](https://eigostudio.github.io/4Q-Grammar-exercises/))
+https://eigostudio.github.io/4Q-Grammar-exercises/
 （※URLをクリックすると目次ページが開きます）
 
 ---
