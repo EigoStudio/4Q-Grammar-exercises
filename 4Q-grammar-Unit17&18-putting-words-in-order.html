@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>17章&18章 比較の文 並べ替え問題</title>
+<style>
+  /* --- 画面表示用の設定 --- */
+  body {
+    font-family: "Hiragino Maru Gothic ProN", "Hiragino Maru Gothic Pro", "HGMaruGothicMPRO", "Chalkboard SE", "Comic Sans MS", "Meiryo", sans-serif;
+    background-color: #fff3e0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    color: #333;
+    margin: 0;
+  }
+
+  button, input, textarea, .word-btn, .answer-word {
+    font-family: inherit;
+  }
+
+  h2 {
+    color: #e65100;
+    margin-bottom: 5px;
+    text-align: center;
+  }
+  .sub-title {
+    font-size: 0.9rem;
+    color: #555;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  .container {
+    background: white;
+    max-width: 700px;
+    width: 100%;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    text-align: center;
+  }
+
+  /* 上部ボタンエリア */
+  .top-controls {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    gap: 10px;
+  }
+
+  /* 共通ボタンスタイル */
+  .header-btn {
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: background-color 0.2s;
+  }
+
+  .print-launch-btn { background-color: #795548; }
+  .print-launch-btn:hover { background-color: #5d4037; }
+
+  .shuffle-btn { background-color: #0288d1; }
+  .shuffle-btn:hover { background-color: #01579b; }
+
+  /* ゲームUI */
+  .question-header {
+      font-size: 0.8rem;
+      color: #ef6c00;
+      margin-bottom: 5px;
+      font-weight: bold;
+      text-align: left;
+      padding-left: 10px;
+  }
+
+  .question-box {
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    min-height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ffe0b2;
+    border-radius: 10px;
+    padding: 15px;
+    border-left: 5px solid #ef6c00;
+    color: #e65100;
+    line-height: 1.4;
+  }
+  .answer-area {
+    min-height: 60px;
+    border-bottom: 2px solid #ffcc80;
+    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px;
+    background-color: #fafafa;
+    border-radius: 5px;
+  }
+  .word-bank {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .word-btn {
+    background-color: #ff9800;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: transform 0.1s;
+    user-select: none;
+  }
+  .word-btn:active { transform: scale(0.95); }
+  .word-btn.used { background-color: #cfd8dc; color: #b0bec5; cursor: default; pointer-events: none; }
+  
+  .answer-word {
+    background-color: #fb8c00;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    animation: popIn 0.2s ease;
+  }
+  @keyframes popIn {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .controls { margin-top: 20px; }
+  button.action-btn {
+    padding: 12px 30px;
+    font-size: 1.1rem;
+    background-color: #43a047;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
+  button.action-btn:hover { background-color: #2e7d32; }
+  .result-msg { margin-top: 15px; font-weight: bold; font-size: 1.2rem; height: 30px; }
+  .correct { color: #2e7d32; }
+  .wrong { color: #c62828; }
+  .progress-container { width: 100%; background-color: #e0e0e0; border-radius: 10px; margin-bottom: 10px; height: 8px; }
+  .progress-bar { height: 100%; background-color: #ef6c00; border-radius: 10px; width: 0%; transition: width 0.3s; }
+
+  /* 印刷用エリア (画面では非表示) */
+  #printable-sheet { display: none; }
+
+  /* --- 印刷時の設定 (A4 1枚に収める) --- */
+  @media print {
+    @page {
+      size: A4;
+      margin: 10mm;
+    }
+    .container, h2, .sub-title, .top-controls { display: none !important; }
+    
+    body {
+      background-color: white;
+      padding: 0;
+      margin: 0;
+      color: black;
+      font-family: "Hiragino Maru Gothic ProN", "Hiragino Maru Gothic Pro", "HGMaruGothicMPRO", sans-serif;
+      width: 100%;
+    }
+    
+    #printable-sheet {
+      display: block;
+      width: 100%;
+    }
+    
+    .sheet-header {
+      text-align: center;
+      border-bottom: 2px solid #333;
+      margin-bottom: 10px;
+      padding-bottom: 5px;
+    }
+    
+    .sheet-title {
+      font-size: 16pt;
+      font-weight: bold;
+      margin: 0;
+    }
+    
+    .sheet-question {
+      margin-bottom: 8px;
+      page-break-inside: avoid;
+    }
+    
+    .q-text {
+      font-size: 10pt;
+      margin-bottom: 2px;
+      line-height: 1.2;
+    }
+    
+    .q-line {
+      border-bottom: 1px solid #333;
+      height: 25px;
+      width: 100%;
+      margin-bottom: 2px;
+    }
+
+    /* PDF用の語群スタイル */
+    .word-hint {
+      font-size: 9pt;
+      color: #555;
+      font-family: serif; /* 違いを出すためにフォント変更 */
+      text-align: right;
+    }
+    
+    .answer-key-section {
+      page-break-before: always;
+      margin-top: 20px;
+      border-top: 1px dashed #999;
+      padding-top: 10px;
+      font-size: 10pt;
+      color: #333;
+    }
+    
+    .key-item { margin-bottom: 4px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="top-controls">
+  <button class="header-btn shuffle-btn" onclick="initGame(true)">🔄 問題をシャッフルしてやり直す</button>
+  <button class="header-btn print-launch-btn" onclick="window.print()">🖨️ プリントを作成</button>
+</div>
+
+<h2>17章&18章 比較の文 並べ替え問題</h2>
+<div class="sub-title">全13問</div>
+
+<div class="container">
+  <div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+  <div class="question-header" id="questionHeader">Question 1/13</div>
+  <div class="question-box" id="questionText">Load Question...</div>
+  <div class="answer-area" id="answerArea">
+    <span style="color:#aaa; font-size:0.9rem; align-self:center;">単語をタップして並べてください</span>
+  </div>
+  <div class="word-bank" id="wordBank"></div>
+  <div class="result-msg" id="resultMsg"></div>
+  <div class="controls">
+    <button class="action-btn" id="checkBtn" onclick="checkAnswer()">Check Answer</button>
+    <button class="action-btn" id="nextBtn" onclick="nextQuestion()" style="display:none; background-color: #ef6c00;">Next Question</button>
+  </div>
+</div>
+
+<div id="printable-sheet">
+  <div class="sheet-header">
+    <h1 class="sheet-title">17章&18章 比較の文 並べ替え問題</h1>
+    <div style="text-align:right; font-size:9pt;">名前: ____________________ / 日付: __________</div>
+  </div>
+  <div id="sheet-content"></div>
+  <div class="answer-key-section">
+    <h3>Answer Key</h3>
+    <div id="sheet-answers"></div>
+  </div>
+</div>
+
+<script>
+  // 文法・スペル修正済みのデータ
+  const originalData = [
+    { ja: "私の犬はあなたの(犬)と同じくらいの大きさです。", en: "My dog is as big as yours." },
+    { ja: "私はオレンジよりリンゴのほうが好きです。", en: "I like apples better than oranges." },
+    { ja: "私はすべての動物の中でライオンが一番好きです。", en: "I like lions the best of all animals." },
+    { ja: "牛乳はジュースほど甘くありません。", en: "Milk is not as sweet as juice." },
+    { ja: "ケンはバスと同じくらい速く走れます。", en: "Ken can run as fast as a bus." },
+    { ja: "私は夏より冬のほうが好きです。", en: "I like winter better than summer." },
+    { ja: "数学と理科、あなたはどちらが好きですか？", en: "Which do you like better, math or science?" },
+    { ja: "あなたは何色が一番好きですか？", en: "What color do you like the best?" },
+    { ja: "この本はあの本よりもおもしろいです。", en: "This book is more interesting than that one." },
+    { ja: "おばあちゃんはおじいちゃんよりもゆっくり歩きます。", en: "Grandma walks more slowly than Grandpa." },
+    { ja: "近所の人の犬は、私の(犬)よりも小さいです。", en: "My neighbor's dog is smaller than mine." },
+    { ja: "リリーはトムよりも多くの本を持っています。", en: "Lily has more books than Tom." },
+    { ja: "あなたのクラスで誰が一番速く走りますか？", en: "Who runs the fastest in your class?" }
+  ];
+
+  // シャッフル用配列
+  let quizData = [];
+
+  let currentQuestionIndex = 0;
+  let currentWords = []; 
+  let userSelection = []; 
+
+  const questionText = document.getElementById('questionText');
+  const questionHeader = document.getElementById('questionHeader');
+  const answerArea = document.getElementById('answerArea');
+  const wordBank = document.getElementById('wordBank');
+  const resultMsg = document.getElementById('resultMsg');
+  const checkBtn = document.getElementById('checkBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const progressBar = document.getElementById('progressBar');
+
+  // 配列をシャッフルする関数
+  function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  }
+
+  function initGame(isRestart = false) {
+    // 毎回問題をシャッフルする
+    quizData = shuffle([...originalData]);
+    
+    currentQuestionIndex = 0;
+    
+    // UIのリセット
+    resultMsg.textContent = "";
+    checkBtn.style.display = "inline-block";
+    nextBtn.style.display = "none";
+    if(isRestart) {
+        alert("問題をシャッフルしてリセットしました！頑張ってください！");
+    }
+
+    loadQuestion();
+    generatePrintSheet(); // 新しい順番でプリントも再生成
+  }
+
+  function generatePrintSheet() {
+    const contentDiv = document.getElementById('sheet-content');
+    const answerDiv = document.getElementById('sheet-answers');
+    
+    contentDiv.innerHTML = "";
+    answerDiv.innerHTML = "";
+    
+    quizData.forEach((item, index) => {
+      // 印刷用のシャッフルされた語群を作成
+      let cleanEn = item.en.replace(/([.,?])/g, " $1");
+      let words = cleanEn.split(/\s+/).filter(w => w.length > 0);
+      let shuffledWords = shuffle([...words]);
+
+      const qBlock = document.createElement('div');
+      qBlock.className = 'sheet-question';
+      // 印刷用HTML: 日本語 + 罫線 + シャッフルされた語群
+      qBlock.innerHTML = `
+        <div class="q-text">${index + 1}. ${item.ja}</div>
+        <div class="q-line"></div>
+        <div class="word-hint">( ${shuffledWords.join(' / ')} )</div>
+      `;
+      contentDiv.appendChild(qBlock);
+
+      const aBlock = document.createElement('div');
+      aBlock.className = 'key-item';
+      aBlock.innerHTML = `<b>${index + 1}.</b> ${item.en}`;
+      answerDiv.appendChild(aBlock);
+    });
+  }
+
+  function loadQuestion() {
+    if (currentQuestionIndex >= quizData.length) {
+      finishGame();
+      return;
+    }
+
+    userSelection = [];
+    resultMsg.textContent = "";
+    resultMsg.className = "result-msg";
+    checkBtn.style.display = "inline-block";
+    nextBtn.style.display = "none";
+    
+    const progress = (currentQuestionIndex / quizData.length) * 100;
+    progressBar.style.width = progress + "%";
+    
+    questionHeader.textContent = `Question ${currentQuestionIndex + 1} / ${quizData.length}`;
+
+    const q = quizData[currentQuestionIndex];
+    questionText.textContent = q.ja;
+
+    // 句読点の前にスペースを入れてからsplit
+    let cleanEn = q.en.replace(/([.,?])/g, " $1"); 
+    let words = cleanEn.split(/\s+/).filter(w => w.length > 0);
+
+    // 単語の並びもシャッフル
+    currentWords = shuffle([...words]);
+
+    renderWordBank();
+    renderAnswerArea();
+  }
+
+  function renderWordBank() {
+    wordBank.innerHTML = "";
+    currentWords.forEach((word, index) => {
+      const btn = document.createElement('button');
+      btn.className = "word-btn";
+      btn.textContent = word;
+      if (userSelection.some(obj => obj.originalIndex === index)) {
+        btn.classList.add('used');
+      } else {
+        btn.onclick = () => selectWord(word, index);
+      }
+      wordBank.appendChild(btn);
+    });
+  }
+
+  function renderAnswerArea() {
+    answerArea.innerHTML = "";
+    if (userSelection.length === 0) {
+      answerArea.innerHTML = '<span style="color:#aaa; font-size:0.9rem; align-self:center;">単語をタップして並べてください</span>';
+      return;
+    }
+
+    userSelection.forEach((item, idx) => {
+      const btn = document.createElement('button');
+      btn.className = "answer-word";
+      
+      let displayText = item.text;
+      if (idx === 0) {
+        // 先頭は大文字にする(視覚的に)
+        displayText = displayText.charAt(0).toUpperCase() + displayText.slice(1);
+      }
+
+      btn.textContent = displayText;
+      btn.onclick = () => removeWord(idx); 
+      answerArea.appendChild(btn);
+    });
+  }
+
+  function selectWord(word, originalIndex) {
+    userSelection.push({ text: word, originalIndex: originalIndex });
+    renderWordBank();
+    renderAnswerArea();
+  }
+
+  function removeWord(selectionIndex) {
+    userSelection.splice(selectionIndex, 1);
+    renderWordBank();
+    renderAnswerArea();
+  }
+
+  function checkAnswer() {
+    let userAnswerRaw = userSelection.map(obj => obj.text).join(" ");
+    
+    if (userAnswerRaw.length > 0) {
+      userAnswerRaw = userAnswerRaw.charAt(0).toUpperCase() + userAnswerRaw.slice(1);
+    }
+
+    const formattedUserAnswer = userAnswerRaw.replace(/\s+([.,?])/g, "$1");
+    const correctAnswer = quizData[currentQuestionIndex].en;
+
+    if (formattedUserAnswer === correctAnswer) {
+      resultMsg.textContent = "Good job! 正解です！";
+      resultMsg.classList.add("correct");
+      checkBtn.style.display = "none";
+      nextBtn.style.display = "inline-block";
+    } else {
+      resultMsg.textContent = "Try again! 語順を見直してみよう。";
+      resultMsg.classList.add("wrong");
+    }
+  }
+
+  function nextQuestion() {
+    currentQuestionIndex++;
+    loadQuestion();
+  }
+
+  function finishGame() {
+    questionText.textContent = "All Done! 全問クリアおめでとう！";
+    questionHeader.textContent = "Completed";
+    answerArea.innerHTML = "🎉";
+    wordBank.innerHTML = "";
+    resultMsg.textContent = "素晴らしい！";
+    checkBtn.style.display = "none";
+    nextBtn.style.display = "none";
+    progressBar.style.width = "100%";
+  }
+
+  initGame();
+</script>
+
+</body>
+</html>
