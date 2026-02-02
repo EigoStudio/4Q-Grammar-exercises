@@ -13,7 +13,7 @@
             --light-orange: #fff3e0;
             --box-bg: #fffde7;
             --en-font: "Chalkboard SE", "Comic Sans MS", "Comic Sans", "Kosugi Maru", sans-serif;
-            --label-color: #5d4037; /* 濃い茶色 */
+            --label-color: #5d4037;
         }
 
         body {
@@ -29,7 +29,6 @@
             -webkit-font-variant-ligatures: none;
         }
 
-        /* ブラウザタイトルのサイズアップ */
         h1.main-title { 
             color: var(--dark-orange); 
             margin: 15px 0; 
@@ -83,7 +82,6 @@
 
         .slot.active { border-color: var(--dark-orange); background-color: #fff9c4; border-style: solid; }
 
-        /* ボックス文字を濃く・大きく */
         .slot-label { 
             font-size: 0.9rem; 
             color: var(--label-color); 
@@ -134,7 +132,21 @@
                border-radius: 50%; background: var(--primary-orange); border: none; 
                color: white; font-size: 2rem; cursor: pointer; display: none; z-index: 10; }
 
-        /* 印刷設定の修正 */
+        /* スマホ向け微調整 (画面幅が800px以下の時) */
+        @media screen and (max-width: 800px) {
+            h1.main-title { font-size: 1.3rem; margin: 10px 0; }
+            .container { padding: 10px; }
+            .question-ja { font-size: 1.1rem; padding: 10px; margin-bottom: 10px; }
+            .slot { min-height: 100px; padding: 4px; }
+            .slot-label { font-size: 0.75rem; margin-bottom: 4px; }
+            .word-bank { padding: 10px; gap: 8px; margin: 10px 0; }
+            .word-btn { padding: 8px 16px; font-size: 1.1rem; box-shadow: 0 3px 0 #ffcc80; }
+            .answer-word { font-size: 1rem; padding: 6px 10px; margin: 2px; }
+            .final-sentence { font-size: 1.6rem; padding: 10px; }
+            .action-btn { padding: 12px 30px; font-size: 1.1rem; }
+        }
+
+        /* 印刷設定 */
         @media print {
             .no-print { display: none !important; }
             body { background: white !important; color: black !important; font-family: 'Kosugi Maru', serif !important; }
@@ -149,7 +161,7 @@
                 border-top: none !important;
                 border-left: none !important;
                 border-right: none !important;
-                border-bottom: 1.5px solid black !important; /* シングル下線 */
+                border-bottom: 1.5px solid black !important;
                 height: 30px; 
                 width: 100%; 
                 margin-top: 10px; 
@@ -167,7 +179,7 @@
 
 <div class="container no-print">
     <div id="game-ui">
-        <div id="questionHeader" style="font-size: 0.9rem; color: #795548; margin-bottom: 8px;">Question 1 / 15</div>
+        <div id="questionHeader" style="font-size: 0.8rem; color: #795548; margin-bottom: 8px;">Question 1 / 15</div>
         <div id="questionJa" class="question-ja"></div>
         <div id="resultMsg" style="height: 30px; margin-bottom: 10px; font-weight: bold; font-size: 1.2rem;"></div>
 
@@ -200,6 +212,7 @@
 <button class="fab no-print" id="ttsBtn" onclick="speakPhrase()">🔊</button>
 
 <script>
+// (中身のロジックは変更なしのため省略。以前のコードのscript部分をそのままお使いいただけます)
 const quizData = [
     { ja: "トムはリサに指輪をあげました。", v1:[], s:["Tom"], v2:["gave"], io:["Lisa"], do:["a", "ring"], ad:[] },
     { ja: "ケンはメアリーに写真を見せてあげました。", v1:[], s:["Ken"], v2:["showed"], io:["Mary"], do:["the", "photos"], ad:[] },
@@ -310,7 +323,6 @@ function nextQuestion() {
     if (currentIdx < quizData.length) {
         renderQuestion();
     } else {
-        // コンプリート演出！
         celebrate();
     }
 }
