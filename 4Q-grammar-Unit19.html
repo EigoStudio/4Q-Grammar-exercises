@@ -31,8 +31,8 @@
 
         h1.main-title { 
             color: var(--dark-orange); 
-            margin: 15px 0; 
-            font-size: 1.6rem; 
+            margin: 10px 0; 
+            font-size: 1.4rem; 
             text-align: center;
         }
         
@@ -107,6 +107,7 @@
         }
         .word-btn.used { background-color: #e0e0e0; color: #bdbdbd; border-color: #d7d7d7; box-shadow: none; transform: translateY(2px); }
 
+        /* 配置後の単語スタイル（PCデフォルト：まだバブルあり） */
         .answer-word {
             background-color: var(--primary-orange); color: white;
             padding: 8px 14px; border-radius: 8px; 
@@ -128,79 +129,80 @@
             box-shadow: 0 4px 15px rgba(230, 81, 0, 0.3);
         }
 
-        .fab { position: fixed; bottom: 20px; right: 20px; width: 70px; height: 70px; 
-               border-radius: 50%; background: var(--primary-orange); border: none; 
-               color: white; font-size: 2rem; cursor: pointer; display: none; z-index: 10; }
-
-        /* スマホ向け微調整 (画面幅が800px以下の時) */
+        /* --- スマホ専用スタイル --- */
         @media screen and (max-width: 800px) {
-            h1.main-title { font-size: 1.3rem; margin: 10px 0; }
-            .container { padding: 10px; }
-            .question-ja { font-size: 1.1rem; padding: 10px; margin-bottom: 10px; }
-            .slot { min-height: 100px; padding: 4px; }
-            .slot-label { font-size: 0.75rem; margin-bottom: 4px; }
-            .word-bank { padding: 10px; gap: 8px; margin: 10px 0; }
-            .word-btn { padding: 8px 16px; font-size: 1.1rem; box-shadow: 0 3px 0 #ffcc80; }
-            .answer-word { font-size: 1rem; padding: 6px 10px; margin: 2px; }
-            .final-sentence { font-size: 1.6rem; padding: 10px; }
-            .action-btn { padding: 12px 30px; font-size: 1.1rem; }
+            h1.main-title { font-size: 1.2rem; margin: 8px 0; }
+            .container { padding: 8px; }
+            
+            /* 和訳エリアの余白を極限まで削減 */
+            .question-ja { 
+                font-size: 1rem; 
+                padding: 8px; 
+                margin-bottom: 8px; /* 下のボックスとの距離を近づける */
+                margin-top: 0;
+            }
+
+            .slot { min-height: 90px; padding: 4px; }
+            .slot-label { font-size: 0.7rem; margin-bottom: 2px; }
+
+            /* 配置後の単語からバブルを排除 */
+            .answer-word { 
+                background-color: transparent; 
+                color: var(--dark-orange); 
+                padding: 0; 
+                margin: 0; 
+                font-size: 1.1rem; 
+                box-shadow: none;
+                border-bottom: 1px solid #ffcc80; /* 下線だけ入れて識別しやすく */
+                width: 90%;
+                text-align: center;
+            }
+
+            .word-bank { padding: 8px; gap: 8px; margin: 8px 0; }
+            .word-btn { padding: 8px 14px; font-size: 1.1rem; }
+            .final-sentence { font-size: 1.5rem; padding: 8px; }
+            .action-btn { padding: 10px 25px; font-size: 1.1rem; }
         }
 
-        /* 印刷設定 */
         @media print {
             .no-print { display: none !important; }
             body { background: white !important; color: black !important; font-family: 'Kosugi Maru', serif !important; }
             #printable-sheet { display: block !important; width: 100%; padding: 0; }
-            .print-q { 
-                margin-bottom: 20px; 
-                padding-bottom: 10px; 
-                page-break-inside: avoid; 
-                color: black !important;
-            }
-            .line { 
-                border-top: none !important;
-                border-left: none !important;
-                border-right: none !important;
-                border-bottom: 1.5px solid black !important;
-                height: 30px; 
-                width: 100%; 
-                margin-top: 10px; 
-            }
-            h2.print-title { font-size: 1.8rem; text-align: center; border-bottom: 2px solid black; padding-bottom: 10px; }
+            .print-q { margin-bottom: 20px; padding-bottom: 10px; page-break-inside: avoid; }
+            .line { border-bottom: 1.5px solid black !important; height: 30px; width: 100%; margin-top: 10px; }
         }
         #printable-sheet { display: none; }
     </style>
 </head>
 <body>
-
 <div class="no-print">
     <h1 class="main-title">19章 語順に注意する文型 並べ替え問題 Part1 SVOO</h1>
 </div>
 
 <div class="container no-print">
     <div id="game-ui">
-        <div id="questionHeader" style="font-size: 0.8rem; color: #795548; margin-bottom: 8px;">Question 1 / 15</div>
+        <div id="questionHeader" style="font-size: 0.8rem; color: #795548; margin-bottom: 4px;">Question 1 / 15</div>
         <div id="questionJa" class="question-ja"></div>
-        <div id="resultMsg" style="height: 30px; margin-bottom: 10px; font-weight: bold; font-size: 1.2rem;"></div>
+        <div id="resultMsg" style="height: 25px; margin-bottom: 5px; font-weight: bold; font-size: 1.1rem;"></div>
 
         <div class="slot-container">
-            <div id="box-V1" class="slot" onclick="setCurrentSlot('V1')"><div class="slot-label">V1 (助動詞/be)</div><div id="slot-V1"></div></div>
-            <div id="box-S" class="slot" onclick="setCurrentSlot('S')"><div class="slot-label">S (主語)</div><div id="slot-S"></div></div>
-            <div id="box-V2" class="slot" onclick="setCurrentSlot('V2')"><div class="slot-label">V2 (動詞)</div><div id="slot-V2"></div></div>
-            <div id="box-IO" class="slot" onclick="setCurrentSlot('IO')"><div class="slot-label">IO (人に)</div><div id="slot-IO"></div></div>
-            <div id="box-DO" class="slot" onclick="setCurrentSlot('DO')"><div class="slot-label">DO (物を)</div><div id="slot-DO"></div></div>
-            <div id="box-AD" class="slot" onclick="setCurrentSlot('AD')"><div class="slot-label">AD (いつ/どこ)</div><div id="slot-AD"></div></div>
+            <div id="box-V1" class="slot" onclick="setCurrentSlot('V1')"><div class="slot-label">V1</div><div id="slot-V1"></div></div>
+            <div id="box-S" class="slot" onclick="setCurrentSlot('S')"><div class="slot-label">S</div><div id="slot-S"></div></div>
+            <div id="box-V2" class="slot" onclick="setCurrentSlot('V2')"><div class="slot-label">V2</div><div id="slot-V2"></div></div>
+            <div id="box-IO" class="slot" onclick="setCurrentSlot('IO')"><div class="slot-label">IO</div><div id="slot-IO"></div></div>
+            <div id="box-DO" class="slot" onclick="setCurrentSlot('DO')"><div class="slot-label">DO</div><div id="slot-DO"></div></div>
+            <div id="box-AD" class="slot" onclick="setCurrentSlot('AD')"><div class="slot-label">AD</div><div id="slot-AD"></div></div>
         </div>
 
         <div class="word-bank" id="wordBank"></div>
         <div id="sentenceDisplay" class="final-sentence"></div>
 
-        <div style="margin-bottom: 20px;">
+        <div style="margin-bottom: 15px;">
             <button class="action-btn" id="checkBtn" onclick="checkAnswer()">Check Answer</button>
             <button class="action-btn" id="nextBtn" onclick="nextQuestion()" style="display:none; background-color: #2e7d32;">Next Question</button>
         </div>
         
-        <div style="margin-top: 20px;"><button onclick="printGame()" style="font-size:0.8rem; color:#8d6e63; border:none; background:none; text-decoration:underline; cursor:pointer; font-weight: bold;">🖨️ プリント学習用に印刷する</button></div>
+        <div><button onclick="printGame()" style="font-size:0.75rem; color:#8d6e63; border:none; background:none; text-decoration:underline; cursor:pointer;">🖨️ 印刷用シート</button></div>
     </div>
 </div>
 
@@ -212,7 +214,6 @@
 <button class="fab no-print" id="ttsBtn" onclick="speakPhrase()">🔊</button>
 
 <script>
-// (中身のロジックは変更なしのため省略。以前のコードのscript部分をそのままお使いいただけます)
 const quizData = [
     { ja: "トムはリサに指輪をあげました。", v1:[], s:["Tom"], v2:["gave"], io:["Lisa"], do:["a", "ring"], ad:[] },
     { ja: "ケンはメアリーに写真を見せてあげました。", v1:[], s:["Ken"], v2:["showed"], io:["Mary"], do:["the", "photos"], ad:[] },
@@ -328,7 +329,7 @@ function nextQuestion() {
 }
 
 function celebrate() {
-    document.getElementById('game-ui').innerHTML = "<h2 style='color:#e65100; font-size: 2.5rem; margin: 50px 0;'>🎉 Congratulations!<br>Mission Accomplished!</h2>";
+    document.getElementById('game-ui').innerHTML = "<h2 style='color:#e65100; font-size: 2rem; margin: 40px 0;'>🎉 Congratulations!<br>Mission Accomplished!</h2>";
     const duration = 5 * 1000;
     const end = Date.now() + duration;
 
