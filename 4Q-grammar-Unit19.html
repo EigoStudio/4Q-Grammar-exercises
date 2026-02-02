@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>19章 語順に注意する文型 並べ替え問題 Part1 SVOO</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --primary-orange: #ff9800;
+            --dark-orange: #e65100;
+            --light-orange: #fff3e0;
+            --box-bg: #fffde7;
+            --en-font: "Chalkboard SE", "Comic Sans MS", "Comic Sans", "Kosugi Maru", sans-serif;
+            --label-color: #5d4037; /* 濃い茶色 */
+        }
+
+        body {
+            font-family: 'Kosugi Maru', var(--en-font);
+            background-color: var(--light-orange);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px;
+            color: #4e342e;
+            margin: 0;
+            font-variant-ligatures: none;
+            -webkit-font-variant-ligatures: none;
+        }
+
+        /* ブラウザタイトルのサイズアップ */
+        h1.main-title { 
+            color: var(--dark-orange); 
+            margin: 15px 0; 
+            font-size: 1.6rem; 
+            text-align: center;
+        }
+        
+        .container {
+            background: white;
+            width: 98%;
+            max-width: 1250px;
+            padding: 15px;
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(230, 81, 0, 0.1);
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        .question-ja {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            background-color: #fffde7;
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid #ffe0b2;
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        .slot-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .slot {
+            background-color: var(--box-bg);
+            border: 2px dashed #ffcc80;
+            border-radius: 12px;
+            flex: 1;
+            min-height: 130px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .slot.active { border-color: var(--dark-orange); background-color: #fff9c4; border-style: solid; }
+
+        /* ボックス文字を濃く・大きく */
+        .slot-label { 
+            font-size: 0.9rem; 
+            color: var(--label-color); 
+            font-weight: 900; 
+            margin-bottom: 8px;
+            border-bottom: 1px solid #d7ccc8;
+            width: 100%;
+            padding-bottom: 2px;
+        }
+
+        .word-bank { 
+            display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; 
+            margin: 15px 0; padding: 15px; background: #fafafa; border-radius: 15px;
+        }
+
+        .word-btn {
+            background-color: #fff; color: #5d4037; border: 2px solid #ffcc80;
+            padding: 12px 22px; border-radius: 30px; 
+            font-size: 1.3rem;
+            font-family: var(--en-font);
+            font-weight: bold; cursor: pointer; white-space: nowrap;
+            box-shadow: 0 4px 0 #ffcc80;
+        }
+        .word-btn.used { background-color: #e0e0e0; color: #bdbdbd; border-color: #d7d7d7; box-shadow: none; transform: translateY(2px); }
+
+        .answer-word {
+            background-color: var(--primary-orange); color: white;
+            padding: 8px 14px; border-radius: 8px; 
+            font-size: 1.2rem;
+            font-family: var(--en-font);
+            margin: 4px; 
+            white-space: nowrap;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .final-sentence { 
+            font-size: 2rem; font-weight: bold; color: var(--dark-orange); 
+            padding: 20px; font-family: var(--en-font);
+        }
+
+        .action-btn {
+            background-color: var(--dark-orange); color: white; border: none;
+            padding: 15px 50px; border-radius: 40px; font-size: 1.3rem; font-weight: bold; cursor: pointer;
+            box-shadow: 0 4px 15px rgba(230, 81, 0, 0.3);
+        }
+
+        .fab { position: fixed; bottom: 20px; right: 20px; width: 70px; height: 70px; 
+               border-radius: 50%; background: var(--primary-orange); border: none; 
+               color: white; font-size: 2rem; cursor: pointer; display: none; z-index: 10; }
+
+        /* 印刷設定の修正 */
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; color: black !important; font-family: 'Kosugi Maru', serif !important; }
+            #printable-sheet { display: block !important; width: 100%; padding: 0; }
+            .print-q { 
+                margin-bottom: 20px; 
+                padding-bottom: 10px; 
+                page-break-inside: avoid; 
+                color: black !important;
+            }
+            .line { 
+                border-top: none !important;
+                border-left: none !important;
+                border-right: none !important;
+                border-bottom: 1.5px solid black !important; /* シングル下線 */
+                height: 30px; 
+                width: 100%; 
+                margin-top: 10px; 
+            }
+            h2.print-title { font-size: 1.8rem; text-align: center; border-bottom: 2px solid black; padding-bottom: 10px; }
+        }
+        #printable-sheet { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="no-print">
+    <h1 class="main-title">19章 語順に注意する文型 並べ替え問題 Part1 SVOO</h1>
+</div>
+
+<div class="container no-print">
+    <div id="game-ui">
+        <div id="questionHeader" style="font-size: 0.9rem; color: #795548; margin-bottom: 8px;">Question 1 / 15</div>
+        <div id="questionJa" class="question-ja"></div>
+        <div id="resultMsg" style="height: 30px; margin-bottom: 10px; font-weight: bold; font-size: 1.2rem;"></div>
+
+        <div class="slot-container">
+            <div id="box-V1" class="slot" onclick="setCurrentSlot('V1')"><div class="slot-label">V1 (助動詞/be)</div><div id="slot-V1"></div></div>
+            <div id="box-S" class="slot" onclick="setCurrentSlot('S')"><div class="slot-label">S (主語)</div><div id="slot-S"></div></div>
+            <div id="box-V2" class="slot" onclick="setCurrentSlot('V2')"><div class="slot-label">V2 (動詞)</div><div id="slot-V2"></div></div>
+            <div id="box-IO" class="slot" onclick="setCurrentSlot('IO')"><div class="slot-label">IO (人に)</div><div id="slot-IO"></div></div>
+            <div id="box-DO" class="slot" onclick="setCurrentSlot('DO')"><div class="slot-label">DO (物を)</div><div id="slot-DO"></div></div>
+            <div id="box-AD" class="slot" onclick="setCurrentSlot('AD')"><div class="slot-label">AD (いつ/どこ)</div><div id="slot-AD"></div></div>
+        </div>
+
+        <div class="word-bank" id="wordBank"></div>
+        <div id="sentenceDisplay" class="final-sentence"></div>
+
+        <div style="margin-bottom: 20px;">
+            <button class="action-btn" id="checkBtn" onclick="checkAnswer()">Check Answer</button>
+            <button class="action-btn" id="nextBtn" onclick="nextQuestion()" style="display:none; background-color: #2e7d32;">Next Question</button>
+        </div>
+        
+        <div style="margin-top: 20px;"><button onclick="printGame()" style="font-size:0.8rem; color:#8d6e63; border:none; background:none; text-decoration:underline; cursor:pointer; font-weight: bold;">🖨️ プリント学習用に印刷する</button></div>
+    </div>
+</div>
+
+<div id="printable-sheet">
+    <h2 class="print-title">19章 語順に注意する文型 並べ替え問題 Part1 SVOO</h2>
+    <div id="print-content"></div>
+</div>
+
+<button class="fab no-print" id="ttsBtn" onclick="speakPhrase()">🔊</button>
+
+<script>
+const quizData = [
+    { ja: "トムはリサに指輪をあげました。", v1:[], s:["Tom"], v2:["gave"], io:["Lisa"], do:["a", "ring"], ad:[] },
+    { ja: "ケンはメアリーに写真を見せてあげました。", v1:[], s:["Ken"], v2:["showed"], io:["Mary"], do:["the", "photos"], ad:[] },
+    { ja: "ユミはケンタにプレゼントを買うつもりです。", v1:[], s:["Yumi"], v2:["is", "going", "to", "buy"], io:["Kenta"], do:["a", "present"], ad:[] },
+    { ja: "マイクはハナにペンを貸すことができます。", v1:[], s:["Mike"], v2:["can", "lend"], io:["Hana"], do:["a", "pen"], ad:[] },
+    { ja: "ジャックはルーシーに面白い話をしました。", v1:[], s:["Jack"], v2:["told"], io:["Lucy"], do:["a", "funny", "story"], ad:[] },
+    { ja: "田中先生は私たちに日本史を教えてくれます。", v1:[], s:["Mr.", "Tanaka"], v2:["teaches"], io:["us"], do:["Japanese", "history"], ad:[] },
+    { ja: "母は私に新しいドレスを作ってくれています。", v1:[], s:["My", "mother"], v2:["is", "making"], io:["me"], do:["a", "new", "dress"], ad:[] },
+    { ja: "私たちは先生に感謝カードを送るつもりです。", v1:[], s:["We"], v2:["are", "going", "to", "send"], io:["our", "teacher"], do:["a", "thank-you", "card"], ad:[] },
+    { ja: "あなたは医者に問題を話さなければなりません。", v1:[], s:["You"], v2:["must", "tell"], io:["your", "doctor"], do:["the", "problem"], ad:[] },
+    { ja: "その女の子は友達にクッキーを持ってきました。", v1:[], s:["The", "girl"], v2:["brought"], io:["her", "friends"], do:["some", "cookies"], ad:[] },
+    { ja: "あとで私にメッセージを送ってくれますか？", v1:["Will"], s:["you"], v2:["send"], io:["me"], do:["a", "message"], ad:["later"], isQ:true },
+    { ja: "ユキは毎日、犬におやつをあげますか？", v1:["Does"], s:["Yuki"], v2:["give"], io:["her", "dog"], do:["a", "snack"], ad:["every", "day"], isQ:true },
+    { ja: "彼らは私たちにその話をしてくれるつもりですか？", v1:["Are"], s:["they"], v2:["going", "to", "tell"], io:["us"], do:["the", "story"], ad:[], isQ:true },
+    { ja: "ケンはメアリーに花を買いませんでした。", v1:[], s:["Ken"], v2:["did", "not", "buy"], io:["Mary"], do:["any", "flowers"], ad:[] },
+    { ja: "お水を一杯持ってきていただけますか？", v1:["Could"], s:["you"], v2:["bring"], io:["me"], do:["a", "glass", "of", "water"], ad:[], isQ:true }
+];
+
+let currentIdx = 0;
+let activeSlot = 'S';
+let userAnswers = { V1: [], S: [], V2: [], IO: [], DO: [], AD: [] };
+
+function setCurrentSlot(id) {
+    activeSlot = id;
+    document.querySelectorAll('.slot').forEach(s => s.classList.remove('active'));
+    document.getElementById(`box-${id}`).classList.add('active');
+}
+
+function renderQuestion() {
+    const data = quizData[currentIdx];
+    userAnswers = { V1: [], S: [], V2: [], IO: [], DO: [], AD: [] };
+    document.getElementById('resultMsg').textContent = "";
+    document.getElementById('sentenceDisplay').textContent = "";
+    document.getElementById('nextBtn').style.display = "none";
+    document.getElementById('checkBtn').style.display = "inline-block";
+    document.getElementById('ttsBtn').style.display = "none";
+    document.getElementById('questionHeader').textContent = `Question ${currentIdx + 1} / ${quizData.length}`;
+    document.getElementById('questionJa').textContent = data.ja;
+    
+    let allWords = [...data.v1, ...data.s, ...data.v2, ...data.io, ...data.do, ...data.ad].sort(() => Math.random() - 0.5);
+    const bank = document.getElementById('wordBank');
+    bank.innerHTML = "";
+    allWords.forEach((word, i) => {
+        const btn = document.createElement('button');
+        btn.className = "word-btn";
+        btn.textContent = word;
+        btn.id = `btn-${i}`;
+        btn.onclick = () => {
+            if(!btn.classList.contains('used')) {
+                userAnswers[activeSlot].push({ text: word, id: `btn-${i}` });
+                btn.classList.add('used');
+                updateSlots();
+            }
+        };
+        bank.appendChild(btn);
+    });
+    updateSlots();
+    setCurrentSlot(data.v1.length > 0 ? 'V1' : 'S');
+}
+
+function updateSlots() {
+    ['V1','S','V2','IO','DO','AD'].forEach(id => {
+        const el = document.getElementById(`slot-${id}`);
+        el.innerHTML = "";
+        userAnswers[id].forEach((item, idx) => {
+            const div = document.createElement('div');
+            div.className = "answer-word";
+            div.textContent = item.text;
+            div.onclick = (e) => {
+                e.stopPropagation();
+                document.getElementById(item.id).classList.remove('used');
+                userAnswers[id].splice(idx, 1);
+                updateSlots();
+            };
+            el.appendChild(div);
+        });
+    });
+}
+
+function checkAnswer() {
+    const d = quizData[currentIdx];
+    const match = (key) => userAnswers[key].map(o => o.text).join(" ") === d[key.toLowerCase()].join(" ");
+    if (match('V1') && match('S') && match('V2') && match('IO') && match('DO') && match('AD')) {
+        document.getElementById('resultMsg').innerHTML = "<span style='color:#2e7d32;'>✨ Excellent! 正解です！</span>";
+        let text = [d.v1, d.s, d.v2, d.io, d.do, d.ad].flat().filter(s => s !== "").join(" ");
+        text += d.isQ ? "?" : ".";
+        document.getElementById('sentenceDisplay').textContent = text;
+        document.getElementById('checkBtn').style.display = "none";
+        document.getElementById('nextBtn').style.display = "inline-block";
+        document.getElementById('ttsBtn').style.display = "block";
+    } else {
+        document.getElementById('resultMsg').innerHTML = "<span style='color:#c62828;'>Try again! 語順を確認してね</span>";
+    }
+}
+
+function speakPhrase() {
+    const text = document.getElementById('sentenceDisplay').textContent;
+    const uttr = new SpeechSynthesisUtterance(text);
+    uttr.lang = "en-US";
+    uttr.rate = 0.7; 
+    const voices = window.speechSynthesis.getVoices();
+    uttr.voice = voices.find(v => v.name.includes('Samantha') || v.name.includes('Google US English')) || voices[0];
+    window.speechSynthesis.speak(uttr);
+}
+
+function nextQuestion() {
+    currentIdx++;
+    if (currentIdx < quizData.length) {
+        renderQuestion();
+    } else {
+        // コンプリート演出！
+        celebrate();
+    }
+}
+
+function celebrate() {
+    document.getElementById('game-ui').innerHTML = "<h2 style='color:#e65100; font-size: 2.5rem; margin: 50px 0;'>🎉 Congratulations!<br>Mission Accomplished!</h2>";
+    const duration = 5 * 1000;
+    const end = Date.now() + duration;
+
+    (function frame() {
+      confetti({
+        particleCount: 7,
+        angle: 60,
+        spread: 55,
+        origin: { x: 0 },
+        colors: ['#ff9800', '#ffeb3b', '#4caf50', '#2196f3', '#e91e63']
+      });
+      confetti({
+        particleCount: 7,
+        angle: 120,
+        spread: 55,
+        origin: { x: 1 },
+        colors: ['#ff9800', '#ffeb3b', '#4caf50', '#2196f3', '#e91e63']
+      });
+
+      if (Date.now() < end) {
+        requestAnimationFrame(frame);
+      }
+    }());
+}
+
+function printGame() {
+    const target = document.getElementById('print-content');
+    target.innerHTML = "";
+    quizData.forEach((d, i) => {
+        const words = [...d.v1, ...d.s, ...d.v2, ...d.io, ...d.do, ...d.ad].sort(() => Math.random() - 0.5);
+        target.innerHTML += `
+            <div class="print-q">
+                <b>Q${i+1}. ${d.ja}</b><br>
+                <span style="font-size:0.95rem; color: #333;">( ${words.join(" / ")} )</span>
+                <div class="line"></div>
+            </div>`;
+    });
+    window.print();
+}
+
+window.speechSynthesis.onvoiceschanged = () => {};
+renderQuestion();
+</script>
+</body>
+</html>
