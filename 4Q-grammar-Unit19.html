@@ -45,7 +45,10 @@
             box-shadow: 0 8px 25px rgba(230, 81, 0, 0.1);
             text-align: center;
             box-sizing: border-box;
+            position: relative;
         }
+
+        .question-ja-container { position: relative; width: 100%; }
 
         .question-ja {
             font-size: 1.2rem;
@@ -58,6 +61,9 @@
             text-align: center;
             line-height: 1.5;
         }
+
+        /* 正解メッセージのデフォルト（PC） */
+        #resultMsg { height: 30px; margin-bottom: 10px; font-weight: bold; font-size: 1.2rem; }
 
         .slot-container {
             display: flex;
@@ -77,7 +83,6 @@
             align-items: center;
             padding: 8px;
             cursor: pointer;
-            transition: all 0.2s;
         }
 
         .slot.active { border-color: var(--dark-orange); background-color: #fff9c4; border-style: solid; }
@@ -107,7 +112,6 @@
         }
         .word-btn.used { background-color: #e0e0e0; color: #bdbdbd; border-color: #d7d7d7; box-shadow: none; transform: translateY(2px); }
 
-        /* 配置後の単語スタイル（PCデフォルト：まだバブルあり） */
         .answer-word {
             background-color: var(--primary-orange); color: white;
             padding: 8px 14px; border-radius: 8px; 
@@ -115,18 +119,21 @@
             font-family: var(--en-font);
             margin: 4px; 
             white-space: nowrap;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
-        .final-sentence { 
-            font-size: 2rem; font-weight: bold; color: var(--dark-orange); 
-            padding: 20px; font-family: var(--en-font);
-        }
+        .final-sentence { font-size: 2rem; font-weight: bold; color: var(--dark-orange); padding: 20px; font-family: var(--en-font); }
 
         .action-btn {
             background-color: var(--dark-orange); color: white; border: none;
             padding: 15px 50px; border-radius: 40px; font-size: 1.3rem; font-weight: bold; cursor: pointer;
-            box-shadow: 0 4px 15px rgba(230, 81, 0, 0.3);
+        }
+
+        /* 🔊ボタンのデフォルトスタイル */
+        .speaker-btn {
+            background-color: var(--primary-orange);
+            color: white; border: none; padding: 10px 20px;
+            border-radius: 30px; font-size: 1.5rem; cursor: pointer;
+            display: none; align-items: center; justify-content: center;
         }
 
         /* --- スマホ専用スタイル --- */
@@ -134,18 +141,28 @@
             h1.main-title { font-size: 1.2rem; margin: 8px 0; }
             .container { padding: 8px; }
             
-            /* 和訳エリアの余白を極限まで削減 */
-            .question-ja { 
-                font-size: 1rem; 
-                padding: 8px; 
-                margin-bottom: 8px; /* 下のボックスとの距離を近づける */
-                margin-top: 0;
+            /* 正解メッセージを和訳の右端に浮かす */
+            #resultMsg { 
+                position: absolute;
+                top: 50%;
+                right: 10px;
+                transform: translateY(-50%);
+                margin-bottom: 0;
+                height: auto;
+                font-size: 0.9rem;
+                background: rgba(255, 255, 255, 0.9);
+                padding: 2px 8px;
+                border-radius: 5px;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                pointer-events: none; /* 下の要素を触れるように */
+                z-index: 5;
             }
+
+            .question-ja { font-size: 1rem; padding: 8px; margin-bottom: 5px; margin-top: 0; padding-right: 60px; }
 
             .slot { min-height: 90px; padding: 4px; }
             .slot-label { font-size: 0.7rem; margin-bottom: 2px; }
 
-            /* 配置後の単語からバブルを排除 */
             .answer-word { 
                 background-color: transparent; 
                 color: var(--dark-orange); 
@@ -153,28 +170,29 @@
                 margin: 0; 
                 font-size: 1.1rem; 
                 box-shadow: none;
-                border-bottom: 1px solid #ffcc80; /* 下線だけ入れて識別しやすく */
+                border-bottom: 1px solid #ffcc80;
                 width: 90%;
-                text-align: center;
             }
 
             .word-bank { padding: 8px; gap: 8px; margin: 8px 0; }
             .word-btn { padding: 8px 14px; font-size: 1.1rem; }
             .final-sentence { font-size: 1.5rem; padding: 8px; }
-            .action-btn { padding: 10px 25px; font-size: 1.1rem; }
+            
+            .action-btn { padding: 12px 25px; font-size: 1.1rem; }
+            .speaker-btn { padding: 8px 15px; font-size: 1.2rem; }
         }
 
         @media print {
             .no-print { display: none !important; }
-            body { background: white !important; color: black !important; font-family: 'Kosugi Maru', serif !important; }
-            #printable-sheet { display: block !important; width: 100%; padding: 0; }
-            .print-q { margin-bottom: 20px; padding-bottom: 10px; page-break-inside: avoid; }
+            body { background: white !important; color: black !important; }
+            #printable-sheet { display: block !important; width: 100%; }
             .line { border-bottom: 1.5px solid black !important; height: 30px; width: 100%; margin-top: 10px; }
         }
         #printable-sheet { display: none; }
     </style>
 </head>
 <body>
+
 <div class="no-print">
     <h1 class="main-title">19章 語順に注意する文型 並べ替え問題 Part1 SVOO</h1>
 </div>
@@ -182,8 +200,10 @@
 <div class="container no-print">
     <div id="game-ui">
         <div id="questionHeader" style="font-size: 0.8rem; color: #795548; margin-bottom: 4px;">Question 1 / 15</div>
-        <div id="questionJa" class="question-ja"></div>
-        <div id="resultMsg" style="height: 25px; margin-bottom: 5px; font-weight: bold; font-size: 1.1rem;"></div>
+        
+        <div class="question-ja-container">
+            <div id="questionJa" class="question-ja"></div>
+            <div id="resultMsg"></div> </div>
 
         <div class="slot-container">
             <div id="box-V1" class="slot" onclick="setCurrentSlot('V1')"><div class="slot-label">V1</div><div id="slot-V1"></div></div>
@@ -197,9 +217,10 @@
         <div class="word-bank" id="wordBank"></div>
         <div id="sentenceDisplay" class="final-sentence"></div>
 
-        <div style="margin-bottom: 15px;">
+        <div id="control-area" style="margin-bottom: 15px; display: flex; justify-content: center; gap: 10px; align-items: center;">
             <button class="action-btn" id="checkBtn" onclick="checkAnswer()">Check Answer</button>
             <button class="action-btn" id="nextBtn" onclick="nextQuestion()" style="display:none; background-color: #2e7d32;">Next Question</button>
+            <button class="speaker-btn" id="ttsBtnInline" onclick="speakPhrase()">🔊</button>
         </div>
         
         <div><button onclick="printGame()" style="font-size:0.75rem; color:#8d6e63; border:none; background:none; text-decoration:underline; cursor:pointer;">🖨️ 印刷用シート</button></div>
@@ -207,13 +228,14 @@
 </div>
 
 <div id="printable-sheet">
-    <h2 class="print-title">19章 語順に注意する文型 並べ替え問題 Part1 SVOO</h2>
+    <h2 class="print-title" style="text-align:center;">19章 SVOO 語順演習シート</h2>
     <div id="print-content"></div>
 </div>
 
-<button class="fab no-print" id="ttsBtn" onclick="speakPhrase()">🔊</button>
+<button class="fab no-print" id="ttsBtnFab" onclick="speakPhrase()" style="display:none;">🔊</button>
 
 <script>
+// (quizData, currentIdx などの変数は変更なし。renderQuestion 以降を更新)
 const quizData = [
     { ja: "トムはリサに指輪をあげました。", v1:[], s:["Tom"], v2:["gave"], io:["Lisa"], do:["a", "ring"], ad:[] },
     { ja: "ケンはメアリーに写真を見せてあげました。", v1:[], s:["Ken"], v2:["showed"], io:["Mary"], do:["the", "photos"], ad:[] },
@@ -249,7 +271,7 @@ function renderQuestion() {
     document.getElementById('sentenceDisplay').textContent = "";
     document.getElementById('nextBtn').style.display = "none";
     document.getElementById('checkBtn').style.display = "inline-block";
-    document.getElementById('ttsBtn').style.display = "none";
+    document.getElementById('ttsBtnInline').style.display = "none";
     document.getElementById('questionHeader').textContent = `Question ${currentIdx + 1} / ${quizData.length}`;
     document.getElementById('questionJa').textContent = data.ja;
     
@@ -297,15 +319,15 @@ function checkAnswer() {
     const d = quizData[currentIdx];
     const match = (key) => userAnswers[key].map(o => o.text).join(" ") === d[key.toLowerCase()].join(" ");
     if (match('V1') && match('S') && match('V2') && match('IO') && match('DO') && match('AD')) {
-        document.getElementById('resultMsg').innerHTML = "<span style='color:#2e7d32;'>✨ Excellent! 正解です！</span>";
+        document.getElementById('resultMsg').innerHTML = "<span style='color:#2e7d32;'>✨ Excellent!</span>";
         let text = [d.v1, d.s, d.v2, d.io, d.do, d.ad].flat().filter(s => s !== "").join(" ");
         text += d.isQ ? "?" : ".";
         document.getElementById('sentenceDisplay').textContent = text;
         document.getElementById('checkBtn').style.display = "none";
         document.getElementById('nextBtn').style.display = "inline-block";
-        document.getElementById('ttsBtn').style.display = "block";
+        document.getElementById('ttsBtnInline').style.display = "flex";
     } else {
-        document.getElementById('resultMsg').innerHTML = "<span style='color:#c62828;'>Try again! 語順を確認してね</span>";
+        document.getElementById('resultMsg').innerHTML = "<span style='color:#c62828;'>Try again!</span>";
     }
 }
 
@@ -332,26 +354,10 @@ function celebrate() {
     document.getElementById('game-ui').innerHTML = "<h2 style='color:#e65100; font-size: 2rem; margin: 40px 0;'>🎉 Congratulations!<br>Mission Accomplished!</h2>";
     const duration = 5 * 1000;
     const end = Date.now() + duration;
-
     (function frame() {
-      confetti({
-        particleCount: 7,
-        angle: 60,
-        spread: 55,
-        origin: { x: 0 },
-        colors: ['#ff9800', '#ffeb3b', '#4caf50', '#2196f3', '#e91e63']
-      });
-      confetti({
-        particleCount: 7,
-        angle: 120,
-        spread: 55,
-        origin: { x: 1 },
-        colors: ['#ff9800', '#ffeb3b', '#4caf50', '#2196f3', '#e91e63']
-      });
-
-      if (Date.now() < end) {
-        requestAnimationFrame(frame);
-      }
+      confetti({ particleCount: 7, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#ff9800', '#ffeb3b', '#4caf50', '#2196f3', '#e91e63'] });
+      confetti({ particleCount: 7, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#ff9800', '#ffeb3b', '#4caf50', '#2196f3', '#e91e63'] });
+      if (Date.now() < end) requestAnimationFrame(frame);
     }());
 }
 
