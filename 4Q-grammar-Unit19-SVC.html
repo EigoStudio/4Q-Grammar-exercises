@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>19章 SVCの文</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --primary-orange: #ff9800;
+            --dark-orange: #e65100;
+            --light-orange: #fff3e0;
+            --box-bg: #fffde7;
+            --warm-yellow: #fff176;
+            --en-font: "Hiragino Maru Gothic ProN", "Hiragino Maru Gothic Pro", "Yu Gothic", "Meiryo", sans-serif;
+        }
+
+        body {
+            font-family: 'Kosugi Maru', var(--en-font);
+            background-color: var(--light-orange);
+            display: flex; flex-direction: column; align-items: center; padding: 10px; color: #4e342e; margin: 0;
+        }
+
+        header { text-align: center; margin-bottom: 15px; width: 100%; max-width: 900px; }
+        h1 { color: var(--dark-orange); margin: 10px 0; font-size: 1.6rem; }
+
+        .control-panel {
+            display: flex; align-items: center; justify-content: center; gap: 20px;
+            background: white; padding: 10px 25px; border-radius: 50px; border: 2px solid #ffcc80;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 20px;
+        }
+        .tab-btn {
+            padding: 8px 20px; border-radius: 25px; border: 2px solid var(--primary-orange);
+            background: white; color: var(--primary-orange); cursor: pointer; font-weight: bold; transition: 0.3s;
+        }
+        .tab-btn.active { background: var(--primary-orange); color: white; }
+
+        .container { background: white; width: 98%; max-width: 1100px; padding: 30px; border-radius: 25px; box-shadow: 0 8px 25px rgba(230, 81, 0, 0.1); text-align: center; box-sizing: border-box; }
+        
+        .question-ja { font-size: 1.3rem; font-weight: bold; margin-bottom: 15px; background-color: var(--box-bg); padding: 15px; border-radius: 15px; border: 2px solid #ffe0b2; }
+
+        .word-bank { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 20px 0; padding: 15px; background: #fafafa; border-radius: 20px; min-height: 60px; }
+        .word-btn { background-color: #fff; border: 2px solid #ffcc80; padding: 12px 20px; border-radius: 30px; font-size: 1.2rem; font-weight: bold; cursor: pointer; box-shadow: 0 4px 0 #ffcc80; transition: 0.2s; }
+        .word-btn.selected-vocab { background-color: var(--warm-yellow); border-color: var(--dark-orange); transform: translateY(2px); box-shadow: none; }
+        .word-btn.used { background-color: #e0e0e0; color: #bdbdbd; border-color: #d7d7d7; box-shadow: none; transform: translateY(2px); pointer-events: none; }
+
+        .choices-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; max-width: 600px; margin: 0 auto; }
+
+        .slot-container { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; }
+        .slot { background-color: var(--box-bg); border: 2px dashed #ffcc80; border-radius: 15px; flex: 1; min-height: 100px; display: flex; flex-direction: column; align-items: center; padding: 8px; cursor: pointer; }
+        .slot.active { border-color: var(--dark-orange); background-color: #fff9c4; border-style: solid; }
+        .slot-label { font-size: 0.85rem; color: #5d4037; font-weight: 900; margin-bottom: 5px; border-bottom: 2px solid #d7ccc8; width: 100%; padding-bottom: 3px; }
+        .answer-word { background-color: var(--primary-orange); color: white; padding: 5px 10px; border-radius: 8px; font-size: 1rem; margin: 3px; font-weight: bold; }
+
+        .final-sentence { font-size: 1.8rem; font-weight: bold; color: var(--dark-orange); margin: 15px 0; min-height: 40px; }
+        .action-btn { background-color: var(--dark-orange); color: white; border: none; padding: 15px 45px; border-radius: 40px; font-size: 1.2rem; font-weight: bold; cursor: pointer; box-shadow: 0 4px 0 #bf360c; }
+        .action-btn:disabled { background-color: #ccc; box-shadow: none; }
+
+        /* 印刷設定: 書き込みスペースを最大化し、黒色に */
+        @media print {
+            .no-print { display: none !important; }
+            #printable-sheet { display: block !important; background: white !important; color: black !important; width: 100%; padding: 0; margin: 0; }
+            h2 { color: black !important; font-size: 1.4rem; border-bottom: 2px solid black; }
+            h3 { color: black !important; border-left: 5px solid black; padding-left: 10px; margin-top: 20px; }
+            .print-row { margin-bottom: 30px; page-break-inside: avoid; }
+            .print-ja { font-weight: bold; font-size: 1rem; color: black; display: block; margin-bottom: 8px; }
+            .print-words { font-style: italic; color: black; font-size: 0.9rem; display: block; margin-bottom: 8px; }
+            
+            /* 穴埋めのアンダーライン強調 */
+            .print-underline { 
+                display: inline-block; 
+                border-bottom: 1px solid black; 
+                width: 150px; /* ここで穴埋め幅を広げています */
+                margin: 0 5px;
+                vertical-align: bottom;
+            }
+            
+            /* 並べ替えの書き込み線 */
+            .line { border-bottom: 1.5px solid black !important; height: 35px; width: 100%; margin-top: 5px; }
+        }
+        #printable-sheet { display: none; }
+    </style>
+</head>
+<body>
+
+<header class="no-print">
+    <h1>19章 SVCの文</h1>
+    <div class="control-panel">
+        <div class="tabs">
+            <button class="tab-btn active" id="tab-vocab" onclick="switchMode('vocab')">穴埋め</button>
+            <button class="tab-btn" id="tab-reorder" onclick="switchMode('reorder')">並べ替え</button>
+        </div>
+    </div>
+</header>
+
+<div class="container no-print">
+    <div id="game-ui">
+        <div id="questionHeader" style="font-size: 0.9rem; color: #8d6e63; margin-bottom: 8px;">Question</div>
+        <div id="questionJa" class="question-ja"></div>
+        <div id="resultMsg" style="height: 30px; font-weight: bold; font-size: 1.2rem; margin-bottom: 10px;"></div>
+        <div id="interactive-area"></div>
+        <div id="sentenceDisplay" class="final-sentence"></div>
+        <button class="action-btn" id="mainActionBtn" onclick="handleAction()" disabled>Check Answer</button>
+    </div>
+    <button onclick="window.print()" style="margin-top:25px; background:none; border:none; text-decoration:underline; cursor:pointer; color:#bcaaa4; font-size: 0.8rem;">🖨️ A4ワークシートを印刷</button>
+</div>
+
+<div id="printable-sheet">
+    <h2 style="text-align:center;">19章 SVCの文</h2>
+    <div id="print-content"></div>
+</div>
+
+<script>
+const vocabData = [
+    { jp: "今日はとても寒いです。", en: "is", full: "It is very cold today.", choices: ["is", "has", "goes", "stays"] },
+    { jp: "彼女は医者になりました。", en: "became", full: "She became a doctor.", choices: ["became", "looked at", "was become", "grows"] },
+    { jp: "このレモンは酸っぱい味がします。", en: "tastes", full: "This lemon tastes sour.", choices: ["tastes", "eats", "smells", "feels"] },
+    { jp: "その計画はおもしろそうですね。", en: "sounds", full: "The plan sounds interesting.", choices: ["sounds", "listens", "sees", "hears"] },
+    { jp: "木の葉が赤くなりました。", en: "turned", full: "The leaves turned red.", choices: ["turned", "become to", "stayed", "were sound"] },
+    { jp: "夕食はいいにおいがします。", en: "smells", full: "Dinner smells good.", choices: ["smells", "cooks", "looks", "is smell"] },
+    { jp: "空が暗くなってきています。", en: "is getting", full: "It is getting dark.", choices: ["is getting", "is got", "gets to", "become"] },
+    { jp: "その話は本当のように思えます。", en: "seems", full: "The story seems true.", choices: ["seems", "seems to", "tells", "listens"] },
+    { jp: "お父さんは疲れているように見えました。", en: "looked", full: "My father looked tired.", choices: ["looked", "watched", "became to", "listens"] },
+    { jp: "私は今とてもお腹が空いています。", en: "am", full: "I am very hungry now.", choices: ["am", "becomes", "feel like", "are"] }
+];
+
+const reorderData = [
+    { ja: "彼はとても忙しそうです。", s:["He"], v:["looks"], c:["very", "busy"], ad:[] },
+    { ja: "その赤ちゃんは大きくなりました。", s:["The", "baby"], v:["grew"], c:["big"], ad:[] },
+    { ja: "その知らせは悲しく聞こえました。", s:["The", "news"], v:["sounded"], c:["sad"], ad:[] },
+    { ja: "私の兄は先生になりました。", s:["My", "brother"], v:["became"], c:["a", "teacher"], ad:[] },
+    { ja: "そのスープは変な味がしました。", s:["The", "soup"], v:["tasted"], c:["strange"], ad:[] },
+    { ja: "空は夕方にオレンジ色になりました。", s:["The", "sky"], v:["turned"], c:["orange"], ad:["in", "the", "evening"] },
+    { ja: "窓の近くで見ると、その花は美しく見えます。", s:["The", "flower"], v:["looks"], c:["beautiful"], ad:["near", "the", "window"] },
+    { ja: "早朝、空気は新鮮なにおいがします。", s:["The", "air"], v:["smells"], c:["fresh"], ad:["early", "in", "the", "morning"] },
+    { ja: "弟は夕食の後、とても眠くなりました。", s:["My", "brother"], v:["became"], c:["very", "sleepy"], ad:["after", "dinner"] },
+    { ja: "そのニュースを聞いたとき、彼は悲しそうに見えました。", s:["He"], v:["looked"], c:["sad"], ad:["when", "he", "heard", "the", "news"] }
+];
+
+let currentIdx = 0;
+let currentMode = 'vocab';
+let userReorder = { S: [], V: [], C: [], AD: [] };
+let activeSlot = 'S';
+let selectedVocab = "";
+let isChecked = false;
+
+function shuffle(array) {
+    return array.sort(() => Math.random() - 0.5);
+}
+
+function switchMode(mode) {
+    currentMode = mode; currentIdx = 0; isChecked = false;
+    document.getElementById('tab-vocab').classList.toggle('active', mode === 'vocab');
+    document.getElementById('tab-reorder').classList.toggle('active', mode === 'reorder');
+    loadQuestion();
+}
+
+function loadQuestion() {
+    isChecked = false; selectedVocab = ""; userReorder = { S: [], V: [], C: [], AD: [] };
+    const btn = document.getElementById('mainActionBtn');
+    btn.disabled = true; btn.textContent = "Check Answer";
+    document.getElementById('resultMsg').textContent = "";
+    document.getElementById('sentenceDisplay').textContent = "";
+    const area = document.getElementById('interactive-area');
+    area.innerHTML = "";
+
+    if (currentMode === 'vocab') {
+        const item = vocabData[currentIdx];
+        document.getElementById('questionHeader').textContent = `穴埋め問題 ${currentIdx + 1} / 10`;
+        document.getElementById('questionJa').textContent = item.jp;
+        area.innerHTML = `<div style="font-size:1.5rem; margin-bottom:20px;">${item.full.replace(item.en, " (____) ")}</div>`;
+        const grid = document.createElement('div');
+        grid.className = "choices-grid";
+        shuffle([...item.choices]).forEach(c => {
+            const b = document.createElement('button');
+            b.className = "word-btn";
+            b.textContent = c;
+            b.onclick = () => {
+                selectedVocab = c;
+                document.querySelectorAll('.word-btn').forEach(el => el.classList.remove('selected-vocab'));
+                b.classList.add('selected-vocab');
+                btn.disabled = false;
+            };
+            grid.appendChild(b);
+        });
+        area.appendChild(grid);
+    } else {
+        const item = reorderData[currentIdx];
+        document.getElementById('questionHeader').textContent = `並べ替え問題 ${currentIdx + 1} / 10`;
+        document.getElementById('questionJa').textContent = item.ja;
+        const slotCont = document.createElement('div');
+        slotCont.className = "slot-container";
+        ['S','V','C','AD'].forEach(id => {
+            let label = id==='S'?'S (主語)':id==='V'?'V (動詞)':id==='C'?'C (補語)':(currentIdx === 9 ? "従属節" : "前置詞句");
+            slotCont.innerHTML += `<div id="box-${id}" class="slot ${id==='S'?'active':''}" onclick="activeSlot='${id}'; updateSlotUI();"><div class="slot-label">${label}</div><div id="slot-${id}" style="display:flex; flex-wrap:wrap; justify-content:center;"></div></div>`;
+        });
+        area.appendChild(slotCont);
+        const bank = document.createElement('div');
+        bank.className = "word-bank";
+        let words = [...item.s, ...item.v, ...item.c, ...item.ad];
+        shuffle(words).forEach((w, i) => {
+            const b = document.createElement('button');
+            b.className = "word-btn";
+            b.textContent = w; b.id = `wb-${i}`;
+            b.onclick = () => {
+                userReorder[activeSlot].push({text:w, id:`wb-${i}`});
+                b.classList.add('used');
+                updateSlotUI(); btn.disabled = false;
+            };
+            bank.appendChild(b);
+        });
+        area.appendChild(bank);
+        activeSlot = 'S';
+    }
+}
+
+function updateSlotUI() {
+    ['S','V','C','AD'].forEach(id => {
+        document.getElementById(`box-${id}`).className = `slot ${activeSlot === id ? 'active' : ''}`;
+        const el = document.getElementById(`slot-${id}`);
+        el.innerHTML = "";
+        userReorder[id].forEach((item, idx) => {
+            const div = document.createElement('div');
+            div.className = "answer-word"; div.textContent = item.text;
+            div.onclick = (e) => {
+                e.stopPropagation();
+                document.getElementById(item.id).classList.remove('used');
+                userReorder[id].splice(idx, 1);
+                updateSlotUI();
+            };
+            el.appendChild(div);
+        });
+    });
+}
+
+function handleAction() {
+    const btn = document.getElementById('mainActionBtn');
+    if (!isChecked) {
+        let isCorrect = false; let correctText = "";
+        if (currentMode === 'vocab') {
+            isCorrect = (selectedVocab === vocabData[currentIdx].en);
+            correctText = vocabData[currentIdx].full;
+        } else {
+            const d = reorderData[currentIdx];
+            const match = (k) => userReorder[k].map(o=>o.text).join(" ") === d[k.toLowerCase()].join(" ");
+            isCorrect = match('S') && match('V') && match('C') && match('AD');
+            correctText = [d.s, d.v, d.c, d.ad].flat().join(" ") + ".";
+        }
+        const msg = document.getElementById('resultMsg');
+        if (isCorrect) {
+            msg.innerHTML = "Perfect! ✨";
+            confetti({ particleCount: 80, spread: 60, origin: { y: 0.7 } });
+            isChecked = true; btn.textContent = "Next →";
+            document.getElementById('sentenceDisplay').textContent = correctText;
+        } else {
+            msg.innerHTML = "並び順をチェック！";
+        }
+    } else {
+        currentIdx++;
+        const max = currentMode === 'vocab' ? vocabData.length : reorderData.length;
+        if (currentIdx < max) loadQuestion();
+        else {
+            document.getElementById('game-ui').innerHTML = "<h2>Mission Complete! 🍊</h2>";
+        }
+    }
+}
+
+function buildPrint() {
+    const target = document.getElementById('print-content');
+    target.innerHTML = "<h3>■ 穴埋め問題：( )内に適切な語を書きなさい。</h3>";
+    vocabData.forEach((d, i) => {
+        // 文中の正解部分を広い下線に置き換える
+        const sentenceWithUnderline = d.full.replace(d.en, `<span class="print-underline"></span>`);
+        const choices = shuffle([...d.choices]).join(" / ");
+        target.innerHTML += `
+        <div class="print-row">
+            <span class="print-ja">${i+1}. ${d.jp} <small style="font-weight:normal;">[ ${choices} ]</small></span>
+            <div style="font-size:1.1rem; margin-top:5px;">${sentenceWithUnderline}</div>
+        </div>`;
+    });
+    
+    target.innerHTML += "<h3>■ 並べ替え問題：日本語に合うように単語を並べなさい。</h3>";
+    reorderData.forEach((d, i) => {
+        const words = shuffle([...d.s, ...d.v, ...d.c, ...d.ad]);
+        target.innerHTML += `
+        <div class="print-row">
+            <span class="print-ja">${i+1}. ${d.ja}</span>
+            <span class="print-words">[ ${words.join(" / ")} ]</span>
+            <div class="line"></div>
+        </div>`;
+    });
+}
+
+window.onload = () => { loadQuestion(); buildPrint(); };
+</script>
+</body>
+</html>
