@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>19章 語順に注意する並べ替え問題 p61 予想問題</title>
+<style>
+  :root {
+    --primary-orange: #ff9800;
+    --text-brown: #5d4037;
+    --bg-color: #fff8f0;
+    --border-color: #d7ccc8;
+  }
+
+  body {
+    font-family: "Hiragino Maru Gothic ProN", "Hiragino Maru Gothic Pro", "HGMaruGothicMPRO", sans-serif;
+    background-color: var(--bg-color);
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    color: #333;
+  }
+
+  .container {
+    background: white;
+    max-width: 900px;
+    width: 100%;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+    box-sizing: border-box;
+    min-height: 550px;
+  }
+
+  h2 {
+    color: #e65100;
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  .progress-container {
+    width: 100%;
+    background-color: #eee;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    height: 8px;
+  }
+  .progress-bar {
+    height: 100%;
+    background-color: var(--primary-orange);
+    width: 0%;
+    transition: width 0.3s;
+  }
+
+  .question-box {
+    font-size: 1.3rem;
+    line-height: 2.0;
+    margin-bottom: 30px;
+    text-align: left;
+    min-height: 100px;
+  }
+
+  .choice-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+
+  .choice-card-btn {
+    padding: 15px 10px;
+    border: 2px solid var(--border-color);
+    background: white;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    text-align: center;
+    color: var(--text-brown);
+    transition: all 0.2s;
+    font-family: inherit;
+    font-weight: bold;
+  }
+
+  .choice-card-btn:hover {
+    border-color: var(--primary-orange);
+    background-color: #fffaf0;
+  }
+
+  .choice-card-btn.selected {
+    border-color: var(--primary-orange);
+    background-color: #fff3e0;
+  }
+
+  .word-btn {
+    background-color: white;
+    color: var(--text-brown);
+    border: 2px solid var(--primary-orange);
+    padding: 12px 22px;
+    border-radius: 25px;
+    font-size: 1.15rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin: 6px;
+    display: inline-block;
+  }
+
+  .word-btn.used {
+    border-color: #eee;
+    color: #ccc;
+    pointer-events: none;
+  }
+
+  .dialog-line {
+    margin-bottom: 1.5rem;
+    display: block;
+  }
+
+  .correct-word {
+    color: #e74c3c;
+    font-weight: bold;
+    text-decoration: underline;
+    margin: 0 5px;
+  }
+
+  .answer-area {
+    min-height: 70px;
+    border-bottom: 2px solid #ffcc80;
+    margin-bottom: 30px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 10px;
+    padding: 10px;
+    background-color: #fffafb;
+    border-radius: 10px;
+  }
+
+  .celebration-text {
+    font-size: 2.2rem;
+    color: #2e7d32;
+    font-weight: bold;
+    text-align: center;
+    animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    line-height: 1.4;
+    padding: 40px 0;
+  }
+
+  @keyframes popIn {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .action-btn {
+    padding: 18px 50px;
+    font-size: 1.2rem;
+    background-color: #43a047;
+    color: white;
+    border: none;
+    border-radius: 35px;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 4px 0 #2e7d32;
+    display: block;
+    margin: 20px auto;
+  }
+
+  @media (max-width: 600px) {
+    .container { padding: 20px; }
+    .question-box { font-size: 1.1rem; line-height: 1.6; }
+    .choice-grid { grid-template-columns: 1fr; }
+    .choice-card-btn { padding: 15px; font-size: 1rem; text-align: left; }
+    .word-btn { font-size: 1rem; padding: 10px 18px; }
+    .celebration-text { font-size: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<h2>19章 語順に注意する並べ替え問題 p61 予想問題</h2>
+
+<div class="container">
+  <div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+  
+  <div id="game-content">
+    <div class="question-box" id="qText"></div>
+    <div id="ui-area"></div>
+    <div id="feedback-area" style="text-align:center; min-height: 50px;"></div>
+    <button class="action-btn" id="checkBtn" style="display:none;" onclick="handleCheck()">Check Answer</button>
+    <button class="action-btn" id="nextBtn" style="display:none; background-color: #ef6c00;" onclick="nextQuestion()">Next Question</button>
+  </div>
+</div>
+
+<script>
+  function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  }
+
+  const quizData = [
+    { type: "choice", base: "Tom wanted to help sick people when he was young. So, he <span id='blank'>( &nbsp;&nbsp;&nbsp;&nbsp; )</span> a doctor.", choices: ["were", "became", "studied", "said"], ans: "became" },
+    { type: "choice", base: "<span class='dialog-line'>A: You <span id='blank'>( &nbsp;&nbsp;&nbsp;&nbsp; )</span> tired, Judy. Are you OK?</span><span class='dialog-line'>B: Yes, thanks, Ken. I had a lot of work to do yesterday.</span>", choices: ["tell", "become", "look", "give"], ans: "look" },
+    { type: "choice", base: "<span class='dialog-line'>A: Did you buy a present for your brother Bill?</span><span class='dialog-line'>B: Yes. I went to the department store yesterday. I'll give <span id='blank'>( &nbsp;&nbsp;&nbsp;&nbsp; )</span> a soccer ball.</span>", choices: ["he", "him", "his", "himself"], ans: "him" },
+    { type: "sort", ja: "あなたに私のお気に入りの写真を見せましょう。", en_full: "I'll show you my favorite photo.", words: ["I'll", "show", "you", "my", "favorite", "photo"] },
+    { type: "sort", ja: "市役所への道を教えていただけますか。", en_full: "Could you tell me the way to the city hall?", words: ["Could you", "tell", "me", "the way", "to", "the city hall"] }
+  ];
+
+  let currentIdx = 0;
+  let selectedChoice = null;
+  let userSort = [];
+
+  function loadQuestion() {
+    const q = quizData[currentIdx];
+    const ui = document.getElementById('ui-area');
+    const qText = document.getElementById('qText');
+    const feedback = document.getElementById('feedback-area');
+    
+    document.getElementById('progressBar').style.width = `${(currentIdx / quizData.length) * 100}%`;
+    document.getElementById('nextBtn').style.display = "none";
+    document.getElementById('checkBtn').style.display = "none";
+    feedback.innerHTML = "";
+    ui.innerHTML = "";
+    selectedChoice = null;
+
+    if (q.type === "choice") {
+      qText.innerHTML = q.base;
+      const grid = document.createElement('div');
+      grid.className = 'choice-grid';
+      const shuffledChoices = shuffle([...q.choices]);
+      shuffledChoices.forEach(c => {
+        const btn = document.createElement('button');
+        btn.className = 'choice-card-btn';
+        btn.textContent = c;
+        btn.onclick = () => {
+          document.querySelectorAll('.choice-card-btn').forEach(b => b.classList.remove('selected'));
+          btn.classList.add('selected');
+          selectedChoice = c;
+          document.getElementById('checkBtn').style.display = "block";
+        };
+        grid.appendChild(btn);
+      });
+      ui.appendChild(grid);
+    } else {
+      qText.innerHTML = `<div style="color:#e65100; font-size:1.1rem; margin-bottom:15px; font-weight:bold;">${q.ja}</div>`;
+      const area = document.createElement('div');
+      area.className = 'answer-area';
+      area.id = 'answerArea';
+      area.innerHTML = '<span style="color:#aaa;">タップして並べ替え</span>';
+      
+      const bank = document.createElement('div');
+      bank.style.textAlign = "center";
+      
+      userSort = [];
+      const shuffledWords = shuffle([...q.words]);
+      shuffledWords.forEach(w => {
+        const btn = document.createElement('button');
+        btn.className = 'word-btn';
+        btn.textContent = w;
+        btn.onclick = () => {
+          if (btn.classList.contains('used')) return;
+          if (userSort.length === 0) area.innerHTML = "";
+          userSort.push({ text: w, btn: btn });
+          btn.classList.add('used');
+          renderSort();
+        };
+        bank.appendChild(btn);
+      });
+      ui.appendChild(area);
+      ui.appendChild(bank);
+    }
+  }
+
+  function renderSort() {
+    const area = document.getElementById('answerArea');
+    area.innerHTML = "";
+    userSort.forEach((item, idx) => {
+      const b = document.createElement('button');
+      b.className = 'word-btn';
+      b.style.margin = "2px";
+      b.textContent = item.text;
+      b.onclick = () => {
+        item.btn.classList.remove('used');
+        userSort.splice(idx, 1);
+        renderSort();
+        if(userSort.length === 0) area.innerHTML = '<span style="color:#aaa;">タップして並べ替え</span>';
+      };
+      area.appendChild(b);
+    });
+    
+    if (userSort.length === quizData[currentIdx].words.length) {
+      document.getElementById('checkBtn').style.display = "block";
+    } else {
+      document.getElementById('checkBtn').style.display = "none";
+    }
+  }
+
+  function handleCheck() {
+    const q = quizData[currentIdx];
+    if (q.type === "choice") {
+      if (selectedChoice === q.ans) {
+        document.getElementById('blank').innerHTML = `<span class="correct-word">${q.ans}</span>`;
+        showSuccess();
+      } else {
+        alert("Try again!");
+      }
+    } else {
+      const userStr = userSort.map(i => i.text).join(" ");
+      // 文字列比較時に末尾の記号を除去して判定
+      if (userStr === q.en_full.slice(0, -1)) {
+        document.getElementById('ui-area').innerHTML = `<div class="celebration-text">${q.en_full}</div>`;
+        showSuccess();
+      } else {
+        alert("語順を確認してね！");
+      }
+    }
+  }
+
+  function showSuccess() {
+    document.getElementById('checkBtn').style.display = "none";
+    document.getElementById('nextBtn').style.display = "block";
+  }
+
+  function nextQuestion() {
+    currentIdx++;
+    if (currentIdx < quizData.length) loadQuestion();
+    else {
+      document.getElementById('game-content').innerHTML = "<div class='celebration-text'>🎉 全問クリア！素晴らしい！ 🎉</div>";
+      document.getElementById('progressBar').style.width = "100%";
+    }
+  }
+
+  window.onload = loadQuestion;
+</script>
+</body>
+</html>

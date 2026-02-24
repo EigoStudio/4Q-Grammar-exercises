@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>英検4級 20章 「〜がある」の文</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --primary-orange: #ff9800;
+            --dark-orange: #e65100;
+            --light-orange: #fff3e0;
+            --box-bg: #fffde7;
+            --en-font: "Chalkboard SE", "Comic Sans MS", "Comic Sans", "Kosugi Maru", sans-serif;
+            --label-color: #5d4037;
+        }
+
+        /* --- オンライン版スタイル --- */
+        body {
+            font-family: var(--en-font);
+            background-color: var(--light-orange);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px;
+            color: #4e342e;
+            margin: 0;
+            user-select: none;
+        }
+
+        *, button, div, span { font-family: var(--en-font) !important; }
+        h1.main-title { color: var(--dark-orange); font-size: 1.4rem; margin: 10px 0; }
+
+        .mode-selector { margin-bottom: 15px; display: flex; gap: 10px; }
+        .mode-btn { 
+            padding: 10px 20px; border-radius: 20px; border: 2px solid var(--dark-orange); 
+            background: white; cursor: pointer; font-weight: bold; font-size: 0.9rem;
+        }
+        .mode-btn.active { background: var(--dark-orange); color: white; }
+
+        .container { 
+            background: white; width: 98%; max-width: 850px; padding: 20px; 
+            border-radius: 20px; box-shadow: 0 8px 25px rgba(230, 81, 0, 0.1); 
+            text-align: center; box-sizing: border-box; overflow: hidden;
+        }
+
+        .question-ja { 
+            font-size: 1.2rem; font-weight: bold; margin-bottom: 15px; 
+            background-color: #fffde7; padding: 15px; border-radius: 10px; 
+            border: 2px solid #ffe0b2; line-height: 1.5; 
+        }
+        
+        #resultMsg { height: 35px; font-weight: bold; font-size: 1.2rem; margin-bottom: 10px; }
+
+        .slot-container { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 15px; }
+        .slot { 
+            background-color: var(--box-bg); border: 2px dashed #ffcc80; border-radius: 12px; 
+            flex: 1; min-height: 110px; display: flex; flex-direction: column; align-items: center; 
+            padding: 8px; cursor: pointer; position: relative;
+        }
+        .slot.active { border-color: var(--dark-orange); background-color: #fff9c4; border-style: solid; }
+        .slot.pop-out { animation: quietFade 0.4s ease-out forwards; }
+        @keyframes quietFade { 0% { opacity: 1; } 100% { opacity: 0; transform: scale(1.02); } }
+
+        .slot-label { font-size: 0.8rem; color: var(--label-color); font-weight: 900; margin-bottom: 8px; border-bottom: 1px solid #d7ccc8; width: 100%; padding-bottom: 2px; }
+
+        .choice-container { display: flex; justify-content: center; gap: 20px; margin: 20px 0; }
+        .choice-btn { background: white; border: 2px solid #ffcc80; padding: 12px 35px; border-radius: 15px; font-size: 1.2rem; cursor: pointer; font-weight: bold; box-shadow: 0 3px 0 #ffcc80; }
+
+        .sentence-gap { font-size: 1.6rem; margin: 25px 0; color: #333; line-height: 2; }
+        .gap-box { display: inline-block; min-width: 130px; border-bottom: 3px solid var(--dark-orange); color: var(--dark-orange); font-weight: bold; margin: 0 5px; padding-bottom: 2px; vertical-align: baseline; }
+
+        .word-bank { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin: 15px 0; padding: 15px; background: #fafafa; border-radius: 15px; }
+        .word-btn { background-color: #fff; color: #5d4037; border: 2px solid #ffcc80; padding: 10px 18px; border-radius: 30px; font-size: 1.3rem; font-weight: bold; cursor: pointer; box-shadow: 0 4px 0 #ffcc80; }
+        .word-btn.used { opacity: 0.2; pointer-events: none; }
+
+        .answer-word { color: #5d4037; font-size: 1.2rem; margin: 4px; font-weight: bold; }
+        .final-sentence-container { height: 0; overflow: hidden; }
+        .final-sentence-container.show { height: auto; padding: 20px 0; }
+        #sentenceDisplay { font-size: 1.8rem; font-weight: bold; color: var(--dark-orange); }
+
+        .action-btn { background-color: var(--dark-orange); color: white; border: none; padding: 15px 50px; border-radius: 40px; font-size: 1.3rem; font-weight: bold; cursor: pointer; margin-top: 10px; }
+
+        /* --- 印刷用設定 --- */
+        #printable-sheet { display: none; }
+        @media print {
+            .no-print, .mode-selector, .container, h1.main-title { display: none !important; }
+            #printable-sheet { display: block !important; background: white; color: black; width: 100%; }
+            body { background: white; padding: 0; margin: 0; }
+            .sheet { width: 180mm; margin: 0 auto; padding: 10mm 15mm; page-break-after: always; color: black; }
+            .print-header { border-bottom: 2px solid black; margin-bottom: 20px; padding-bottom: 5px; }
+            .print-title { font-size: 1.5rem; font-weight: bold; text-align: center; }
+            .print-subtitle { font-size: 1.2rem; font-weight: bold; margin: 25px 0 10px 0; border-left: 5px solid black; padding-left: 10px; }
+            .print-selection-hint { font-size: 0.85rem; font-weight: normal; margin-left: 10px; color: #333; }
+            .print-order-item { margin-bottom: 30px; list-style: none; font-size: 1rem; }
+            .print-q-header { display: flex; align-items: baseline; flex-wrap: wrap; gap: 12px; margin-bottom: 6px; }
+            .print-ja { font-weight: bold; font-size: 0.85rem; }
+            .print-words { font-style: italic; font-size: 0.8rem; color: #444; }
+            .print-ans-line { border-bottom: 1px solid black; height: 32px; width: 100%; margin-top: 2px; }
+            .print-choice-item { margin-bottom: 25px; list-style: none; font-size: 1rem; }
+            .print-gap-sentence { font-size: 1.1rem; margin-top: 6px; }
+            /* 空欄をさらに広く設定 */
+            .print-gap { display: inline-block; width: 150px; border-bottom: 1px solid black; }
+            ol { padding-left: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<h1 class="main-title no-print">There構文マスター</h1>
+
+<div class="mode-selector no-print">
+    <button class="mode-btn active" id="modeOrder" onclick="switchMode('order')">ならべかえ</button>
+    <button class="mode-btn" id="modeChoice" onclick="switchMode('choice')">some / any クイズ</button>
+</div>
+
+<div class="container no-print">
+    <div id="game-ui">
+        <div id="qHeader" style="font-size: 0.8rem; color: #795548; font-weight: bold; margin-bottom: 5px;">Question 1</div>
+        <div id="questionJa" class="question-ja"></div>
+        <div id="resultMsg"></div>
+
+        <div id="orderArea">
+            <div id="slotWrapper" class="slot-container">
+                <div id="box-1" class="slot" onclick="setSlot(1)"><div id="l-1" class="slot-label"></div><div id="s-1"></div></div>
+                <div id="box-2" class="slot" onclick="setSlot(2)"><div id="l-2" class="slot-label"></div><div id="s-2"></div></div>
+                <div id="box-3" class="slot" onclick="setSlot(3)"><div id="l-3" class="slot-label"></div><div id="s-3"></div></div>
+                <div id="box-4" class="slot" onclick="setSlot(4)"><div id="l-4" class="slot-label"></div><div id="s-4"></div></div>
+            </div>
+            <div id="finalWrap" class="final-sentence-container">
+                <div id="sentenceDisplay"></div>
+            </div>
+            <div class="word-bank" id="wordBank"></div>
+        </div>
+
+        <div id="choiceArea" style="display:none;">
+            <div class="sentence-gap" id="sentenceGap"></div>
+            <div class="choice-container" id="choiceBank"></div>
+        </div>
+
+        <button class="action-btn" id="checkBtn" onclick="check()">Check Answer</button>
+        <button class="action-btn" id="nextBtn" onclick="next()" style="display:none; background:#2e7d32;">Next Question</button>
+    </div>
+</div>
+
+<div id="printable-sheet">
+    <div class="sheet">
+        <div class="print-header">
+            <div class="print-title">英検4級 20章 「〜がある」の文</div>
+        </div>
+        <div class="print-subtitle">並べ替え問題</div>
+        <ol id="print-order-list"></ol>
+    </div>
+    <div class="sheet">
+        <div class="print-header">
+            <div class="print-title">英検4級 20章 「〜がある」の文</div>
+        </div>
+        <div class="print-subtitle">穴埋め問題 <span class="print-selection-hint">( some / any / something / anything / someone / anyone )</span></div>
+        <ol id="print-choice-list"></ol>
+    </div>
+</div>
+
+<script>
+const orderData = [
+    { ja: "公園に大きな木があります。", labels:["There", "be動詞", "主語", "場所"], ans:[["There"], ["is"], ["a","big","tree"], ["in","the","park"]] },
+    { ja: "壁に写真がありません。", labels:["There", "be動詞", "主語", "場所"], ans:[["There"], ["is","not"], ["a","picture"], ["on","the","wall"]] },
+    { ja: "冷蔵庫の中に牛乳はありません。", labels:["There", "be動詞", "主語", "場所"], ans:[["There"], ["is","not"], ["any","milk"], ["in","the","fridge"]] },
+    { ja: "テーブルの上にリンゴがいくつかあります。", labels:["There", "be動詞", "主語", "場所"], ans:[["There"], ["are"], ["some","apples"], ["on","the","table"]] },
+    { ja: "この近くに銀行はありますか？", labels:["be動詞", "there", "主語", "場所"], ans:[["Is"], ["there"], ["a","bank"], ["near","here"]], isQ:true },
+    { ja: "教室の中に生徒はいますか？", labels:["be動詞", "there", "主語", "場所"], ans:[["Are"], ["there"], ["any","students"], ["in","the","classroom"]], isQ:true },
+    { ja: "椅子の下に小さな猫がいました。", labels:["There", "be動詞", "主語", "場所"], ans:[["There"], ["was"], ["a","small","cat"], ["under","the","chair"]] },
+    { ja: "駐車場に車はありましたか？", labels:["be動詞", "there", "主語", "場所"], ans:[["Were"], ["there"], ["any","cars"], ["in","the","parking","lot"]], isQ:true },
+    { ja: "駅の近くに病院はありますか？", labels:["be動詞", "there", "主語", "場所"], ans:[["Is"], ["there"], ["a","hospital"], ["near","the","station"]], isQ:true },
+    { ja: "あなたのカバンの中に何冊の本が入っていますか？", labels:["How many...", "be動詞", "there", "場所"], ans:[["How","many","books"], ["are"], ["there"], ["in","your","bag"]], isQ:true }
+];
+
+const choiceData = [
+    { ja: "コップの中に水がいくらかあります。", q: "There is (   ) water in the glass.", choices: ["some", "any"], correct: "some" },
+    { ja: "箱の中にペンは一本もありません。", q: "There aren't (   ) pens in the box.", choices: ["some", "any"], correct: "any" },
+    { ja: "庭に何かいますか？", q: "Is there (   ) in the yard?", choices: ["something", "anything"], correct: "anything" },
+    { ja: "カバンの中に何か入っています。", q: "There is (   ) in my bag.", choices: ["something", "anything"], correct: "something" },
+    { ja: "冷蔵庫に卵は一つもありません。", q: "There are not (   ) eggs in the fridge.", choices: ["some", "any"], correct: "any" },
+    { ja: "何か食べ物はありますか？", q: "Is there (   ) food?", choices: ["some", "any"], correct: "any" },
+    { ja: "テーブルの上にオレンジがいくつかあります。", q: "There are (   ) oranges on the table.", choices: ["some", "any"], correct: "some" },
+    { ja: "何か質問はありますか？", q: "Do you have (   ) questions?", choices: ["some", "any"], correct: "any" },
+    { ja: "誰かがドアのところにいます。", q: "There is (   ) at the door.", choices: ["someone", "anyone"], correct: "someone" },
+    { ja: "この部屋には誰もいません。", q: "There isn't (   ) in this room.", choices: ["someone", "anyone"], correct: "anyone" }
+];
+
+let mode = 'order'; 
+let curIdx = 0;
+let userAnsOrder = { 1:[], 2:[], 3:[], 4:[] };
+let activeSlot = 1;
+let selectedChoice = "";
+
+// --- 印刷用データの生成 (修正箇所) ---
+function preparePrint() {
+    const oList = document.getElementById('print-order-list');
+    orderData.forEach((d, i) => {
+        // すべての単語をフラットにしてからランダムに並べ替える処理を徹底
+        const words = d.ans.flat().sort(() => Math.random() - 0.5).join(" / ");
+        oList.innerHTML += `
+            <li class="print-order-item">
+                <div class="print-q-header">
+                    <span class="print-ja">${i+1}. ${d.ja}</span>
+                    <span class="print-words">( ${words} )</span>
+                </div>
+                <div class="print-ans-line"></div>
+            </li>`;
+    });
+    const cList = document.getElementById('print-choice-list');
+    choiceData.forEach((d, i) => {
+        // 印刷時の空欄（カッコ）の幅を大きく確保
+        cList.innerHTML += `
+            <li class="print-choice-item">
+                <span class="print-ja">${i+1}. ${d.ja}</span>
+                <div class="print-gap-sentence">There ( &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ) ${d.q.split(')')[1]}</div>
+            </li>`;
+    });
+}
+
+function switchMode(m) {
+    mode = m; curIdx = 0;
+    document.getElementById('modeOrder').classList.toggle('active', mode==='order');
+    document.getElementById('modeChoice').classList.toggle('active', mode==='choice');
+    document.getElementById('orderArea').style.display = (mode==='order' ? 'block' : 'none');
+    document.getElementById('choiceArea').style.display = (mode==='choice' ? 'block' : 'none');
+    render();
+}
+
+function render() {
+    const d = (mode==='order' ? orderData[curIdx] : choiceData[curIdx]);
+    const total = (mode==='order' ? orderData.length : choiceData.length);
+    document.getElementById('qHeader').textContent = `Question ${curIdx + 1} / ${total}`;
+    document.getElementById('questionJa').textContent = d.ja;
+    document.getElementById('resultMsg').textContent = "";
+    document.getElementById('nextBtn').style.display = "none";
+    document.getElementById('checkBtn').style.display = "inline-block";
+
+    if(mode === 'order') {
+        userAnsOrder = { 1:[], 2:[], 3:[], 4:[] };
+        document.getElementById('slotWrapper').style.display = 'flex';
+        document.getElementById('finalWrap').classList.remove('show');
+        for(let i=1; i<=4; i++) {
+            const el = document.getElementById(`box-${i}`);
+            el.classList.remove('pop-out'); el.style.opacity = "1";
+            document.getElementById(`l-${i}`).textContent = d.labels[i-1];
+        }
+        let words = d.ans.flat().sort(() => Math.random() - 0.5);
+        const bank = document.getElementById('wordBank'); bank.innerHTML = "";
+        words.forEach((w, i) => {
+            const b = document.createElement('button');
+            b.className = "word-btn"; b.textContent = w; b.id = `w-${i}`;
+            b.onclick = () => {
+                if(!b.classList.contains('used')){
+                    userAnsOrder[activeSlot].push({t:w, id:`w-${i}`});
+                    b.classList.add('used'); updateSlots();
+                }
+            };
+            bank.appendChild(b);
+        });
+        updateSlots(); setSlot(1);
+    } else {
+        selectedChoice = "";
+        document.getElementById('sentenceGap').innerHTML = d.q.replace("(   )", '<span class="gap-box" id="gap"></span>');
+        const bank = document.getElementById('choiceBank'); bank.innerHTML = "";
+        d.choices.forEach(c => {
+            const b = document.createElement('button');
+            b.className = "choice-btn"; b.textContent = c;
+            b.onclick = () => {
+                selectedChoice = c; document.getElementById('gap').textContent = c;
+                document.querySelectorAll('.choice-btn').forEach(btn => btn.style.border = "2px solid #ffcc80");
+                b.style.border = "2px solid var(--dark-orange)";
+            };
+            bank.appendChild(b);
+        });
+    }
+}
+
+function setSlot(n) { activeSlot = n; document.querySelectorAll('.slot').forEach(s=>s.classList.remove('active')); document.getElementById(`box-${n}`).classList.add('active'); }
+
+function updateSlots() {
+    for(let i=1; i<=4; i++){
+        const el = document.getElementById(`s-${i}`); el.innerHTML = "";
+        userAnsOrder[i].forEach((item, idx) => {
+            const v = document.createElement('div'); v.className = "answer-word"; v.textContent = item.t;
+            v.onclick = (e) => { e.stopPropagation(); document.getElementById(item.id).classList.remove('used'); userAnsOrder[i].splice(idx, 1); updateSlots(); };
+            el.appendChild(v);
+        });
+    }
+}
+
+function check() {
+    const d = (mode==='order' ? orderData[curIdx] : choiceData[curIdx]);
+    let ok = false;
+    if(mode === 'order') {
+        ok = true;
+        for(let i=1; i<=4; i++){
+            if(userAnsOrder[i].map(o=>o.t).join(" ").toLowerCase() !== d.ans[i-1].join(" ").toLowerCase()) ok = false;
+        }
+    } else { ok = (selectedChoice === d.correct); }
+
+    if(ok) {
+        document.getElementById('resultMsg').innerHTML = "<span style='color:#2e7d32;'>Correct! せいかい！</span>";
+        document.getElementById('checkBtn').style.display = "none";
+        document.getElementById('nextBtn').style.display = "inline-block";
+        if(mode === 'order') {
+            for(let i=1; i<=4; i++) document.getElementById(`box-${i}`).classList.add('pop-out');
+            setTimeout(() => {
+                document.getElementById('slotWrapper').style.display = 'none';
+                let res = d.ans.flat().join(" ");
+                res = res.charAt(0).toUpperCase() + res.slice(1) + (d.isQ ? "?" : ".");
+                document.getElementById('sentenceDisplay').textContent = res;
+                document.getElementById('finalWrap').classList.add('show');
+            }, 400);
+        }
+        confetti({ particleCount: 80, spread: 60, origin: { y: 0.8 } });
+    } else { document.getElementById('resultMsg').innerHTML = "<span style='color:#c62828;'>Try again! もういちど！</span>"; }
+}
+
+function next() {
+    const total = (mode==='order' ? orderData.length : choiceData.length);
+    curIdx++;
+    if(curIdx < total) render();
+    else document.getElementById('game-ui').innerHTML = "<h2>🎉 All Clear!</h2>";
+}
+
+preparePrint();
+render();
+</script>
+</body>
+</html>
