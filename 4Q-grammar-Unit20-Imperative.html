@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>20章 「〜しなさい」の文 並べ替え問題</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --primary-orange: #ff9800;
+            --dark-orange: #e65100;
+            --light-orange: #fff3e0;
+            --text-brown: #5d4037;
+            --en-font: "Chalkboard SE", "Comic Sans MS", "Comic Sans", "Kosugi Maru", sans-serif;
+        }
+
+        body {
+            font-family: 'Kosugi Maru', var(--en-font);
+            background-color: var(--light-orange);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            color: #333;
+            margin: 0;
+        }
+
+        h2 { color: var(--dark-orange); text-align: center; margin-bottom: 20px; }
+
+        .container {
+            background: white;
+            max-width: 800px;
+            width: 100%;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+            box-sizing: border-box;
+            text-align: center;
+            min-height: 450px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .question-ja {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--dark-orange);
+            margin-bottom: 20px;
+            background: var(--light-orange);
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .answer-area {
+            min-height: 60px;
+            border-bottom: 3px solid var(--primary-orange);
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            padding: 15px;
+            background-color: #fffafb;
+            border-radius: 10px;
+        }
+
+        .word-bank {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .word-btn {
+            background-color: white;
+            color: var(--text-brown);
+            border: 2px solid var(--primary-orange);
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 0 var(--primary-orange);
+        }
+
+        .word-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--primary-orange); }
+        .word-btn.used { background-color: #eee; color: #ccc; border-color: #ddd; box-shadow: none; pointer-events: none; }
+
+        .action-btn {
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            background-color: #43a047;
+            color: white;
+            border: none;
+            border-radius: 35px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 4px 0 #2e7d32;
+        }
+
+        .feedback { margin-top: 15px; font-weight: bold; min-height: 24px; }
+
+        .congrats-screen {
+            animation: popIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+         /* 印刷設定: グレーの線や色を排除 */
+        @media print {
+            .no-print { display: none !important; }
+            #printable-sheet { display: block !important; width: 100%; color: #000 !important; background: #fff !important; }
+            body { background: #fff !important; }
+            .print-title { color: #000 !important; border-bottom: 2px solid #000 !important; padding-bottom: 10px; margin-bottom: 20px; text-align: center; font-size: 1.2rem; font-weight: bold; }
+            .print-q { margin-bottom: 30px; border: none !important; padding: 0 !important; }
+            .print-ja { font-weight: normal; font-size: 1.0rem; margin-bottom: 5px; color: #000 !important; }
+            .print-words { font-style: italic; font-size: 1rem; color: #000 !important; margin-bottom: 1px; display: block; }
+            .line { border-bottom: 0.5px solid #000 !important; height: 23px; width: 100%; margin-top: 0px; border-top: none; border-left: none; border-right: none; }
+        }
+        #printable-sheet { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="no-print">
+    <h2>20章 「〜しなさい」の文 並べ替え問題</h2>
+    <div class="container" id="mainContainer">
+        <div id="game-content">
+            <div id="questionHeader" style="color: #666; font-size: 0.8rem; margin-bottom: 10px;"></div>
+            <div id="questionJa" class="question-ja"></div>
+            
+            <div id="answerArea" class="answer-area">
+                <span style="color:#aaa;">タップして並べ替えてね</span>
+            </div>
+
+            <div id="wordBank" class="word-bank"></div>
+            
+            <div id="feedback" class="feedback"></div>
+
+            <div style="margin-top: 20px;">
+                <button id="checkBtn" class="action-btn" onclick="checkAnswer()">Check Answer</button>
+                <button id="nextBtn" class="action-btn" onclick="nextQuestion()" style="display:none; background-color: var(--dark-orange); box-shadow: 0 4px 0 #bf360c;">Next Question</button>
+                <button id="finishBtn" class="action-btn" onclick="showFinalCongrats()" style="display:none; background-color: #d32f2f; box-shadow: 0 4px 0 #b71c1c;">Finish!</button>
+            </div>
+        </div>
+
+        <div style="margin-top:30px;" class="no-print">
+            <button onclick="printGame()" style="font-size:0.8rem; color:#8d6e63; border:none; background:none; text-decoration:underline; cursor:pointer;">🖨️ ワークシートを印刷する</button>
+        </div>
+    </div>
+</div>
+
+<div id="printable-sheet">
+    <div class="print-title">20章 「〜しなさい」の文 ワークシート</div>
+    <div id="print-content"></div>
+</div>
+
+<script>
+// フィッシャー・イェーツのシャッフル（より確実なランダム化）
+function fisherYatesShuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
+const quizData = [
+    { ja: "立ち上がりなさい。", words: ["Stand", "up"], full: "Stand up!" },
+    { ja: "今すぐ宿題をしなさい。", words: ["Do", "your", "homework", "right", "now"], full: "Do your homework right now!" },
+    { ja: "ドアを開けてください。(pleaseを最後に)", words: ["Open", "the", "door,", "please"], full: "Open the door, please." },
+    { ja: "トイレへの行き方を教えてください。(pleaseを最後に)", words: ["Show", "me", "the", "way", "to", "the", "restroom,", "please"], full: "Show me the way to the restroom, please." },
+    { ja: "静かにしてください。(pleaseを最初に)", words: ["Please,", "be", "quiet"], full: "Please, be quiet!" },
+    { ja: "窓を閉めなさい。", words: ["Close", "the", "window"], full: "Close the window." },
+    { ja: "ここに来てください。(pleaseを最初に)", words: ["Please", "come", "here"], full: "Please come here." },
+    { ja: "あなたの名前をここに書いてください。(pleaseを最後に)", words: ["Write", "your", "name", "here,", "please"], full: "Write your name here, please." },
+    { ja: "お母さんを手伝いなさい。", words: ["Help", "your", "mother"], full: "Help your mother." },
+    { ja: "毎日英語を話しなさい。", words: ["Speak", "English", "every", "day"], full: "Speak English every day." }
+];
+
+let currentIdx = 0;
+let userSort = [];
+
+function loadQuestion() {
+    const q = quizData[currentIdx];
+    userSort = [];
+    document.getElementById('questionHeader').textContent = `Question ${currentIdx + 1} / ${quizData.length}`;
+    document.getElementById('questionJa').textContent = q.ja;
+    document.getElementById('feedback').textContent = "";
+    document.getElementById('answerArea').innerHTML = '<span style="color:#aaa;">タップして並べ替えてね</span>';
+    document.getElementById('nextBtn').style.display = "none";
+    document.getElementById('finishBtn').style.display = "none";
+    document.getElementById('checkBtn').style.display = "inline-block";
+    
+    const bank = document.getElementById('wordBank');
+    bank.innerHTML = "";
+    
+    // 表示用に確実にシャッフル
+    const shuffled = fisherYatesShuffle([...q.words]);
+    shuffled.forEach((w, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'word-btn';
+        btn.textContent = w;
+        btn.onclick = () => {
+            if (userSort.length === 0) document.getElementById('answerArea').innerHTML = "";
+            userSort.push({ text: w, btn: btn });
+            btn.classList.add('used');
+            renderAnswer();
+        };
+        bank.appendChild(btn);
+    });
+}
+
+function renderAnswer() {
+    const area = document.getElementById('answerArea');
+    area.innerHTML = "";
+    userSort.forEach((item, idx) => {
+        const b = document.createElement('button');
+        b.className = 'word-btn';
+        b.textContent = item.text;
+        b.onclick = () => {
+            item.btn.classList.remove('used');
+            userSort.splice(idx, 1);
+            renderAnswer();
+            if (userSort.length === 0) area.innerHTML = '<span style="color:#aaa;">タップして並べ替え</span>';
+        };
+        area.appendChild(b);
+    });
+}
+
+function checkAnswer() {
+    const q = quizData[currentIdx];
+    const userStr = userSort.map(i => i.text).join(" ");
+    const correctStr = q.words.join(" ");
+
+    if (userStr === correctStr) {
+        confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+        document.getElementById('feedback').innerHTML = "<span style='color:#2e7d32;'>✨ Correct! 命令文は主語なしで動詞から！</span>";
+        document.getElementById('answerArea').innerHTML = `<div style="font-size:2rem; font-weight:bold; color:var(--dark-orange);">${q.full}</div>`;
+        document.getElementById('checkBtn').style.display = "none";
+
+        if (currentIdx === quizData.length - 1) {
+            document.getElementById('finishBtn').style.display = "inline-block";
+        } else {
+            document.getElementById('nextBtn').style.display = "inline-block";
+        }
+    } else {
+        document.getElementById('feedback').innerHTML = "<span style='color:#c62828;'>語順を確認してね！</span>";
+    }
+}
+
+function nextQuestion() {
+    currentIdx++;
+    loadQuestion();
+}
+
+function showFinalCongrats() {
+    const end = Date.now() + 3000;
+    (function frame() {
+      confetti({ particleCount: 7, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#ff9800', '#e65100'] });
+      confetti({ particleCount: 7, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#4caf50', '#2e7d32'] });
+      if (Date.now() < end) requestAnimationFrame(frame);
+    }());
+
+    const container = document.getElementById('mainContainer');
+    container.innerHTML = `
+        <div class="congrats-screen">
+            <div style="font-size: 5rem; margin-bottom:10px;">🎉</div>
+            <h2 style="font-size: 2.5rem; color: #000; margin: 0 0 20px 0;">Congratulations!</h2>
+            <p style="font-size: 1.4rem; font-weight: bold; line-height:1.6;">
+                全10問クリア！素晴らしいなり！<br>
+                命令文のマスターだね！
+            </p>
+            <button class="action-btn" style="margin-top: 30px; background-color: var(--primary-orange);" onclick="location.reload()">最初から挑戦する</button>
+        </div>
+    `;
+}
+
+function printGame() {
+    const target = document.getElementById('print-content');
+    target.innerHTML = "";
+    quizData.forEach((d, i) => {
+        // 印刷時に一問ずつ個別に新しくシャッフル
+        const wordsForPrint = fisherYatesShuffle([...d.words]);
+        target.innerHTML += `
+            <div class="print-q">
+                <div class="print-ja">Q${i+1}. ${d.ja}</div>
+                <div class="print-words">( ${wordsForPrint.join(" / ")} )</div>
+                <div class="line"></div>
+            </div>`;
+    });
+    window.print();
+}
+
+loadQuestion();
+</script>
+</body>
+</html>
