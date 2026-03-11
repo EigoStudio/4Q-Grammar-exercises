@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>p66-67 予想テスト 修正版</title>
+<style>
+  :root {
+    --primary-blue: #0277bd;
+    --bg-color: #f0f4f8;
+    --text-color: #37474f;
+    --accent-green: #43a047;
+  }
+
+  body {
+    font-family: "Hiragino Maru Gothic ProN", sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    margin: 0;
+  }
+
+  .container {
+    background: white;
+    max-width: 850px;
+    width: 100%;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    box-sizing: border-box;
+  }
+
+  h1 { color: var(--primary-blue); text-align: center; font-size: 1.8rem; }
+  h2 { border-left: 6px solid var(--primary-blue); padding-left: 12px; font-size: 1.4rem; margin-top: 0; }
+
+  .progress-container { width: 100%; background: #e0e0e0; height: 12px; border-radius: 6px; margin-bottom: 25px; }
+  .progress-bar { height: 100%; background: var(--primary-blue); width: 0%; border-radius: 6px; transition: 0.3s; }
+
+  .question-box { font-size: 1.5rem; margin-bottom: 25px; line-height: 1.8; font-weight: 500; }
+  .japanese-hint { color: #d84315; font-size: 1.2rem; margin-bottom: 15px; font-weight: bold; }
+
+  .choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+  .choice-btn {
+    padding: 20px; border: 2px solid #cfd8dc; background: white; border-radius: 12px;
+    cursor: pointer; font-size: 1.4rem; transition: 0.2s; font-weight: bold;
+    color: var(--text-color);
+  }
+  .choice-btn:hover { border-color: var(--primary-blue); background: #e1f5fe; }
+
+  .answer-area {
+    min-height: 80px; border-bottom: 3px solid var(--primary-blue); margin-bottom: 25px;
+    display: flex; flex-wrap: wrap; gap: 10px; padding: 15px; background: #fafafa; border-radius: 8px;
+  }
+  .word-btn {
+    background: white; border: 2px solid var(--primary-blue); padding: 12px 20px;
+    border-radius: 25px; cursor: pointer; font-weight: bold; font-size: 1.3rem;
+  }
+  .word-btn.used { opacity: 0.2; pointer-events: none; border-color: #ccc; }
+
+  .audio-controls {
+    background: #eceff1; padding: 15px; border-radius: 10px; margin-bottom: 20px;
+    display: flex; align-items: center; gap: 15px; flex-wrap: wrap;
+  }
+  .audio-btn {
+    background: #546e7a; color: white; border: none; padding: 12px 25px;
+    border-radius: 8px; cursor: pointer; font-size: 1.2rem; font-weight: bold;
+  }
+  .speed-slider-wrap { display: flex; align-items: center; gap: 10px; font-size: 1rem; }
+
+  .action-btn {
+    display: block; width: 250px; margin: 30px auto; padding: 18px;
+    background: #43a047; color: white; border: none; border-radius: 40px;
+    font-size: 1.3rem; font-weight: bold; cursor: pointer; box-shadow: 0 5px #2e7d32;
+  }
+  .result-screen { text-align: center; font-size: 2rem; font-weight: bold; padding: 50px; color: #43a047; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1 id="title">p66-67 予想テスト</h1>
+  <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+  
+  <div id="quiz-content">
+    <div id="q-header">
+      <h2 id="section-title"></h2>
+    </div>
+    <div class="japanese-hint" id="jaText"></div>
+    <div class="question-box" id="qText"></div>
+    <div id="ui-area"></div>
+    <button class="action-btn" id="nextBtn" style="display:none;" onclick="handleNext()">Next Question</button>
+  </div>
+</div>
+
+<script>
+  const quizData = [
+    { section: "【1】 適切なものを選ぼう", type: "choice", num: 1, q: "A: Who is the ( &nbsp;&nbsp; ) player in your club?<br>B: John. He's a very good player.", choices: ["better", "best", "more", "most"], ans: "best" },
+    { section: "【1】", type: "choice", num: 2, q: "A: Do you like your grandfather?<br>B: Yes. He always ( &nbsp;&nbsp; ) us interesting stories.", choices: ["talks", "listens", "tells", "says"], ans: "tells" },
+    { section: "【1】", type: "choice", num: 3, q: "There ( &nbsp;&nbsp; ) some cups on the table. Judy likes them very much.", choices: ["is", "take", "are", "have"], ans: "are" },
+    { section: "【1】", type: "choice", num: 4, q: "A: Don't ( &nbsp;&nbsp; ) late for dinner, Kate.<br>B: OK, Mom.", choices: ["am", "be", "are", "is"], ans: "be" },
+    { section: "【1】", type: "choice", num: 5, q: "A: Do you want to have pizza ( &nbsp;&nbsp; ) spaghetti?<br>B: Spaghetti, please.", choices: ["and", "after", "but", "or"], ans: "or" },
+    { section: "【1】", type: "choice", num: 6, q: "This is the ( &nbsp;&nbsp; ) tower in Japan.", choices: ["tall", "taller", "tallest", "as tall"], ans: "tallest" },
+    { section: "【2】 正しい語順に並べよう", type: "sort", num: 1, ja: "あなたは彼女にクリスマスプレゼントを送りましたか。", words: ["Did", "you", "send", "her", "a Christmas", "present?"], ans: "Did you send her a Christmas present?" },
+    { section: "【2】", type: "sort", num: 2, ja: "彼が私を訪ねてきたとき、私は音楽を聞いていました。", words: ["I was", "listening to", "music", "when", "he", "visited", "me."], ans: "I was listening to music when he visited me." },
+    { section: "【2】", type: "sort", num: 3, ja: "暗くなる前に家に帰ってきなさい、ジョン。", words: ["Come", "home", "before", "it", "gets", "dark,", "John."], ans: "Come home before it gets dark, John." },
+    { section: "【2】", type: "sort", num: 4, ja: "私は兄ほど上手に中国語が話せません。", words: ["I", "can't", "speak", "Chinese", "as well", "as", "my brother."], ans: "I can't speak Chinese as well as my brother." },
+    { 
+      section: "【3】 リスニング問題", type: "listening", num: 1, 
+      ja: "(1) 質問の答えとして適切なものを選ぼう",
+      dialog: [
+        { role: "male", text: "You look nice in that blue dress." },
+        { role: "female", text: "Thank you, Rick. I like its color." },
+        { role: "male", text: "Do you like blue?" },
+        { role: "female", text: "Yes. But my favorite color is green." },
+        { role: "pause", text: "" },
+        { role: "female", text: "Question: What color does the girl like the best?" }
+      ],
+      choices: ["Colors.", "Blue.", "Green.", "Brown."], ans: "Green."
+    },
+    { 
+      section: "【3】", type: "listening", num: 2, 
+      ja: "(2) 質問の答えとして適切なものを選ぼう",
+      dialog: [
+        { role: "female", text: "Happy birthday, Ben. This is for you." },
+        { role: "male", text: "I wanted a cap like this. Thanks, Judy." },
+        { role: "female", text: "Did you get any other presents?" },
+        { role: "male", text: "Dad gave me a dictionary, and Mom gave me soccer shoes." },
+        { role: "pause", text: "" },
+        { role: "male", text: "Question: Who gave Ben a dictionary?" }
+      ],
+      choices: ["Judy.", "Judy's mother.", "Ben's father.", "Ben's mother."], ans: "Ben's father."
+    }
+  ];
+
+  let currentIdx = 0;
+  let userSort = [];
+  let speechRate = 0.8; // 初期の速さを少し遅めに設定
+
+  function loadQuestion() {
+    const q = quizData[currentIdx];
+    document.getElementById('progressBar').style.width = `${(currentIdx / quizData.length) * 100}%`;
+    document.getElementById('section-title').textContent = q.section;
+    document.getElementById('jaText').textContent = q.ja || "";
+    document.getElementById('qText').innerHTML = `(${q.num}) ${q.q || ""}`;
+    document.getElementById('nextBtn').style.display = "none";
+    
+    const ui = document.getElementById('ui-area');
+    ui.innerHTML = "";
+
+    if (q.type === "choice" || q.type === "listening") {
+      if (q.type === "listening") {
+        createAudioControls(ui, q.dialog);
+      }
+      const grid = document.createElement('div');
+      grid.className = 'choice-grid';
+      q.choices.forEach(c => {
+        const b = document.createElement('button');
+        b.className = 'choice-btn';
+        b.textContent = c;
+        b.onclick = () => checkChoice(c, b);
+        grid.appendChild(b);
+      });
+      ui.appendChild(grid);
+    } else if (q.type === "sort") {
+      renderSortUI(q.words);
+    }
+  }
+
+  function createAudioControls(container, dialog) {
+    const wrap = document.createElement('div');
+    wrap.className = 'audio-controls';
+    
+    const btn = document.createElement('button');
+    btn.className = "audio-btn";
+    btn.innerHTML = "🔊 英文を再生";
+    btn.onclick = () => playDialog(dialog);
+    
+    const sliderWrap = document.createElement('div');
+    sliderWrap.className = 'speed-slider-wrap';
+    sliderWrap.innerHTML = `
+      <span>速さ:</span>
+      <input type="range" min="0.5" max="1.5" step="0.1" value="${speechRate}" id="speedRange">
+      <span id="speedVal">${speechRate}x</span>
+    `;
+    
+    wrap.appendChild(btn);
+    wrap.appendChild(sliderWrap);
+    container.appendChild(wrap);
+
+    const slider = sliderWrap.querySelector('#speedRange');
+    slider.oninput = (e) => {
+      speechRate = e.target.value;
+      document.getElementById('speedVal').textContent = speechRate + "x";
+    };
+  }
+
+  async function playDialog(dialog) {
+    window.speechSynthesis.cancel();
+    const voices = window.speechSynthesis.getVoices();
+    
+    const femaleVoice = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Female') || v.name.includes('Samantha') || v.name.includes('Zira') || v.name.includes('Google US English'))) || voices[0];
+    const maleVoice = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Male') || v.name.includes('David') || v.name.includes('Alex'))) || voices[0];
+
+    for (const line of dialog) {
+      if (line.role === "pause") {
+        await new Promise(r => setTimeout(r, 1000));
+        continue;
+      }
+      const uttr = new SpeechSynthesisUtterance(line.text);
+      uttr.lang = 'en-US';
+      uttr.rate = speechRate;
+      uttr.voice = (line.role === "female") ? femaleVoice : maleVoice;
+      uttr.pitch = (line.role === "female") ? 1.3 : 0.8;
+
+      window.speechSynthesis.speak(uttr);
+      await new Promise(r => { uttr.onend = r; });
+    }
+  }
+
+  function checkChoice(choice, btn) {
+    if (choice === quizData[currentIdx].ans) {
+      btn.style.background = "#43a047";
+      btn.style.color = "white";
+      document.getElementById('nextBtn').style.display = "block";
+    } else {
+      btn.style.background = "#e53935";
+      btn.style.color = "white";
+      setTimeout(() => { btn.style.background = "white"; btn.style.color = "#37474f"; }, 500);
+    }
+  }
+
+  function renderSortUI(words) {
+    const ui = document.getElementById('ui-area');
+    userSort = [];
+    const area = document.createElement('div');
+    area.className = 'answer-area';
+    const bank = document.createElement('div');
+    bank.style.textAlign = "center";
+    
+    const shuffled = [...words].sort(() => Math.random() - 0.5);
+    shuffled.forEach(w => {
+      const b = document.createElement('button');
+      b.className = 'word-btn';
+      b.textContent = w;
+      b.onclick = () => {
+        if (b.classList.contains('used')) return;
+        b.classList.add('used');
+        userSort.push({ text: w, ref: b });
+        updateSortArea(area);
+      };
+      bank.appendChild(b);
+    });
+    ui.appendChild(area);
+    ui.appendChild(bank);
+  }
+
+  function updateSortArea(area) {
+    area.innerHTML = "";
+    userSort.forEach((item, idx) => {
+      const b = document.createElement('button');
+      b.className = 'word-btn';
+      b.textContent = item.text;
+      b.onclick = () => {
+        item.ref.classList.remove('used');
+        userSort.splice(idx, 1);
+        updateSortArea(area);
+      };
+      area.appendChild(b);
+    });
+    if (userSort.length === quizData[currentIdx].words.length) {
+      if (userSort.map(i => i.text).join(" ") === quizData[currentIdx].ans) {
+        document.getElementById('nextBtn').style.display = "block";
+      }
+    }
+  }
+
+  function handleNext() {
+    currentIdx++;
+    if (currentIdx < quizData.length) loadQuestion();
+    else {
+      document.getElementById('quiz-content').innerHTML = "<div class='result-screen'>🎉 Congratulations!<br>全問クリア！</div>";
+      document.getElementById('progressBar').style.width = "100%";
+    }
+  }
+
+  // 起動時に確実に読み込む
+  window.onload = loadQuestion;
+  if (window.speechSynthesis.onvoiceschanged !== undefined) {
+    window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+  }
+</script>
+</body>
+</html>
