@@ -119,13 +119,15 @@
   ];
 
   function shuffle(array) {
-    for (let i = array.length - 1; i > 0; i--) {
+    const newArray = [...array];
+    for (let i = newArray.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
+      [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
     }
-    return array;
+    return newArray;
   }
 
+  // 問題自体の順番をシャッフル
   const quizData = [...shuffle(choiceData), ...shuffle(sortData)];
   let currentIdx = 0;
   let selectedChoice = null;
@@ -143,7 +145,8 @@
       qText.innerHTML = q.dialog.map(line => `<span class="dialog-line">${line}</span>`).join("");
       const grid = document.createElement('div');
       grid.className = 'choice-grid';
-      [...q.choices].sort(() => Math.random() - 0.5).forEach(c => {
+      // ここで選択肢を読み込むたびにシャッフル
+      shuffle(q.choices).forEach(c => {
         const btn = document.createElement('button');
         btn.className = 'choice-card-btn';
         btn.textContent = c;
@@ -165,7 +168,8 @@
       const bank = document.createElement('div');
       bank.style.textAlign = "center";
       userSort = [];
-      [...q.words].sort(() => Math.random() - 0.5).forEach(w => {
+      // ここで単語を読み込むたびにシャッフル
+      shuffle(q.words).forEach(w => {
         const btn = document.createElement('button');
         btn.className = 'word-btn';
         btn.textContent = w;
