@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>21章 許可・依頼の表現</title>
+<style>
+  :root {
+    --primary-blue: #0288d1;
+    --text-dark: #333;
+    --bg-color: #f0f7ff;
+    --border-color: #b3e5fc;
+  }
+
+  body {
+    font-family: "Hiragino Maru Gothic ProN", "Hiragino Maru Gothic Pro", sans-serif;
+    background-color: var(--bg-color);
+    margin: 0; padding: 20px;
+    display: flex; flex-direction: column; align-items: center;
+  }
+
+  .container {
+    background: white; max-width: 850px; width: 100%;
+    padding: 30px; border-radius: 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  }
+
+  h2 { color: var(--primary-blue); text-align: center; }
+
+  .dialog-line { display: block; margin-bottom: 10px; line-height: 1.6; }
+  .question-box { 
+    font-size: 1.4rem; 
+    margin-bottom: 25px; padding: 20px; 
+    background: #f9f9f9; border-radius: 10px; 
+    border-left: 6px solid var(--primary-blue); 
+  }
+
+  .choice-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+  .choice-card-btn {
+    padding: 18px; border: 2px solid var(--border-color); background: white;
+    border-radius: 12px; cursor: pointer; font-size: 1.2rem;
+    font-weight: bold; font-family: inherit; text-align: left; transition: 0.2s;
+  }
+  .choice-card-btn:hover { background-color: #e1f5fe; }
+  .choice-card-btn.selected { background-color: var(--border-color); border-color: var(--primary-blue); }
+
+  .word-btn {
+    border: 2px solid var(--primary-blue); padding: 12px 22px; border-radius: 25px;
+    margin: 6px; cursor: pointer; background: white; font-weight: bold;
+    font-size: 1.3rem;
+  }
+  .word-btn.used { color: #ccc; border-color: #eee; }
+
+  .answer-area {
+    min-height: 70px; border-bottom: 3px solid var(--primary-blue);
+    margin-bottom: 25px; display: flex; flex-wrap: wrap; gap: 8px; padding: 10px;
+    background-color: #fafafa; border-radius: 10px;
+    font-size: 1.4rem;
+  }
+
+  .action-btn {
+    padding: 15px 40px; font-size: 1.2rem; border-radius: 35px; cursor: pointer;
+    border: none; font-weight: bold; margin: 10px auto; display: block;
+  }
+
+  /* ワークシート表示用（印刷時に見える） */
+  #worksheet-view { display: none; width: 100%; max-width: 750px; color: black; }
+  .ws-section-title { font-weight: bold; border-left: 5px solid black; padding-left: 10px; margin: 25px 0 10px; font-size: 12pt; }
+  .ws-question { margin-bottom: 20px; font-size: 11pt; line-height: 1.5; padding-bottom: 5px; page-break-inside: avoid; }
+  .ws-choices { display: flex; flex-wrap: wrap; gap: 15px; margin-top: 8px; font-size: 10pt; }
+  .ws-sort-area { margin-top: 30px; border-bottom: 1px solid black; min-height: 25px; }
+
+  @media print {
+    body { background: white; padding: 0; }
+    .container { display: none !important; }
+    #worksheet-view { display: block !important; }
+    h2 { font-size: 16pt; margin-bottom: 15px; color: black; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container" id="quiz-container">
+  <h2>21章 許可・依頼の表現（15問）</h2>
+  <div id="game-content">
+    <div class="question-box" id="qText"></div>
+    <div id="ui-area"></div>
+    <button class="action-btn" id="checkBtn" style="display:none; background: #2e7d32; color: white;" onclick="handleCheck()">Check Answer</button>
+    <button class="action-btn" id="nextBtn" style="display:none; background: #0277bd; color: white;" onclick="nextQuestion()">Next Question</button>
+  </div>
+</div>
+
+<div id="worksheet-view">
+  <h2 style="text-align: left; border-bottom: 2px solid black;">21章 許可・依頼の表現</h2>
+  <div id="ws-content"></div>
+</div>
+
+<script>
+  // 選択問題 10問
+  const choiceData = [
+    { type: "choice", dialog: ["A: ( &nbsp;&nbsp;&nbsp;&nbsp; ) use your dictionary?", "B: Sure. Here it is."], choices: ["May I", "Could you", "Shall I", "Will you"], ans: "May I" },
+    { type: "choice", dialog: ["A: I'm busy now. ( &nbsp;&nbsp;&nbsp;&nbsp; ) help me with my homework?", "B: All right. It looks difficult."], choices: ["Could you", "May I", "Shall I", "Must you"], ans: "Could you" },
+    { type: "choice", dialog: ["A: It's a little hot here. ( &nbsp;&nbsp;&nbsp;&nbsp; ) open the window?", "B: Of course. Go ahead."], choices: ["Can I", "Can you", "Should you", "Shall I"], ans: "Can I" },
+    { type: "choice", dialog: ["A: I can't reach that box. ( &nbsp;&nbsp;&nbsp;&nbsp; )", "B: Sure. No problem."], choices: ["Could you take it for me?", "May I take it for you?", "Shall I take it for you?", "Will I take it for you?"], ans: "Could you take it for me?" },
+    { type: "choice", dialog: ["A: ( &nbsp;&nbsp;&nbsp;&nbsp; ) see the menu?", "B: All right. It's on that table."], choices: ["May I", "Could you", "Shall I", "Should you"], ans: "May I" },
+    { type: "choice", dialog: ["A: ( &nbsp;&nbsp;&nbsp;&nbsp; ) pass me the sugar, please?", "B: Certainly. Here you are."], choices: ["Could you", "May I", "Shall I", "Must I"], ans: "Could you" },
+    { type: "choice", dialog: ["A: Can I use your pen?", "B: ( &nbsp;&nbsp;&nbsp;&nbsp; ) I'm using it now."], choices: ["Sorry, you can't.", "All right.", "Sure.", "No problem."], ans: "Sorry, you can't." },
+    { type: "choice", dialog: ["A: Could you tell me your phone number?", "B: ( &nbsp;&nbsp;&nbsp;&nbsp; ) It's 090-1234-5678."], choices: ["All right.", "You're welcome.", "No, thank you.", "I'm sorry."], ans: "All right." },
+    { type: "choice", dialog: ["A: ( &nbsp;&nbsp;&nbsp;&nbsp; ) go to the restroom?", "B: Of course. Hurry up."], choices: ["May I", "Could you", "Will you", "Must you"], ans: "May I" },
+    { type: "choice", dialog: ["A: ( &nbsp;&nbsp;&nbsp;&nbsp; ) show me your notebook?", "B: Sure. Here you are."], choices: ["Can you", "Can I", "Should I", "Shall I"], ans: "Can you" }
+  ];
+
+  // 並べ替え問題 5問
+  const sortData = [
+    { type: "sort", ja: "ここで写真を撮ってもいいですか？", en_full: "Can I take a picture here?", words: ["Can", "I", "take", "a", "picture", "here?"] },
+    { type: "sort", ja: "駅への道を教えていただけますか？", en_full: "Could you tell me the way to the station?", words: ["Could", "you", "tell", "me", "the", "way", "to", "the", "station?"] },
+    { type: "sort", ja: "窓を閉めてくれますか？", en_full: "Can you close the window?", words: ["Can", "you", "close", "the", "window?"] },
+    { type: "sort", ja: "あなたの消しゴムを借りてもいいですか？", en_full: "May I borrow your eraser?", words: ["May", "I", "borrow", "your", "eraser?"] },
+    { type: "sort", ja: "私を手伝っていただけますか？", en_full: "Could you help me?", words: ["Could", "you", "help", "me?"] }
+  ];
+
+  function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  }
+
+  const quizData = [...shuffle(choiceData), ...shuffle(sortData)];
+  let currentIdx = 0;
+  let selectedChoice = null;
+  let userSort = [];
+
+  function loadQuestion() {
+    const q = quizData[currentIdx];
+    const ui = document.getElementById('ui-area');
+    const qText = document.getElementById('qText');
+    document.getElementById('nextBtn').style.display = "none";
+    document.getElementById('checkBtn').style.display = "none";
+    ui.innerHTML = "";
+
+    if (q.type === "choice") {
+      qText.innerHTML = q.dialog.map(line => `<span class="dialog-line">${line}</span>`).join("");
+      const grid = document.createElement('div');
+      grid.className = 'choice-grid';
+      [...q.choices].sort(() => Math.random() - 0.5).forEach(c => {
+        const btn = document.createElement('button');
+        btn.className = 'choice-card-btn';
+        btn.textContent = c;
+        btn.onclick = () => {
+          document.querySelectorAll('.choice-card-btn').forEach(b => b.classList.remove('selected'));
+          btn.classList.add('selected');
+          selectedChoice = c;
+          document.getElementById('checkBtn').style.display = "block";
+        };
+        grid.appendChild(btn);
+      });
+      ui.appendChild(grid);
+    } else {
+      qText.innerHTML = `<div style="font-weight:bold; color:var(--primary-blue);">${q.ja}</div>`;
+      const area = document.createElement('div');
+      area.className = 'answer-area';
+      area.id = 'answerArea';
+      area.innerHTML = '<span style="color:#aaa;">タップして並べ替え</span>';
+      const bank = document.createElement('div');
+      bank.style.textAlign = "center";
+      userSort = [];
+      [...q.words].sort(() => Math.random() - 0.5).forEach(w => {
+        const btn = document.createElement('button');
+        btn.className = 'word-btn';
+        btn.textContent = w;
+        btn.onclick = () => {
+          if (btn.classList.contains('used')) return;
+          if (userSort.length === 0) area.innerHTML = "";
+          userSort.push({ text: w, btn: btn });
+          btn.classList.add('used');
+          renderSort();
+        };
+        bank.appendChild(btn);
+      });
+      ui.appendChild(area);
+      ui.appendChild(bank);
+    }
+  }
+
+  function renderSort() {
+    const area = document.getElementById('answerArea');
+    area.innerHTML = "";
+    userSort.forEach((item, idx) => {
+      const b = document.createElement('button');
+      b.className = 'word-btn';
+      b.textContent = item.text;
+      b.onclick = () => {
+        item.btn.classList.remove('used');
+        userSort.splice(idx, 1);
+        renderSort();
+      };
+      area.appendChild(b);
+    });
+    document.getElementById('checkBtn').style.display = (userSort.length === quizData[currentIdx].words.length) ? "block" : "none";
+  }
+
+  function handleCheck() {
+    const q = quizData[currentIdx];
+    if (q.type === "choice") {
+      if (selectedChoice === q.ans) {
+        qText.innerHTML = q.dialog.map(line => `<span class="dialog-line">${line.replace("( &nbsp;&nbsp;&nbsp;&nbsp; )", `<b style="color:red; text-decoration:underline;">${q.ans}</b>`)}</span>`).join("");
+        document.getElementById('checkBtn').style.display = "none";
+        document.getElementById('nextBtn').style.display = "block";
+      } else { alert("Try again!"); }
+    } else {
+      if (userSort.map(i => i.text).join(" ") === q.words.join(" ")) {
+        document.getElementById('ui-area').innerHTML = `<h3 style="text-align:center; color:green;">Correct!</h3><p style="text-align:center;">${q.en_full}</p>`;
+        document.getElementById('checkBtn').style.display = "none";
+        document.getElementById('nextBtn').style.display = "block";
+      } else { alert("Check the order!"); }
+    }
+  }
+
+  function nextQuestion() {
+    currentIdx++;
+    if (currentIdx < quizData.length) loadQuestion();
+    else {
+      document.getElementById('game-content').innerHTML = "<h3 style='text-align:center;'>Mastered! 🎓 全15問終了です！</h3>";
+    }
+  }
+
+  function generateWorksheet() {
+    const ws = document.getElementById('ws-content');
+    ws.innerHTML = '<div class="ws-section-title">【1】 Choose the best sentence or phrase for each ( &nbsp;&nbsp;&nbsp; ).</div>';
+    
+    let count = 1;
+    quizData.forEach(q => {
+      if(q.type === "choice") {
+        const item = document.createElement('div');
+        item.className = "ws-question";
+        const dialogHtml = q.dialog.map(line => `<div>${line}</div>`).join("");
+        const choicesHtml = q.choices.map((c, i) => `<span>(${i+1}) ${c}</span>`).join(" &nbsp; ");
+        item.innerHTML = `<strong>${count}.</strong> ${dialogHtml} <div class="ws-choices">${choicesHtml}</div>`;
+        ws.appendChild(item);
+        count++;
+      }
+    });
+
+    const sortTitle = document.createElement('div');
+    sortTitle.className = "ws-section-title";
+    sortTitle.innerHTML = '【2】 Put the words in the correct order.';
+    ws.appendChild(sortTitle);
+
+    let sortCount = 1;
+    quizData.forEach(q => {
+      if(q.type === "sort") {
+        const item = document.createElement('div');
+        item.className = "ws-question";
+        item.innerHTML = `<strong>${sortCount}.</strong> ${q.ja} <br> [ ${shuffle([...q.words]).join(" / ")} ] <div class="ws-sort-area"></div>`;
+        ws.appendChild(item);
+        sortCount++;
+      }
+    });
+  }
+
+  window.onload = () => {
+    loadQuestion();
+    generateWorksheet();
+  };
+</script>
+</body>
+</html>
