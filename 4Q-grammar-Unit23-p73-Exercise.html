@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>23章 提案・感想を聞く表現 予想問題</title>
+<style>
+  :root {
+    --primary-blue: #0288d1;
+    --bg-color: #f0f7ff;
+    --border-color: #b3e5fc;
+    --success-green: #4caf50;
+  }
+  body { font-family: "Hiragino Maru Gothic ProN", "Hiragino Maru Gothic Pro", sans-serif; background-color: var(--bg-color); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+  .container { background: white; max-width: 850px; width: 100%; padding: 30px; border-radius: 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+  h2 { color: var(--primary-blue); text-align: center; }
+  .progress-container { width: 100%; background: #eee; border-radius: 10px; margin-bottom: 20px; height: 8px; }
+  .progress-bar { height: 100%; background: var(--primary-blue); width: 0%; transition: width 0.3s; }
+  .question-display { font-size: 1.3rem; line-height: 1.8; margin-bottom: 25px; padding: 25px; background: #f9f9f9; border-radius: 15px; border-left: 6px solid var(--primary-blue); }
+  .listening-mode { background: #263238; color: #fff; text-align: center; border-left: none; display: flex; flex-direction: column; align-items: center; padding: 30px; }
+  .speed-ctrl { margin: 15px 0; color: #fff; font-size: 0.9rem; }
+  .choice-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; width: 100%; }
+  .choice-card-btn { padding: 18px; border: 2px solid var(--border-color); background: white; border-radius: 12px; cursor: pointer; font-size: 1.2rem; font-weight: bold; transition: 0.2s; }
+  .choice-card-btn:hover { background-color: #e1f5fe; }
+  .choice-card-btn.selected { background: var(--border-color); border-color: var(--primary-blue); }
+  .answer-area { min-height: 60px; border-bottom: 3px solid var(--primary-blue); margin-bottom: 25px; display: flex; flex-wrap: wrap; gap: 8px; padding: 10px; background-color: #fafafa; border-radius: 10px; font-size: 1.4rem; align-items: center; }
+  .word-btn { border: 2px solid var(--primary-blue); padding: 10px 20px; border-radius: 25px; margin: 4px; cursor: pointer; background: white; font-weight: bold; font-size: 1.2rem; }
+  .word-btn.used { color: #ccc; border-color: #eee; cursor: default; }
+  .action-btn { padding: 15px 50px; font-size: 1.1rem; border-radius: 35px; cursor: pointer; border: none; font-weight: bold; margin: 10px auto; display: block; color: white; width: 100%; }
+  .feedback-content { text-align: center; animation: fadeIn 0.5s; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+  @media (max-width: 600px) { .choice-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h2>23章 提案・感想を聞く表現 予想問題</h2>
+  <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+  <div id="game-content">
+    <div id="qArea" class="question-display"></div>
+    <div id="ui-area"></div>
+    <button class="action-btn" id="checkBtn" style="display:none; background: #2e7d32;" onclick="handleCheck()">Check Answer</button>
+    <button class="action-btn" id="nextBtn" style="display:none; background: var(--primary-blue);" onclick="nextQuestion()">Next Question</button>
+  </div>
+</div>
+
+<script>
+  let voices = [];
+  function setVoices() { voices = window.speechSynthesis.getVoices(); }
+  if (speechSynthesis.onvoiceschanged !== undefined) { speechSynthesis.onvoiceschanged = setVoices; }
+
+  const quizData = [
+    { type: "read", html: "A: Meg, ( &nbsp;&nbsp;&nbsp;&nbsp; ) was the math test today?<br>B: I don't like math very much. But I did my best.", choices: ["what", "when", "how", "why"], ans: "how" },
+    { type: "read", html: "Woman: I'm looking for a sweater. It's a present for my grandson.<br>Salesclerk: ( &nbsp;&nbsp;&nbsp;&nbsp; ) This color is popular among young people.", choices: ["We don't have any sweaters.", "What are you looking for?", "How was your grandson?", "How about this one?"], ans: "How about this one?" },
+    { type: "sort", ja: "ジョージ、私の新しいTシャツはどうですか。", prefix: "George, ", en_full: "George, how do you like my new T-shirt?", words: ["how", "do", "you", "like", "my", "new", "T-shirt?"] },
+    { type: "listen", dialogue: [{ gender: 'male', text: "What did you do this weekend?" }, { gender: 'female', text: "I went to the art museum." }, { gender: 'male', text: "How was it?" }], script: "A: What did you do this weekend?<br>B: I went to the art museum.<br>A: How was it?<br>B: ( &nbsp;&nbsp;&nbsp;&nbsp; )", choices: ["Yes, please.", "It was great.", "I'll see you."], ans: "It was great." },
+    { type: "listen", dialogue: [{ gender: 'male', text: "Ms. Williams will leave Japan next month." }, { gender: 'female', text: "I want to do something for her." }, { gender: 'male', text: "How about singing English songs?" }], script: "A: Ms. Williams will leave Japan next month.<br>B: I want to do something for her.<br>A: How about singing English songs?<br>B: ( &nbsp;&nbsp;&nbsp;&nbsp; )", choices: ["Sounds good.", "It looks nice.", "I'll do that again."], ans: "Sounds good." }
+  ];
+
+  let currentIdx = 0, score = 0, selectedChoice = null, userSort = [];
+
+ async function playAudio() {
+    window.speechSynthesis.cancel();
+    const baseSpeed = parseFloat(document.getElementById('speedRange').value);
+    
+    // 全音声リストから「アメリカ英語(en-US)」だけを抽出
+    const allVoices = window.speechSynthesis.getVoices();
+    const usVoices = allVoices.filter(v => v.lang === 'en-US' || v.lang === 'en_US');
+
+    // アメリカ英語の中から男性・女性をより細かく分類
+    const males = usVoices.filter(v => v.name.match(/David|Mark|Guy|Male|Google US English|Andrew/i));
+    const females = usVoices.filter(v => v.name.match(/Zira|Aria|Samantha|Female|Google US English|Linda/i));
+
+    for (let i = 0; i < quizData[currentIdx].dialogue.length; i++) {
+      const line = quizData[currentIdx].dialogue[i];
+      await new Promise(resolve => {
+        const ut = new SpeechSynthesisUtterance(line.text);
+        ut.lang = 'en-US'; // 念のためここでもアメリカ英語を強制
+
+        let targetVoice;
+        if (line.gender === 'male') {
+          // 男性がいれば男性、いなければ女性リストの2番目、それもなければUSリストの最後の方を試す
+          targetVoice = males[0] || females[1] || usVoices[usVoices.length - 1];
+          ut.rate = baseSpeed;
+          ut.pitch = 0.9;
+        } else {
+          // 女性がいれば女性、いなければUSリストの最初の方を試す
+          targetVoice = females[0] || usVoices[0];
+          ut.rate = baseSpeed * 0.85; // 落ち着いたスピードに調整
+          ut.pitch = 1.0;
+        }
+
+        if (targetVoice) ut.voice = targetVoice;
+
+        ut.onend = () => setTimeout(resolve, 600);
+        window.speechSynthesis.speak(ut);
+      });
+    }
+  }
+
+  function loadQuestion() {
+    const q = quizData[currentIdx];
+    const qArea = document.getElementById('qArea');
+    const ui = document.getElementById('ui-area');
+    ui.innerHTML = ""; selectedChoice = null; userSort = [];
+
+    if (q.type === "read") {
+      qArea.className = "question-display";
+      qArea.innerHTML = q.html;
+      // 選択肢を毎回シャッフル
+      const shuffledChoices = [...q.choices].sort(() => Math.random() - 0.5);
+      renderChoices(shuffledChoices, ui);
+    } else if (q.type === "listen") {
+      qArea.className = "question-display listening-mode";
+      qArea.innerHTML = `Listening Quiz<br><div class="speed-ctrl">Speed: <input type="range" id="speedRange" min="0.5" max="1.2" step="0.1" value="0.8"></div><button class="action-btn" style="background:#555; width:auto; padding: 10px 30px;" onclick="playAudio()">🎧 Listen Audio</button><div id="review" style="display:none; margin-top:20px; text-align:left; font-size:1.1rem; color:#fff;">${q.script}</div>`;
+      // 選択肢を毎回シャッフル
+      const shuffledChoices = [...q.choices].sort(() => Math.random() - 0.5);
+      renderChoices(shuffledChoices, ui);
+    } else if (q.type === "sort") {
+      qArea.className = "question-display";
+      qArea.innerHTML = `<div style="color:var(--primary-blue); font-weight:bold;">${q.ja}</div>`;
+      const answerArea = document.createElement('div');
+      answerArea.className = 'answer-area'; answerArea.id = 'answerArea';
+      answerArea.innerHTML = `<span>${q.prefix}</span><span style="color:#aaa; font-size:0.9rem; margin-left:10px;">タップして並べ替え</span>`;
+      const wordBank = document.createElement('div');
+      wordBank.style.textAlign = "center";
+      [...q.words].sort(() => Math.random() - 0.5).forEach(w => {
+        const btn = document.createElement('button'); btn.className = 'word-btn'; btn.textContent = w;
+        btn.onclick = () => { if (btn.classList.contains('used')) return; if (userSort.length === 0) answerArea.innerHTML = `<span>${q.prefix}</span>`; userSort.push({ text: w, btn: btn }); btn.classList.add('used'); renderSort(); };
+        wordBank.appendChild(btn);
+      });
+      ui.appendChild(answerArea); ui.appendChild(wordBank);
+    }
+    document.getElementById('progressBar').style.width = `${(currentIdx / quizData.length) * 100}%`;
+    document.getElementById('checkBtn').style.display = "none"; document.getElementById('nextBtn').style.display = "none";
+  }
+
+  function renderChoices(choices, container) {
+    const grid = document.createElement('div'); grid.className = 'choice-grid';
+    choices.forEach(c => {
+      const btn = document.createElement('button'); btn.className = 'choice-card-btn'; btn.textContent = c;
+      btn.onclick = () => { document.querySelectorAll('.choice-card-btn').forEach(b => b.classList.remove('selected')); btn.classList.add('selected'); selectedChoice = c; document.getElementById('checkBtn').style.display = "block"; };
+      grid.appendChild(btn);
+    });
+    container.appendChild(grid);
+  }
+
+  function renderSort() {
+    const area = document.getElementById('answerArea'), q = quizData[currentIdx];
+    area.innerHTML = `<span>${q.prefix}</span>`;
+    userSort.forEach((item, idx) => {
+      const b = document.createElement('button'); b.className = 'word-btn'; b.textContent = item.text;
+      b.onclick = () => { item.btn.classList.remove('used'); userSort.splice(idx, 1); renderSort(); };
+      area.appendChild(b);
+    });
+    document.getElementById('checkBtn').style.display = (userSort.length === q.words.length) ? "block" : "none";
+  }
+
+  function handleCheck() {
+    const q = quizData[currentIdx];
+    let isCorrect = (q.type === "sort") ? (userSort.map(i => i.text).join(" ") === q.words.join(" ")) : (selectedChoice === q.ans);
+    if (isCorrect) { score++; showFeedback(); } else { alert("Try again! もう一度確認してみてね！"); }
+  }
+
+  function showFeedback() {
+    const q = quizData[currentIdx], ui = document.getElementById('ui-area');
+    ui.innerHTML = `<div class="feedback-content"><h2 style="color:var(--success-green); font-size:2.5rem; margin-bottom:10px;">Correct! ✨</h2><p style="font-size:1.4rem; color:#555;">${q.en_full || ""}</p></div>`;
+    if (q.type === "read") document.getElementById('qArea').innerHTML = q.html.replace("( &nbsp;&nbsp;&nbsp;&nbsp; )", `<b style="color:red; text-decoration:underline;">${selectedChoice}</b>`);
+    else if (q.type === "listen") { const rev = document.getElementById('review'); rev.style.display = "block"; rev.innerHTML = q.script.replace("( &nbsp;&nbsp;&nbsp;&nbsp; )", `<b style="color:#ffeb3b; text-decoration:underline;">${selectedChoice}</b>`); }
+    document.getElementById('checkBtn').style.display = "none"; document.getElementById('nextBtn').style.display = "block";
+  }
+
+  function nextQuestion() {
+    currentIdx++;
+    if (currentIdx < quizData.length) loadQuestion(); else showFinalResult();
+  }
+
+  function showFinalResult() {
+    const content = document.getElementById('game-content');
+    content.innerHTML = `<div style="text-align:center; padding: 20px;"><h2 style="font-size:2rem;">🎉 All Clear! 🎓</h2><p style="font-size:1.8rem; margin: 20px 0;">Score: <span style="color:var(--primary-blue); font-weight:bold;">${score}</span> / ${quizData.length}</p><div style="background:#f0f7ff; padding:20px; border-radius:15px; margin-bottom:20px;"><h3 style="margin-top:0;">Tamaki先生に報告する</h3><input type="text" id="userName" placeholder="自分の名前を入力" style="padding:12px; border-radius:8px; border:1px solid #ccc; width:90%; font-size:1rem; margin-bottom:15px;"><br><button class="action-btn" style="background:#ef6c00; margin-bottom:10px;" onclick="sendEmailReport()">メールで報告する 📧</button><button class="action-btn" style="background:#555; margin:0; font-size:0.9rem;" onclick="reportToTeacher()">内容をコピー（LINE用） 📋</button></div><button class="action-btn" style="background:var(--primary-blue);" onclick="location.reload()">もう一度解く</button></div>`;
+  }
+
+  function sendEmailReport() {
+    const name = document.getElementById('userName').value || "生徒";
+    const teacherEmail = "tamaki@eigostudio-stepforward.com";
+    const subject = encodeURIComponent("23章 提案・感想を聞く表現 クイズ結果");
+    const body = encodeURIComponent(`Tamaki先生へ\n\n「23章 提案・感想を聞く表現」のクイズを完了しました！\n\n名前: ${name}\nスコア: ${score} / ${quizData.length} でした！`);
+    window.location.href = `mailto:${teacherEmail}?subject=${subject}&body=${body}`;
+  }
+
+  function reportToTeacher() {
+    const name = document.getElementById('userName').value || "生徒";
+    const msg = `Tamaki先生、「23章 提案・感想を聞く表現 予想問題」の結果報告です！\n名前: ${name}\nスコア: ${score} / ${quizData.length} でした！`;
+    navigator.clipboard.writeText(msg).then(() => alert("報告文をコピーしました！"));
+  }
+
+  window.onload = () => { setVoices(); loadQuestion(); };
+</script>
+</body>
+</html>
