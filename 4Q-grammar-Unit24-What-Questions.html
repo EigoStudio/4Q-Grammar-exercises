@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>24章 What の疑問文</title>
+<style>
+  :root {
+    --primary-blue: #0288d1;
+    --success-green: #2e7d32;
+    --bg-color: #f8fbff;
+    --border-color: #b3e5fc;
+  }
+  body { font-family: "Hiragino Maru Gothic ProN", "Hiragino Maru Gothic Pro", sans-serif; background-color: var(--bg-color); margin: 0; padding: 15px; display: flex; flex-direction: column; align-items: center; }
+  .container { background: white; max-width: 850px; width: 100%; padding: 25px; border-radius: 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); position: relative; }
+  .header-area { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #e1f5fe; padding-bottom: 10px; }
+  h2 { color: var(--primary-blue); margin: 0; font-size: 1.4rem; }
+  
+  .mode-switch { display: flex; gap: 5px; background: #eee; padding: 4px; border-radius: 10px; }
+  .mode-switch button { padding: 6px 12px; cursor: pointer; border: none; border-radius: 8px; font-weight: bold; font-size: 0.85rem; background: none; transition: 0.2s; }
+  .mode-switch .active-mode { background: white; color: var(--primary-blue); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+  
+  .question-box { font-size: 1.3rem; margin-bottom: 20px; padding: 20px; background: #f9f9f9; border-radius: 12px; border-left: 8px solid var(--primary-blue); }
+  .dialog-line { display: block; margin-bottom: 10px; line-height: 1.6; }
+  
+  .listening-mode { background: #263238; color: #fff; text-align: center; border-left: none; padding: 30px; border-radius: 12px; }
+  .speed-ctrl { margin: 15px 0; color: #fff; font-size: 0.9rem; }
+
+  .choice-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  @media (max-width: 600px) { .choice-grid { grid-template-columns: 1fr; } }
+  
+  .choice-card-btn { padding: 14px 18px; border: 2px solid var(--border-color); background: white; border-radius: 12px; cursor: pointer; font-size: 1.1rem; text-align: left; transition: 0.2s; }
+  .choice-card-btn.selected { background-color: #b3e5fc; border-color: var(--primary-blue); }
+
+  .answer-area { min-height: 55px; border-bottom: 3px solid var(--primary-blue); margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 8px; padding: 10px; background-color: #fafafa; border-radius: 10px; align-items: center; font-size: 1.2rem; }
+  .word-btn { border: 2px solid var(--primary-blue); padding: 8px 16px; border-radius: 20px; cursor: pointer; background: white; font-weight: bold; font-size: 1.1rem; margin: 4px; }
+  .word-btn.used { color: #ccc; border-color: #eee; cursor: default; }
+
+  .action-btn { padding: 14px 40px; font-size: 1.1rem; border-radius: 30px; cursor: pointer; border: none; font-weight: bold; margin: 10px auto; display: block; color: white; transition: 0.2s; }
+  .correct-text { color: red; text-decoration: underline; font-weight: bold; }
+
+  /* --- 印刷用隠しエリア --- */
+  #worksheet-print-area { display: none; }
+
+  /* --- @media print --- */
+  @media print {
+    body { background: white !important; padding: 0 !important; }
+    .container, #main-container, .action-btn { display: none !important; }
+    #worksheet-print-area { display: block !important; width: 100% !important; padding: 0; margin: 0; }
+    @page { size: A4; margin: 20mm 15mm; }
+    .ws-title { text-align: center; font-size: 1.6rem; font-weight: bold; margin-bottom: 30px; }
+    .ws-section-title { font-weight: bold; font-size: 1.3rem; margin: 40px 0 15px; border-bottom: 1px solid #000; padding-bottom: 5px; }
+    .ws-question { margin-bottom: 20px; display: flex; flex-direction: column; page-break-inside: avoid; }
+    .ws-q-main { display: flex; align-items: flex-start; margin-bottom: 10px; }
+    .ws-q-num { font-weight: bold; width: 35px; font-size: 1.1rem; }
+    .ws-q-text { flex: 1; font-size: 1.1rem; line-height: 1.6; }
+    .ws-choice-row { display: flex; justify-content: flex-start; gap: 25px; margin-left: 35px; font-size: 1rem; }
+    .ws-choice-item { white-space: nowrap; }
+    .ws-sort-ans { margin-top: 10px; border-bottom: 1px solid #000; height: 35px; width: 90%; margin-left: 35px; }
+  }
+</style>
+</head>
+<body onload="initApp()">
+
+<div class="container" id="main-container">
+  <div class="header-area">
+    <h2>24章 What の疑問文</h2>
+    <div class="mode-switch">
+      <button id="btnLearn" class="active-mode" onclick="switchMode('learn')">練習問題</button>
+      <button id="btnTest" onclick="switchMode('test')">予想問題</button>
+    </div>
+  </div>
+
+  <div id="quiz-screen">
+    <div id="progressText" style="text-align: right; font-size: 0.9rem; color: #666; margin-bottom: 5px;"></div>
+    <div id="qText" class="question-box"></div>
+    <div id="ui-area"></div>
+    <div id="feedback-area" style="text-align: center; margin: 10px 0; min-height: 30px;"></div>
+    <button class="action-btn" id="checkBtn" style="display:none; background: var(--success-green);" onclick="handleCheck()">答え合わせ</button>
+    <button class="action-btn" id="nextBtn" style="display:none; background: var(--primary-blue);" onclick="nextQuestion()">次の問題へ</button>
+  </div>
+</div>
+
+<div id="worksheet-print-area">
+  <div class="ws-title">24章 What の疑問文</div>
+  <div id="ws-content"></div>
+</div>
+
+<script>
+  let voices = [];
+  function setVoices() { voices = window.speechSynthesis.getVoices(); }
+  if (speechSynthesis.onvoiceschanged !== undefined) { speechSynthesis.onvoiceschanged = setVoices; }
+
+  const learnData = [
+    { type: "choice", dialog: ["A: What ( &nbsp;&nbsp;&nbsp;&nbsp; ) you interested in?", "B: I'm interested in animals. I want to be a vet."], choices: ["is", "are", "do", "does"], ans: "are" },
+    { type: "choice", dialog: ["A: What ( &nbsp;&nbsp;&nbsp;&nbsp; ) next weekend?", "B: I will go camping with my family."], choices: ["are you going to do", "did you do", "do you do", "is you doing"], ans: "are you going to do" },
+    { type: "choice", dialog: ["A: What ( &nbsp;&nbsp;&nbsp;&nbsp; ) your brother do yesterday?", "B: He studied for the math test."], choices: ["is", "does", "did", "do"], ans: "did" },
+    { type: "choice", dialog: ["A: What ( &nbsp;&nbsp;&nbsp;&nbsp; ) your mother doing now?", "B: She is making lunch in the kitchen."], choices: ["is", "are", "does", "do"], ans: "is" },
+    { type: "choice", dialog: ["A: ( &nbsp;&nbsp;&nbsp;&nbsp; ) do you like best?", "B: I like science. It's interesting."], choices: ["What color", "What subject", "What sport", "What animal"], ans: "What subject" },
+    { type: "choice", dialog: ["A: ( &nbsp;&nbsp;&nbsp;&nbsp; ) of food do you like?", "B: I like Japanese food, like sushi."], choices: ["What kind", "What color", "What time", "What many"], ans: "What kind" },
+    { type: "choice", dialog: ["A: ( &nbsp;&nbsp;&nbsp;&nbsp; ) is your birthday?", "B: It's May."], choices: ["What month", "What time", "What day", "What year"], ans: "What month" },
+    { type: "choice", dialog: ["A: What did you buy at the bookstore?", "B: ( &nbsp;&nbsp;&nbsp;&nbsp; )"], choices: ["I'll buy a comic book.", "I bought a new dictionary.", "I like reading books.", "It is a big bookstore."], ans: "I bought a new dictionary." },
+    { type: "choice", dialog: ["A: What is your father's job?", "B: ( &nbsp;&nbsp;&nbsp;&nbsp; )"], choices: ["He is at home now.", "He likes his job.", "He is a doctor.", "He works every day."], ans: "He is a doctor." },
+    { type: "choice", dialog: ["A: ( &nbsp;&nbsp;&nbsp;&nbsp; )", "B: I want a new watch."], choices: ["What do you want for Christmas?", "What are you doing now?", "What did you see there?", "What do you like?"], ans: "What do you want for Christmas?" },
+    { type: "choice", dialog: ["A: What color do you want to paint your room?", "B: ( &nbsp;&nbsp;&nbsp;&nbsp; )"], choices: ["It's a small room.", "I want to paint it blue.", "I have two rooms.", "Yes, I do."], ans: "I want to paint it blue." },
+    { type: "choice", dialog: ["A: What ( &nbsp;&nbsp;&nbsp;&nbsp; ) you usually do after school?", "B: I usually play video games with my friends."], choices: ["do", "does", "are", "did"], ans: "do" },
+    { type: "sort", ja: "あなたは朝食に何を食べましたか？", words: ["What", "did", "you", "eat", "for", "breakfast", "?"], en_full: "What did you eat for breakfast?" },
+    { type: "sort", ja: "（今）何時ですか？", words: ["What", "time", "is", "it", "now", "?"], en_full: "What time is it now?" },
+    { type: "sort", ja: "彼は何のスポーツが好きですか？", words: ["What", "sport", "does", "he", "like", "the", "best", "?"], en_full: "What sport does he like the best?" },
+    { type: "sort", ja: "あなたは将来、何になりたいですか？", words: ["What", "do", "you", "want", "to", "be", "in", "the", "future", "?"], en_full: "What do you want to be in the future?" }
+  ];
+
+  const testData = [
+    { type: "choice", dialog: ["Boy 1: What are you going to do in Japan?", "Boy 2: ( &nbsp;&nbsp;&nbsp;&nbsp; ) I want to go to a lot of temples."], choices: ["I visited there.", "I'll visit Kyoto.", "Sorry, I can't.", "I know him very well."], ans: "I'll visit Kyoto." },
+    { type: "choice", dialog: ["Student: I visited Ueno Zoo last week.", "Teacher: That's nice. ( &nbsp;&nbsp;&nbsp;&nbsp; )", "Student: Pandas! They were very cute."], choices: ["What animal did you like?", "When did you arrive?", "What did you think?", "Where did you see?"], ans: "What animal did you like?" },
+    { type: "sort", ja: "あなたはどんな花を育ててみたいですか。", words: ["What", "kind", "of", "flowers", "do", "you", "want", "to", "grow", "?"], en_full: "What kind of flowers do you want to grow?" },
+    { 
+      type: "listen", 
+      dialogue: [
+        { gender: 'female', text: "It smells good. I'm getting hungry." },
+        { gender: 'male', text: "Do you want some, Aya?" },
+        { gender: 'female', text: "Yes. What are you cooking?" }
+      ],
+      script: "A: It smells good. I'm getting hungry.<br>B: Do you want some, Aya?<br>A: Yes. What are you cooking?<br>B: ( &nbsp;&nbsp;&nbsp;&nbsp; )", 
+      choices: ["It was good.", "I like cooking.", "Chicken soup."], ans: "Chicken soup." 
+    },
+    { 
+      type: "listen", 
+      dialogue: [
+        { gender: 'female', text: "Can I help you, Ms. Brown?" },
+        { gender: 'male', text: "Thank you, Yuta. Please bring me a plastic bag." },
+        { gender: 'female', text: "What size do you need?" }
+      ],
+      script: "A: Can I help you, Ms. Brown?<br>B: Thank you, Yuta. Please bring me a plastic bag.<br>A: What size do you need?<br>B: ( &nbsp;&nbsp;&nbsp;&nbsp; )", 
+      choices: ["The biggest one, please.", "Three, please.", "A brown shirt, please."], ans: "The biggest one, please." 
+    }
+  ];
+
+  let currentIdx = 0, quizList = [], userSort = [], selectedChoice = null;
+
+  async function playAudio() {
+    window.speechSynthesis.cancel();
+    const baseSpeed = parseFloat(document.getElementById('speedRange')?.value || 0.8);
+    const allVoices = window.speechSynthesis.getVoices();
+    
+    // アメリカ英語の声を抽出
+    const usVoices = allVoices.filter(v => v.lang === 'en-US' || v.lang === 'en_US');
+
+    const dialogue = quizList[currentIdx].dialogue;
+    for (let i = 0; i < dialogue.length; i++) {
+      const line = dialogue[i];
+      await new Promise(resolve => {
+        const ut = new SpeechSynthesisUtterance(line.text);
+        ut.lang = 'en-US';
+
+        // --- 自然な演じ分けロジック ---
+        let targetVoice;
+        if (line.gender === 'male') {
+          // 男性: David, Mark, Google US English(Male) などを探す
+          targetVoice = usVoices.find(v => v.name.includes('David') || v.name.includes('Mark') || v.name.includes('Male')) || usVoices[1] || usVoices[0];
+          ut.pitch = 1.0; // 無理に低くしない
+        } else {
+          // 女性: Zira, Samantha, Aria, Google US English(Female) などを探す
+          targetVoice = usVoices.find(v => v.name.includes('Zira') || v.name.includes('Samantha') || v.name.includes('Female') || v.name.includes('Aria')) || usVoices[0];
+          ut.pitch = 1.0; // 無理に高くしない（本物の女性声に任せる）
+        }
+
+        if (targetVoice) ut.voice = targetVoice;
+        ut.rate = baseSpeed;
+
+        ut.onend = () => setTimeout(resolve, 800);
+        window.speechSynthesis.speak(ut);
+      });
+    }
+  }
+
+  function switchMode(mode) {
+    currentIdx = 0;
+    document.getElementById('btnLearn').className = mode === 'learn' ? 'active-mode' : '';
+    document.getElementById('btnTest').className = mode === 'test' ? 'active-mode' : '';
+    quizList = mode === 'learn' ? [...learnData] : [...testData];
+    loadQuestion();
+    updateWorksheet();
+  }
+
+  function loadQuestion() {
+    const q = quizList[currentIdx];
+    const ui = document.getElementById('ui-area');
+    const qText = document.getElementById('qText');
+    document.getElementById('progressText').textContent = `${currentIdx + 1} / ${quizList.length}`;
+    document.getElementById('nextBtn').style.display = "none";
+    document.getElementById('checkBtn').style.display = "none";
+    document.getElementById('feedback-area').innerHTML = "";
+    ui.innerHTML = "";
+    selectedChoice = null;
+    userSort = [];
+
+    if (q.type === "choice" || q.type === "listen") {
+      if (q.type === "listen") {
+        qText.className = "question-box listening-mode";
+        qText.innerHTML = `Listening Quiz<br><div class="speed-ctrl">Speed: <input type="range" id="speedRange" min="0.5" max="1.2" step="0.1" value="0.8"></div><button class="action-btn" style="background:#555; width:auto; padding: 10px 30px;" onclick="playAudio()">🎧 Listen Audio</button><div id="script-view" style="display:none; margin-top:20px; text-align:left; font-size:1.1rem; border-top:1px solid #555; padding-top:10px;">${q.script}</div>`;
+      } else {
+        qText.className = "question-box";
+        qText.innerHTML = q.dialog.map(line => `<span class="dialog-line">${line}</span>`).join("");
+      }
+      const grid = document.createElement('div');
+      grid.className = 'choice-grid';
+      [...q.choices].sort(() => Math.random() - 0.5).forEach(c => {
+        const btn = document.createElement('button');
+        btn.className = 'choice-card-btn';
+        btn.textContent = c;
+        btn.onclick = () => {
+          document.querySelectorAll('.choice-card-btn').forEach(b => b.classList.remove('selected'));
+          btn.classList.add('selected');
+          selectedChoice = c;
+          document.getElementById('checkBtn').style.display = "block";
+        };
+        grid.appendChild(btn);
+      });
+      ui.appendChild(grid);
+    } else {
+      qText.className = "question-box";
+      qText.innerHTML = `<div style="color:var(--primary-blue); font-weight:bold;">${q.ja}</div>`;
+      const area = document.createElement('div');
+      area.className = 'answer-area'; area.id = 'answerArea';
+      area.innerHTML = `<span style="color:#aaa; font-size:1rem;">(タップして並べ替え)</span>`;
+      const bank = document.createElement('div');
+      bank.style.textAlign = "center";
+      [...q.words].sort(() => Math.random() - 0.5).forEach(w => {
+        const btn = document.createElement('button');
+        btn.className = 'word-btn'; btn.textContent = w;
+        btn.onclick = () => {
+          if (btn.classList.contains('used')) return;
+          if (userSort.length === 0) area.innerHTML = "";
+          userSort.push({ text: w, btn: btn });
+          btn.classList.add('used'); renderSort();
+        };
+        bank.appendChild(btn);
+      });
+      ui.appendChild(area); ui.appendChild(bank);
+    }
+  }
+
+  function renderSort() {
+    const area = document.getElementById('answerArea'), q = quizList[currentIdx];
+    area.innerHTML = "";
+    userSort.forEach((item, idx) => {
+      const b = document.createElement('span');
+      b.style.cssText = "background:#e1f5fe; padding:4px 8px; border-radius:5px; cursor:pointer; font-weight:bold; margin:2px;";
+      b.textContent = item.text;
+      b.onclick = () => { item.btn.classList.remove('used'); userSort.splice(idx, 1); renderSort(); };
+      area.appendChild(b);
+    });
+    document.getElementById('checkBtn').style.display = (userSort.length === q.words.length) ? "block" : "none";
+  }
+
+  function handleCheck() {
+    const q = quizList[currentIdx];
+    let isCorrect = (q.type === "sort") ? (userSort.map(i => i.text).join(" ") === q.words.join(" ")) : (selectedChoice === q.ans);
+    if (isCorrect) {
+      if (q.type === "choice") {
+        document.getElementById('qText').innerHTML = q.dialog.map(line => `<span class="dialog-line">${line.replace("( &nbsp;&nbsp;&nbsp;&nbsp; )", `<span class="correct-text">${q.ans}</span>`)}</span>`).join("");
+      } else if (q.type === "listen") {
+        const sv = document.getElementById('script-view'); sv.style.display = "block";
+        sv.innerHTML = q.script.replace("( &nbsp;&nbsp;&nbsp;&nbsp; )", `<span class="correct-text" style="color:#ffeb3b;">${q.ans}</span>`);
+      }
+      document.getElementById('feedback-area').innerHTML = "<b>Correct! ✨</b>";
+      document.getElementById('checkBtn').style.display = "none";
+      document.getElementById('nextBtn').style.display = "block";
+    } else { alert("もう一度！"); }
+  }
+
+  function nextQuestion() {
+    currentIdx++;
+    if (currentIdx < quizList.length) loadQuestion();
+    else alert("Clear!");
+  }
+
+  function updateWorksheet() {
+    const wsContent = document.getElementById('ws-content');
+    wsContent.innerHTML = '<div class="ws-section-title">【1】 次の日本文の意味を表すように、最も適切なものを(1)～(4)の中から1つ選びなさい。</div>';
+    
+    let choiceCount = 1, sortCount = 1;
+    quizList.forEach(q => {
+      if (q.type === "choice" || q.type === "listen") {
+        const item = document.createElement('div'); item.className = "ws-question";
+        const content = q.type === "listen" ? q.script : q.dialog.join("<br>");
+        const choiceHTML = q.choices.map((c, i) => `<span class="ws-choice-item">(${i+1}) ${c}</span>`).join("");
+        item.innerHTML = `<div class="ws-q-main"><div class="ws-q-num">${choiceCount++}.</div><div class="ws-q-text">${content}</div></div><div class="ws-choice-row">${choiceHTML}</div>`;
+        wsContent.appendChild(item);
+      }
+    });
+
+    const sortSection = document.createElement('div');
+    sortSection.innerHTML = '<div class="ws-section-title">【2】 次の日本文の意味を表すように、( )内の語句を正しく並べ替えなさい。</div>';
+    wsContent.appendChild(sortSection);
+
+    quizList.forEach(q => {
+      if (q.type === "sort") {
+        const item = document.createElement('div'); item.className = "ws-question";
+        item.innerHTML = `<div class="ws-q-main"><div class="ws-q-num">${sortCount++}.</div><div class="ws-q-text">${q.ja}<br>( ${[...q.words].sort(()=>Math.random()-0.5).join(" / ")} )</div></div><div class="ws-sort-ans"></div>`;
+        wsContent.appendChild(item);
+      }
+    });
+  }
+
+  function initApp() { setVoices(); switchMode('learn'); }
+</script>
+</body>
+</html>
