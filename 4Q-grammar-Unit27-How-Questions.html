@@ -283,8 +283,10 @@
     learnData.forEach(q => {
       if (q.type === 'choice') {
         const item = document.createElement('div'); item.className = "ws-question";
+        // ワークシート生成時のみ、選択肢の配列をシャッフルする処理を追加
+        const shuffledChoices = [...q.choices].sort(() => Math.random() - 0.5);
         item.innerHTML = `<div class="ws-q-main"><div class="ws-q-num">${count++}.</div><div>${q.dialog.join("<br>")}</div></div>
-                          <div class="ws-choices">${q.choices.map((c, i) => `<span>(${i+1}) ${c}</span>`).join("")}</div>`;
+                          <div class="ws-choices">${shuffledChoices.map((c, i) => `<span>(${i+1}) ${c}</span>`).join("")}</div>`;
         sec1.appendChild(item);
       }
     });
