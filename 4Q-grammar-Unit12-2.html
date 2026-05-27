@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>過去形と過去進行形 否定文と疑問文を作るときに気をつけるポイント</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <style>
+        :root {
+            --primary-blue: #1a237e;
+            --light-blue: #2196f3;
+            --primary-pink: #ff4757;
+            --success-green: #6ab04c;
+            --bg-color: #f1f3f9;
+            --card-bg: #ffffff;
+            --text-color: #2c3e50;
+            --helper-yellow: #ffeb3b;
+            --verb-pink: #ffc1e3;
+        }
+
+        body {
+            font-family: "Zen Maru Gothic", sans-serif;
+            background: linear-gradient(135deg, #f1f3f9, #e8eaf6);
+            color: var(--text-color);
+            margin: 0; padding: 20px;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+
+        .container { max-width: 650px; width: 100%; }
+        header { text-align: center; margin-bottom: 20px; }
+        h1 { color: var(--primary-blue); font-size: 1.6rem; margin-bottom: 5px; line-height: 1.4; }
+        
+        .progress-bar {
+            width: 100%; height: 12px; background-color: #cbd5e1;
+            border-radius: 6px; margin-bottom: 25px; overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%; width: 0%; background-color: var(--light-blue);
+            transition: width 0.3s ease;
+        }
+
+        .card {
+            background: var(--card-bg); border-radius: 25px; padding: 30px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05); border: 2px solid #fff;
+            text-align: center; display: none; animation: fadeIn 0.4s ease forwards;
+        }
+        .card.active { display: block; }
+
+        .hint-box {
+            background: #fff9db; border-left: 5px solid #fcc419;
+            padding: 12px; border-radius: 10px; font-weight: bold;
+            font-size: 1rem; margin-bottom: 20px; text-align: left;
+            line-height: 1.5;
+        }
+
+        .sentence-display {
+            font-size: 1.5rem; font-weight: bold; color: #1a237e;
+            background: #f0f4c3; padding: 10px 15px; border-radius: 15px;
+            margin-bottom: 15px; display: inline-block;
+        }
+
+        .japanese-inst { font-size: 1.2rem; font-weight: bold; margin-bottom: 20px; color: #546e7a; }
+
+        .drop-zone {
+            min-height: 65px; border-bottom: 3px dashed #cbd5e1;
+            margin-bottom: 20px; display: flex; flex-wrap: wrap;
+            gap: 10px; align-items: center; justify-content: center;
+            padding: 10px; background: #fafafa; border-radius: 15px;
+        }
+
+        .pool {
+            display: flex; flex-wrap: wrap; gap: 10px;
+            justify-content: center; margin-bottom: 25px; min-height: 50px;
+        }
+
+        .word-btn {
+            background-color: #ffffff; border: 2px solid #cbd5e1;
+            padding: 10px 18px; border-radius: 25px; cursor: pointer;
+            font-weight: bold; font-size: 1.1rem; color: var(--text-color);
+            box-shadow: 0 4px 0 #cbd5e1; transition: all 0.1s;
+        }
+        .word-btn.helper { border-color: #ffd43b; background-color: #fffde7; }
+        .word-btn.verb { border-color: #faa2c1; background-color: #fff0f6; }
+        .word-btn.used { opacity: 0.2; pointer-events: none; box-shadow: none; background-color: #f1f5f9; }
+
+        .placed-word {
+            background-color: #ffffff; color: var(--text-color);
+            border: 2px solid #cbd5e1;
+            padding: 10px 18px; border-radius: 25px; font-weight: bold;
+            font-size: 1.1rem; cursor: pointer; box-shadow: 0 4px 0 #cbd5e1;
+        }
+        .placed-word.helper { border-color: #ffd43b; background-color: #fffde7; }
+        .placed-word.verb { border-color: #faa2c1; background-color: #fff0f6; }
+
+        .action-nav { display: flex; justify-content: center; gap: 15px; }
+        .nav-btn {
+            padding: 12px 30px; font-family: inherit; font-weight: bold;
+            font-size: 1.1rem; border: none; border-radius: 50px; cursor: pointer;
+            color: white; transition: 0.1s;
+        }
+        .check-btn { background: var(--light-blue); box-shadow: 0 5px 0 #1565c0; }
+        .next-btn { background: var(--success-green); box-shadow: 0 5px 0 #538d3d; display: none; }
+        .nav-btn:active { transform: translateY(3px); box-shadow: none; }
+
+        .result-row {
+            display: flex; align-items: center; background: #f8fafc;
+            padding: 15px 20px; border-radius: 20px; margin-bottom: 12px;
+            border: 1px solid #e2e8f0; text-align: left; gap: 15px;
+        }
+        .speaker-btn {
+            background-color: var(--light-blue); color: white; border: none;
+            width: 45px; height: 45px; border-radius: 50%; font-size: 1.3rem;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 0 #1976d2; transition: 0.1s; flex-shrink: 0;
+        }
+        .speaker-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #1976d2; }
+        .speaker-btn.playing { background-color: var(--primary-pink); box-shadow: 0 4px 0 #d63031; }
+        .result-text { font-size: 1.2rem; font-weight: bold; }
+
+        .q-title {
+            font-size: 1.2rem; background-color: #e2e8f0; padding: 4px 15px;
+            border-radius: 10px; display: inline-block; margin-bottom: 15px; font-weight: bold;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>過去形と過去進行形<br>否定文と疑問文を作るときに気をつけるポイント 💥</h1>
+    </header>
+
+    <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <div class="card active" id="card-1">
+        <div class="q-title">Q1 : 過去進行形パターン</div>
+        <div class="hint-box">💡 過去進行形の否定文は超カンタン！ be動詞（was/were）のうしろに、そのまま not を置くだけ。動詞の形は ~ing のままでいいんだよ！分裂はしません！</div>
+        <div class="japanese-inst">「ユミはそのとき英語を勉強していませんでした。」</div>
+        <div class="drop-zone" id="drop-1"></div>
+        <div class="pool" id="pool-1"></div>
+        <div class="action-nav">
+            <button class="nav-btn check-btn" id="check-1" onclick="checkSplitStep(1, 'Yumi was not studying English then.', 'おしい！ be動詞(was)のすぐ後ろに not を置いてね。studyingはそのままの形だよ！')">答えあわせ</button>
+            <button class="nav-btn next-btn" id="next-1" onclick="goNext(1)">Next ➔</button>
+        </div>
+    </div>
+
+    <div class="card" id="card-2">
+        <div class="q-title">Q1 : 過去進行形パターン</div>
+        <div class="hint-box">🥪 過去進行形の疑問文（〜していましたか？）は、be動詞（Was/Were）を文のあたまに飛び出させて、主語をサンドイッチしよう！</div>
+        <div class="japanese-inst">「ユミはそのとき英語を勉強していましたか？」</div>
+        <div class="drop-zone" id="drop-2"></div>
+        <div class="pool" id="pool-2"></div>
+        <div class="action-nav">
+            <button class="nav-btn check-btn" id="check-2" onclick="checkSplitStep(2, 'Was Yumi studying English then?', 'おしい！ Was を先頭に出して、主語(Yumi)をはさみ込もう。最後は ? だよ！')">答えあわせ</button>
+            <button class="nav-btn next-btn" id="next-2" onclick="goNext(2)">Next ➔</button>
+        </div>
+    </div>
+
+    <div class="card" id="card-3">
+        <div class="q-title">Q2 : 過去進行形 (whenパターン)</div>
+        <div class="hint-box">💡 主語が they（複数）のときは were を使うよ。 when の後ろの文（when the phone rang）はカタマリのまま最後に置こう！</div>
+        <div class="japanese-inst">「電話が鳴ったとき、彼らはテレビを見ていませんでした。」</div>
+        <div class="drop-zone" id="drop-3"></div>
+        <div class="pool" id="pool-3"></div>
+        <div class="action-nav">
+            <button class="nav-btn check-btn" id="check-3" onclick="checkSplitStep(3, 'They were not watching TV when the phone rang.', 'おしい！ were の後ろに not を挟もう。whenのカタマリは文の後ろにくっつけるよ。')">答えあわせ</button>
+            <button class="nav-btn next-btn" id="next-3" onclick="goNext(3)">Next ➔</button>
+        </div>
+    </div>
+
+    <div class="card" id="card-4">
+        <div class="q-title">Q2 : 過去進行形 (whenパターン)</div>
+        <div class="hint-box">🥪 さあ、Were を前に出して疑問文を作ろう！主語の they をサンドイッチしてね。</div>
+        <div class="japanese-inst">「電話が鳴ったとき、彼らはテレビを見ていましたか？」</div>
+        <div class="drop-zone" id="drop-4"></div>
+        <div class="pool" id="pool-4"></div>
+        <div class="action-nav">
+            <button class="nav-btn check-btn" id="check-4" onclick="checkSplitStep(4, 'Were they watching TV when the phone rang?', 'おしい！ Were を先頭に置いて、they をサンドイッチしよう！')">答えあわせ</button>
+            <button class="nav-btn next-btn" id="next-4" onclick="goNext(4)">Next ➔</button>
+        </div>
+    </div>
+
+    <div class="card" id="card-5">
+        <div class="q-title">Q3 : 過去形（一般動詞）の復習</div>
+        <div class="hint-box">💥 さあ、ここからは普通の過去形だよ！進行形じゃない一般動詞（made）は、否定文や疑問文を作るときに、何と何に「分裂」するんだっけ？</div>
+        <div class="sentence-display">He made cookies yesterday.</div>
+        <div class="japanese-inst">made を２つのパーツに分けてみよう！</div>
+        <div class="drop-zone" id="drop-5"></div>
+        <div class="pool" id="pool-5">
+            <button class="word-btn helper" onclick="clickWord(5, 'did', true)">did</button>
+            <button class="word-btn helper" onclick="clickWord(5, 'was', true)">was</button>
+            <button class="word-btn verb" onclick="clickWord(5, 'make', false)">make</button>
+            <button class="word-btn verb" onclick="clickWord(5, 'made', false)">made</button>
+        </div>
+        <div class="action-nav">
+            <button class="nav-btn check-btn" id="check-5" onclick="checkSplitStep(5, 'did make', '過去形（一般動詞）のひみつ！did が前に出ると、後ろは元の形（make）に戻るよ！wasは使いません！')">答えあわせ</button>
+            <button class="nav-btn next-btn" id="next-5" onclick="goNext(5)">Next ➔</button>
+        </div>
+    </div>
+
+    <div class="card" id="card-6">
+        <div class="q-title">Q3 : 過去形（一般動詞）の復習</div>
+        <div class="hint-box">💡 分裂させた did と make の「まんなか」に not を入れて、否定文を完成させよう！</div>
+        <div class="japanese-inst">「彼は昨日、クッキーを作りませんでした。」</div>
+        <div class="drop-zone" id="drop-6"></div>
+        <div class="pool" id="pool-6"></div>
+        <div class="action-nav">
+            <button class="nav-btn check-btn" id="check-6" onclick="checkSplitStep(6, 'He did not make cookies yesterday.', 'おしい！「主語 + did not + 動詞の原形」の順番だよ。')">答えあわせ</button>
+            <button class="nav-btn next-btn" id="next-6" onclick="goNext(6)">Next ➔</button>
+        </div>
+    </div>
+
+    <div class="card" id="card-7">
+        <div class="q-title">Q3 : 過去形（一般動詞）の復習</div>
+        <div class="hint-box">🥪 過去形の一般動詞の疑問文は、分裂した Did と 元の形の動詞 のあいだに、主語をサンドイッチ！</div>
+        <div class="japanese-inst">「彼は昨日、クッキーを作りましたか？」</div>
+        <div class="drop-zone" id="drop-7"></div>
+        <div class="pool" id="pool-7"></div>
+        <div class="action-nav">
+            <button class="nav-btn check-btn" id="check-7" onclick="checkSplitStep(7, 'Did he make cookies yesterday?', 'おしい！ Did を先頭に出して、主語(he)をはさみ、動詞は元の形(make)だよ！')">答えあわせ</button>
+            <button class="nav-btn next-btn" id="next-7" onclick="goNext(7)">Next ➔</button>
+        </div>
+    </div>
+
+    <div class="card" id="card-8">
+        <div class="q-title">Q4 : ミックスチェック（否定文）</div>
+        <div class="hint-box">⚠️ どっちのルールかな？「〜を弾いていました（進行形）」の否定文だよ。be動詞があるから分裂はしないよ！</div>
+        <div class="japanese-inst">「ケンはそのときピアノを弾いていませんでした。」</div>
+        <div class="drop-zone" id="drop-8"></div>
+        <div class="pool" id="pool-8"></div>
+        <div class="action-nav">
+            <button class="nav-btn check-btn" id="check-8" onclick="checkSplitStep(8, 'Ken was not playing the piano then.', 'おしい！was のすぐ後ろに not を置こう。playingはそのまま！')">答えあわせ</button>
+            <button class="nav-btn next-btn" id="next-8" onclick="goNext(8)">Next ➔</button>
+        </div>
+    </div>
+
+    <div class="card" id="card-9">
+        <div class="q-title">Q4 : ミックスチェック（否定文）</div>
+        <div class="hint-box">⚠️ 今度はどっち？「〜へ行きました（過去形）」の否定文だよ。wentを分裂させて、元の形に戻すルールを思い出して！</div>
+        <div class="japanese-inst">「リサは昨日、その公園へ行きませんでした。」</div>
+        <div class="drop-zone" id="drop-9"></div>
+        <div class="pool" id="pool-9"></div>
+        <div class="action-nav">
+            <button class="nav-btn check-btn" id="check-9" onclick="checkSplitStep(9, 'Lisa did not go to the park yesterday.', 'おしい！went が分裂して did not go になるよ！')">答えあわせ</button>
+            <button class="nav-btn next-btn" id="next-9" onclick="goNext(9)">Next ➔</button>
+        </div>
+    </div>
+
+    <div class="card" id="card-10">
+        <div class="q-title">Q5 : ミックスチェック（疑問文）</div>
+        <div class="hint-box">⚠️ 「〜を買いましたか？（過去形の疑問）」だよ。分裂させてあたまに持ってくるお助けキャラはどっち？</div>
+        <div class="japanese-inst">「リサは昨日、新しいコンピューターを買いましたか？」</div>
+        <div class="drop-zone" id="drop-10"></div>
+        <div class="pool" id="pool-10"></div>
+        <div class="action-nav">
+            <button class="nav-btn check-btn" id="check-10" onclick="checkSplitStep(10, 'Did Lisa buy a new computer yesterday?', 'おしい！一般動詞の過去形の疑問文は Did から始めて、動詞は元の形(buy)にするよ！')">答えあわせ</button>
+            <button class="nav-btn next-btn" id="next-10" onclick="goNext(10)">Next ➔</button>
+        </div>
+    </div>
+
+    <div class="card" id="card-11">
+        <div class="q-title">Q5 : ミックスチェック（疑問文）</div>
+        <div class="hint-box">⚠️ 「〜を料理していましたか？（過去進行形の疑問）」だよ。be動詞をあたまに出すルールだったね！</div>
+        <div class="japanese-inst">「お母さんが帰ってきたとき、ケンは夕食を料理していましたか？」</div>
+        <div class="drop-zone" id="drop-11"></div>
+        <div class="pool" id="pool-11"></div>
+        <div class="action-nav">
+            <button class="nav-btn check-btn" id="check-11" onclick="checkSplitStep(11, 'Was Ken cooking dinner when his mother came home?', 'おしい！過去進行形の疑問文は Was を先頭に出して、cookingはそのままの形だよ！')">答えあわせ</button>
+            <button class="nav-btn next-btn" id="next-11" onclick="goNext(11)">Next ➔</button>
+        </div>
+    </div>
+
+    <div class="card" id="card-12">
+        <div class="q-title">Q6 : ボス問題（否定文）</div>
+        <div class="hint-box">🔥 最後の仕上げ！「〜を書いていませんでした（過去進行形の否定）」だよ。長いけど落ち着いて組み立てよう。</div>
+        <div class="japanese-inst">「私が部屋に入ったとき、トムは手紙を書いていませんでした。」</div>
+        <div class="drop-zone" id="drop-12"></div>
+        <div class="pool" id="pool-12"></div>
+        <div class="action-nav">
+            <button class="nav-btn check-btn" id="check-12" onclick="checkSplitStep(12, 'Tom was not writing a letter when I entered the room.', 'おしい！ Tom was not writing a letter に、whenの文を繋げよう。')">答えあわせ</button>
+            <button class="nav-btn next-btn" id="next-12" onclick="goNext(12)">Next ➔</button>
+        </div>
+    </div>
+
+    <div class="card" id="card-13">
+        <div class="q-title">Q6 : ボス問題（疑問文）</div>
+        <div class="hint-box">🔥 これができれば完璧！「〜を練習しましたか？（過去形の疑問文）」だよ。お助けキャラを思い出して！</div>
+        <div class="japanese-inst">「彼らは放課後、サッカーを練習しましたか？」</div>
+        <div class="drop-zone" id="drop-13"></div>
+        <div class="pool" id="pool-13"></div>
+        <div class="action-nav">
+            <button class="nav-btn check-btn" id="check-13" onclick="checkLastStep(13, 'Did they practice soccer after school?', 'おしい！ Did と practice のあいだに、主語(they)をきれいにサンドイッチしてね！')">答えあわせ</button>
+            <button class="nav-btn next-btn" id="next-13" onclick="showResults()">結果を見る ➔</button>
+        </div>
+    </div>
+
+    <div class="card" id="card-result">
+        <h2 style="color: var(--success-green); margin-bottom: 10px;">完璧！ミッションコンプリート！ 🎉</h2>
+        <p style="font-weight: bold; color: #546e7a; margin-bottom: 25px;">「過去形のdid分裂ルール」と「過去進行形のbe動詞ルール」の使い分け、完ペキに見抜けたね！</p>
+        
+        <div id="results-list"></div>
+        <button class="nav-btn check-btn" style="margin-top:20px; background-color: var(--light-blue);" onclick="location.reload()">もういちど 挑戦する 🔄</button>
+    </div>
+</div>
+
+<script>
+    // シャッフル用ワードデータ
+    const poolData = {
+        1: ['Yumi', 'was', 'not', 'studying', 'English', 'then.'],
+        2: ['Was', 'Yumi', 'studying', 'English', 'then?'],
+        3: ['They', 'were', 'not', 'watching', 'TV', 'when the phone rang.'],
+        4: ['Were', 'they', 'watching', 'TV', 'when the phone rang?'],
+        // 5は特殊択一のため自動 pool 生成から除外
+        6: ['He', 'did', 'not', 'make', 'cookies', 'yesterday.'],
+        7: ['Did', 'he', 'make', 'cookies', 'yesterday?'],
+        8: ['Ken', 'was', 'not', 'playing', 'the piano', 'then.'],
+        9: ['Lisa', 'did', 'not', 'go', 'to the park', 'yesterday.'],
+        10: ['Did', 'Lisa', 'buy', 'a new computer', 'yesterday?'],
+        11: ['Was', 'Ken', 'cooking', 'dinner', 'when his mother came home?'],
+        12: ['Tom', 'was', 'not', 'writing', 'a letter', 'when I entered the room.'],
+        13: ['Did', 'they', 'practice', 'soccer', 'after school?']
+    };
+
+    const totalSteps = 13;
+
+    function shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        // 各ステージのプールを自動シャッフル生成
+        Object.keys(poolData).forEach(stage => {
+            setupPool(stage, poolData[stage]);
+        });
+
+        // 全ドロップゾーンをSortable化
+        for (let i = 1; i <= 13; i++) {
+            new Sortable(document.getElementById(`drop-${i}`), {
+                animation: 150,
+                ghostClass: 'sortable-ghost'
+            });
+        }
+        updateProgressBar(0);
+    });
+
+    function setupPool(stage, wordsArray) {
+        const pool = document.getElementById(`pool-${stage}`);
+        if (!pool) return;
+        
+        const copied = [...wordsArray];
+        shuffle(copied);
+
+        copied.forEach(word => {
+            const btn = document.createElement('button');
+            btn.className = 'word-btn';
+            if (['did', 'Did', 'was', 'Was', 'were', 'Were'].includes(word)) btn.classList.add('helper');
+            if (['make', 'go', 'buy', 'practice', 'studying', 'watching', 'playing', 'cooking', 'writing'].includes(word.replace(/[.?]/g, ''))) btn.classList.add('verb');
+            btn.textContent = word;
+            btn.onclick = () => handlePoolClick(stage, btn, word);
+            pool.appendChild(btn);
+        });
+    }
+
+    // ★ステージ5の特殊択一用（ここだけclickWordを使用）
+    function clickWord(stage, word, isHelper) {
+        const target = event.target;
+        if(target.classList.contains('used')) return;
+        
+        target.classList.add('used');
+        const placed = document.createElement('div');
+        placed.className = `placed-word ${isHelper ? 'helper' : 'verb'}`;
+        placed.textContent = word;
+        placed.onclick = () => {
+            target.classList.remove('used');
+            placed.remove();
+        };
+        document.getElementById(`drop-${stage}`).appendChild(placed);
+    }
+
+    // ★通常ステージのプールクリック（並び替え用の正しい関数）
+    function handlePoolClick(stage, btnElement, word) {
+        if(btnElement.classList.contains('used')) return;
+
+        btnElement.classList.add('used');
+        const placed = document.createElement('div');
+        placed.className = 'placed-word';
+        if (['did', 'Did', 'was', 'Was', 'were', 'Were'].includes(word)) placed.classList.add('helper');
+        if (['make', 'go', 'buy', 'practice', 'studying', 'watching', 'playing', 'cooking', 'writing'].includes(word.replace(/[.?]/g, ''))) placed.classList.add('verb');
+        placed.textContent = word;
+        
+        placed.onclick = () => {
+            btnElement.classList.remove('used');
+            placed.remove();
+        };
+        document.getElementById(`drop-${stage}`).appendChild(placed);
+    }
+
+    function updateProgressBar(step) {
+        const percentage = (step / totalSteps) * 100;
+        document.getElementById('progressFill').style.width = percentage + '%';
+    }
+
+    function goNext(current) {
+        document.getElementById(`card-${current}`).classList.remove('active');
+        document.getElementById(`card-${current + 1}`).classList.add('active');
+        updateProgressBar(current);
+    }
+
+    // 各ステージの判定
+    function checkSplitStep(stage, correctAnswer, alertMessage) {
+        const currentAnswers = Array.from(document.getElementById(`drop-${stage}`).children).map(c => c.textContent);
+        if(currentAnswers.join(' ') === correctAnswer) {
+            alert("正解！ピンポン！素晴らしい！");
+            document.getElementById(`check-${stage}`).style.display = 'none';
+            document.getElementById(`next-${stage}`).style.display = 'inline-block';
+        } else {
+            alert(alertMessage);
+        }
+    }
+
+    function checkLastStep(stage, correctAnswer, alertMessage) {
+        const currentAnswers = Array.from(document.getElementById(`drop-${stage}`).children).map(c => c.textContent);
+        if(currentAnswers.join(' ') === correctAnswer) {
+            alert("正解！ピンポン！素晴らしい！ラストクリアです！");
+            document.getElementById(`check-${stage}`).style.display = 'none';
+            document.getElementById(`next-${stage}`).style.display = 'inline-block';
+        } else {
+            alert(alertMessage);
+        }
+    }
+
+    // 最終リザルト表示
+    function showResults() {
+        updateProgressBar(13);
+        document.getElementById('card-13').classList.remove('active');
+        document.getElementById('card-result').classList.add('active');
+
+        const finalSentences = [
+            "Yumi was not studying English then.",
+            "Was Yumi studying English then?",
+            "They were not watching TV when the phone rang.",
+            "Were they watching TV when the phone rang?",
+            "He did not make cookies yesterday.",
+            "Did he make cookies yesterday?",
+            "Ken was not playing the piano then.",
+            "Lisa did not go to the park yesterday.",
+            "Did Lisa buy a new computer yesterday?",
+            "Was Ken cooking dinner when his mother came home?",
+            "Tom was not writing a letter when I entered the room.",
+            "Did they practice soccer after school?"
+        ];
+
+        const resultsList = document.getElementById('results-list');
+        resultsList.innerHTML = '';
+
+        finalSentences.forEach((sentence, index) => {
+            const row = document.createElement('div');
+            row.className = 'result-row';
+            row.innerHTML = `
+                <button class="speaker-btn" id="btn-s${index}" onclick="speakText('s${index}', \`${sentence}\`)">🔊</button>
+                <div class="result-text">${sentence}</div>
+            `;
+            resultsList.appendChild(row);
+        });
+    }
+
+    // 音声読み上げ（ゆっくり速度 0.6）
+    let preferredVoice = null;
+    function loadVoices() {
+        const voices = window.speechSynthesis.getVoices();
+        if (voices.length === 0) return;
+        preferredVoice = 
+            voices.find(v => (v.lang === 'en-US' || v.lang === 'en_US') && v.name.includes("Google US English")) ||
+            voices.find(v => (v.lang === 'en-US' || v.lang === 'en_US') && v.name.includes("Samantha")) ||
+            voices.find(v => (v.lang === 'en-US' || v.lang === 'en_US') && v.name.includes("Zira")) ||
+            voices.find(v => v.lang.startsWith('en'));
+    }
+    window.speechSynthesis.onvoiceschanged = loadVoices;
+    loadVoices();
+
+    function speakText(id, text) {
+        window.speechSynthesis.cancel();
+        const uttr = new SpeechSynthesisUtterance(text);
+        if (preferredVoice) uttr.voice = preferredVoice;
+        uttr.lang = 'en-US';
+        uttr.rate = 0.6;
+        
+        const btn = document.getElementById('btn-' + id);
+        btn.classList.add('playing');
+        uttr.onend = () => btn.classList.remove('playing');
+        uttr.onerror = () => btn.classList.remove('playing');
+        window.speechSynthesis.speak(uttr);
+    }
+</script>
+</body>
+</html>
