@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>be動詞の過去形：否定文と疑問文のポイント</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <style>
+        :root {
+            --primary-blue: #1a237e;
+            --light-blue: #2196f3;
+            --primary-pink: #ff4757;
+            --success-green: #6ab04c;
+            --bg-color: #f1f3f9;
+            --card-bg: #ffffff;
+            --text-color: #2c3e50;
+            --helper-yellow: #fffde7;
+            --verb-pink: #fff0f6;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: "Zen Maru Gothic", sans-serif;
+            background: linear-gradient(135deg, #f1f3f9, #e8eaf6);
+            color: var(--text-color);
+            margin: 0; padding: 20px;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+
+        /* レッスン画面（大画面）に合わせて横幅を800pxに拡張 */
+        .container { max-width: 800px; width: 100%; }
+        header { text-align: center; margin-bottom: 20px; }
+        h1 { color: var(--primary-blue); font-size: 1.6rem; margin-bottom: 5px; line-height: 1.4; }
+        
+        .progress-bar {
+            width: 100%; height: 12px; background-color: #cbd5e1;
+            border-radius: 6px; margin-bottom: 25px; overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%; width: 0%; background-color: var(--light-blue);
+            transition: width 0.3s ease;
+        }
+
+        .card {
+            background: var(--card-bg); border-radius: 25px; padding: 30px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05); border: 2px solid #fff;
+            text-align: center; display: none; animation: fadeIn 0.4s ease forwards;
+        }
+        .card.active { display: block; }
+
+        .hint-box {
+            background: #fff9db; border-left: 5px solid #fcc419;
+            padding: 12px; border-radius: 10px; font-weight: bold;
+            font-size: 1rem; margin-bottom: 20px; text-align: left;
+            line-height: 1.5;
+        }
+
+        .q-title {
+            font-size: 1.1rem; background-color: #e2e8f0; padding: 6px 15px;
+            border-radius: 10px; display: inline-block; margin-bottom: 15px; font-weight: bold;
+        }
+
+        .question-text {
+            font-size: 1.3rem; font-weight: bold; color: var(--primary-blue);
+            text-align: left; line-height: 1.6; margin-bottom: 25px;
+        }
+
+        /* クイズ用のグリッド（縦1列のレイアウト） */
+        .choices-grid {
+            display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;
+        }
+
+        /* ★仕様変更：選択肢が短い問題用の、幅を絞った中央寄せ縦並びスタイル★ */
+        .choices-grid.short-buttons {
+            align-items: center;
+        }
+        .choices-grid.short-buttons .choice-btn {
+            width: 100%; max-width: 280px; text-align: center; justify-content: center;
+        }
+
+        .choice-btn {
+            background-color: #ffffff; border: 2px solid #cbd5e1;
+            padding: 15px 20px; border-radius: 15px; cursor: pointer;
+            font-weight: bold; font-size: 1.05rem; color: var(--text-color);
+            text-align: left; box-shadow: 0 4px 0 #cbd5e1; transition: all 0.1s;
+            line-height: 1.4; display: flex; align-items: center;
+        }
+        .choice-btn:hover { background-color: #f8fafc; border-color: #94a3b8; }
+        .choice-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #cbd5e1; }
+        
+        .choice-btn.correct {
+            background-color: #e8f5e9 !important; border-color: var(--success-green) !important;
+            color: #2e7d32 !important; box-shadow: 0 4px 0 #c8e6c9 !important;
+        }
+        .choice-btn.wrong {
+            background-color: #ffebee !important; border-color: var(--primary-pink) !important;
+            color: #c62828 !important; box-shadow: 0 4px 0 #ffcdd2 !important;
+            opacity: 0.6; pointer-events: none;
+        }
+        .choice-btn.disabled { pointer-events: none; }
+
+        /* 並べ替えアクティビティ用のスタイル */
+        .drop-zone {
+            min-height: 65px; border-bottom: 3px dashed #cbd5e1;
+            margin-bottom: 20px; display: flex; flex-wrap: wrap;
+            gap: 10px; align-items: center; justify-content: center;
+            padding: 10px; background: #fafafa; border-radius: 15px;
+        }
+
+        .pool {
+            display: flex; flex-wrap: wrap; gap: 10px;
+            justify-content: center; margin-bottom: 25px; min-height: 50px;
+        }
+
+        .word-btn {
+            background-color: #ffffff; border: 2px solid #cbd5e1;
+            padding: 10px 18px; border-radius: 25px; cursor: pointer;
+            font-weight: bold; font-size: 1.1rem; color: var(--text-color);
+            box-shadow: 0 4px 0 #cbd5e1; transition: all 0.1s;
+        }
+        .word-btn.helper { border-color: #ffd43b; background-color: var(--helper-yellow); }
+        .word-btn.used { opacity: 0.2; pointer-events: none; box-shadow: none; background-color: #f1f5f9; }
+
+        /* 選択後も白ベースをキープ */
+        .placed-word {
+            background-color: #ffffff; color: var(--text-color);
+            border: 2px solid #cbd5e1;
+            padding: 10px 18px; border-radius: 25px; font-weight: bold;
+            font-size: 1.1rem; cursor: pointer; box-shadow: 0 4px 0 #cbd5e1;
+        }
+        .placed-word.helper { border-color: #ffd43b; background-color: var(--helper-yellow); }
+
+        /* 解説ボックス */
+        .explanation-box {
+            background-color: #e3f2fd; border-left: 5px solid var(--light-blue);
+            padding: 15px; border-radius: 10px; text-align: left;
+            margin-top: 15px; font-size: 0.95rem; line-height: 1.5;
+            display: none; animation: fadeIn 0.3s ease;
+        }
+        .explanation-box strong { color: var(--primary-blue); }
+
+        .action-nav { display: flex; justify-content: center; margin-top: 25px; }
+        .next-btn {
+            padding: 12px 40px; font-family: inherit; font-weight: bold;
+            font-size: 1.1rem; border: none; border-radius: 50px; cursor: pointer;
+            color: white; background: var(--success-green); box-shadow: 0 5px 0 #538d3d;
+            display: none; transition: 0.1s;
+        }
+        .next-btn.check-mode { background: var(--light-blue); box-shadow: 0 5px 0 #1565c0; display: inline-block; }
+        .next-btn:active { transform: translateY(3px); box-shadow: none; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        #excellentPopup {
+            position: fixed; top: 40px; left: 50%; transform: translateX(-50%) translateY(-20px);
+            background-color: #ffeb3b; color: #333; padding: 12px 40px; border-radius: 50px;
+            font-weight: bold; font-size: 1.6rem; box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+            opacity: 0; pointer-events: none; transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28); z-index: 1000;
+        }
+        #excellentPopup.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    </style>
+</head>
+<body>
+
+<div id="excellentPopup">Excellent! 🌟</div>
+
+<div class="container">
+    <header>
+        <h1>be動詞の過去形クイズ<br>否定文と疑問文を作るときに気をつけるポイント 💥</h1>
+    </header>
+
+    <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <div class="card active" id="card-0">
+        <div class="q-title">Q1 : be動詞ってな〜んだ？</div>
+        <div class="hint-box">💡 Ken is happy.（ケンは幸せな状態です＝ケン＝幸せ）という文をイメージしてみてね。</div>
+        <div class="question-text">そもそも、英語の「be動詞（is, am, are / was, were）」って、どういうときに使う言葉かな？</div>
+        <div class="choices-grid">
+            <button class="choice-btn" onclick="selectQuizOption(this, true, 'be動詞は「主語 ＝ 後ろの言葉」という状態や存在（〜にいる）を表すのが一番の大切な役目です！', 0)">主語の「状態」や「イコール（〜です、〜にいる）」を表すとき</button>
+            <button class="choice-btn" onclick="selectQuizOption(this, false, '「走る」や「料理する」など、激しい動きを表すのは「一般動詞」の役目だよ！', 0)">「走る」や「料理する」など、主語の「動き（動作）」を表すとき</button>
+            <button class="choice-btn" onclick="selectQuizOption(this, false, 'be動詞には「状態」や「場所」を表すとても大事な意味があるんだよ！', 0)">意味はなくて、文をかっこよく見せるための飾りのとき</button>
+        </div>
+        <div class="explanation-box" id="exp-0"></div>
+        <div class="action-nav"><button class="next-btn" id="next-0" onclick="goNext(0)">Next ➔</button></div>
+    </div>
+
+    <div class="card" id="card-1">
+        <div class="q-title">Q2 : 否定文のひみつ（アピール）</div>
+        <div class="hint-box">💡 be動詞の否定文は、分裂作業がないからビックリするほど簡単なんだよ！</div>
+        <div class="question-text">一般動詞の過去形（madeなど）は否定文で「did not make」に分裂しました。では、be動詞の過去形（was / were）の否定文はどうやって作るでしょう？</div>
+        <div class="choices-grid">
+            <button class="choice-btn" onclick="selectQuizOption(this, true, 'be動詞はパワーが強いので、お助けキャラを呼ばずに自分の後ろにnotを置くだけで否定文が作れます。超カンタン！', 1)">分裂は一切なし！wasやwereのすぐ後ろに「not」を置くだけ！</button>
+            <button class="choice-btn" onclick="selectQuizOption(this, false, 'didは一般動詞専用のお助けキャラなので、be動詞の文に登場することはありません。', 1)">didを呼んで、did not was に分裂させる</button>
+            <button class="choice-btn" onclick="selectQuizOption(this, false, '過去形であることを表すために、wasやwereの形のままで後ろにnotを付けます。', 1)">wasやwereを元の形（be）に戻して、be not にする</button>
+        </div>
+        <div class="explanation-box" id="exp-1"></div>
+        <div class="action-nav"><button class="next-btn" id="next-1" onclick="goNext(1)">Next ➔</button></div>
+    </div>
+
+    <div class="card" id="card-2">
+        <div class="q-title">Q3 : 否定文を作ってみよう！</div>
+        <div class="hint-box">💡 be動詞の後ろにnotをポンと置くだけ。分裂しないから動詞の形が変わる心配もありません！</div>
+        <div class="japanese-inst">「私は昨夜、忙しくありませんでした。」</div>
+        <div class="drop-zone" id="drop-2"></div>
+        <div class="pool" id="pool-2"></div>
+        <div class="explanation-box" id="exp-2"></div>
+        <div class="action-nav">
+            <button class="next-btn check-mode" id="check-2" onclick="checkSortStep(2, 'I was not very busy last night.', 'be動詞wasの後ろにそのままnotを置くだけで、簡単に否定文が完成します！')">答えあわせ</button>
+            <button class="next-btn" id="next-2" onclick="goNext(2)">Next ➔</button>
+        </div>
+    </div>
+
+    <div class="card" id="card-3">
+        <div class="q-title">Q4 : 疑問文のひみつ（アピール）</div>
+        <div class="hint-box">💡 be動詞自身が先頭へ大移動！主語をサンドイッチする形になるよ。</div>
+        <div class="question-text">be動詞の過去形の「疑問文（〜でしたか？）」を作るルールはどれでしょう？</div>
+        <div class="choices-grid">
+            <button class="choice-btn" onclick="selectQuizOption(this, true, 'be動詞を前に出すだけで、後ろの言葉の順番を変えずに疑問文が作れます。やっぱり超カンタン！', 3)">be動詞（Was / Were）を文のあたま（主語の前）に飛び出させるだけ！</button>
+            <button class="choice-btn" onclick="selectQuizOption(this, false, 'Didを使うのは一般動詞のルールです。be動詞は自分で前に飛び出せます。', 3)">文のあたまに Did を置いて、be動詞を原形に戻す</button>
+            <button class="choice-btn" onclick="selectQuizOption(this, false, 'クエスチョンマークは必ず文の最後に置くルールです。', 3)">主語とbe動詞のあいだにクエスチョンマークを入れる</button>
+        </div>
+        <div class="explanation-box" id="exp-3"></div>
+        <div class="action-nav"><button class="next-btn" id="next-3" onclick="goNext(3)">Next ➔</button></div>
+    </div>
+
+    <div class="card" id="card-4">
+        <div class="q-title">Q5 : 疑問文を作ってみよう！</div>
+        <div class="hint-box">💡 wereがあたまに飛び出して、主語のtheyを優しくキャッチするイメージだよ。</div>
+        <div class="japanese-inst">「彼らは昨日、そこにいましたか？」</div>
+        <div class="drop-zone" id="drop-4"></div>
+        <div class="pool" id="pool-4"></div>
+        <div class="explanation-box" id="exp-4"></div>
+        <div class="action-nav">
+            <button class="next-btn check-mode" id="check-4" onclick="checkSortStep(4, 'Were they there yesterday?', 'be動詞のwereを先頭に出し、主語theyを後ろに続けるだけで正しい疑問文になります。')">答えあわせ</button>
+            <button class="next-btn" id="next-4" onclick="goNext(4)">Next ➔</button>
+        </div>
+    </div>
+
+    <div class="card" id="card-5">
+        <div class="q-title">Q6 : どっちを選ぶ？（主語が1人）</div>
+        <div class="hint-box">💡 「Takuya ＝ sick だった？」という過去の状態を聞いています。Takuyaは1人だね！</div>
+        <div class="question-text">「タクヤは先週、病気（sick）でしたか？」と聞きたいです。主語が Takuya（1人）のとき、あたまに置く正しいbe動詞の過去形はどっち？</div>
+        <div class="choices-grid short-buttons">
+            <button class="choice-btn" onclick="selectQuizOption(this, true, '主語が単数（1人・1つ）のとき、過去形のbe動詞はwasを使用します。Was Takuya sick last week? となります。', 5)">Was</button>
+            <button class="choice-btn" onclick="selectQuizOption(this, false, 'wereは主語がYouのときや、複数（2人以上）のときに使う形です。', 5)">Were</button>
+            <button class="choice-btn" onclick="selectQuizOption(this, false, 'sick（病気で）は状態を表す言葉なので、一般動詞を助けるDidは使えません。', 5)">Did</button>
+            <button class="choice-btn" onclick="selectQuizOption(this, false, '「先週（last week）」のことなので、現在形のisではなく過去形にする必要があります。', 5)">Is</button>
+        </div>
+        <div class="explanation-box" id="exp-5"></div>
+        <div class="action-nav"><button class="next-btn" id="next-5" onclick="goNext(5)">Next ➔</button></div>
+    </div>
+
+    <div class="card" id="card-6">
+        <div class="q-title">Q7 : どっちを選ぶ？（主語が複数）</div>
+        <div class="hint-box">💡 主語が「私たち（複数）」のときのbe動詞の形に注目して、後ろにnotを繋げよう！</div>
+        <div class="question-text">「私たちはそのとき、お腹が空いていませんでした。」を英語に完成させるとき、(   ) に入る正しい言葉はどれ？（お腹が空いた＝hungry）<br><br><span style="color:var(--primary-blue); font-size:1.4rem; font-weight:bold;">We (   ) hungry then.</span></div>
+        <div class="choices-grid short-buttons">
+            <button class="choice-btn" onclick="selectQuizOption(this, true, '主語We（複数）に合わせてwereを使い、その直後にnotを置くことで正しい否定文になります。', 6)">were not</button>
+            <button class="choice-btn" onclick="selectQuizOption(this, false, '主語がWe（私たち＝複数）のときは、wasではなくwereを選びます。', 6)">was not</button>
+            <button class="choice-btn" onclick="selectQuizOption(this, false, 'hungryは状態を表す言葉なので、一般動詞の否定に使うdid notは置けません。', 6)">did not</button>
+            <button class="choice-btn" onclick="selectQuizOption(this, false, 'notの位置はbe動詞の後ろでなければなりません。', 6)">not were</button>
+        </div>
+        <div class="explanation-box" id="exp-6"></div>
+        <div class="action-nav"><button class="next-btn" id="next-6" onclick="goNext(6)">Next ➔</button></div>
+    </div>
+
+    <div class="card" id="card-7">
+        <div class="q-title">Q8 : 最後のまとめテスト！</div>
+        <div class="hint-box">💡 be動詞は一般動詞と違って「自分で何でもできる強い動詞」だったね！</div>
+        <div class="question-text">be動詞の過去形（was/were）のルールについて、間違っている説明はどれ？</div>
+        <div class="choices-grid">
+            <button class="choice-btn" onclick="selectQuizOption(this, true, 'これが間違いです！be動詞は自分で文頭に移動できるため、Didを置く必要はありません。', 7)">疑問文にするときは、一般動詞と同じようにDidをあたまに置く。</button>
+            <button class="choice-btn" onclick="selectQuizOption(this, false, 'これは完全に正しいbe動詞の否定文のルールです。', 7)">否定文にするときは、was / were の後ろにそのままnotを置けばよい。</button>
+            <button class="choice-btn" onclick="selectQuizOption(this, false, 'be動詞は分裂しないのが最大の強みであり、正しい説明です。', 7)">一般動詞のように、動詞を2つのパーツに「分裂」させる作業は必要ない。</button>
+            <button class="choice-btn" onclick="selectQuizOption(this, false, '主語の数によってwasとwereを過去形でも使い分けるという正しい説明です。', 7)">主語が単数ならwas、複数ならwereを使い分ける。</button>
+        </div>
+        <div class="explanation-box" id="exp-7"></div>
+        <div class="action-nav"><button class="next-btn" id="next-7" onclick="goNext(7)">Next ➔</button></div>
+    </div>
+
+    <div class="card" id="card-result">
+        <h2 style="color: var(--success-green); margin-bottom: 10px;">全問クリア！おめでとう！ 🎉</h2>
+        <p style="font-weight: bold; color: #546e7a; margin-bottom: 25px;">be動詞の過去形ルール、カンペキにマスターできたね！一般動詞との違いもバッチリ！</p>
+        <button class="nav-btn next-btn" style="display:inline-block; background-color: var(--light-blue); box-shadow: 0 5px 0 #1565c0;" onclick="location.reload()">もういちど 挑戦する 🔄</button>
+    </div>
+</div>
+
+<script>
+    // 並べ替え問題用の単語データ
+    const sortData = {
+        2: ['I', 'was', 'not', 'very', 'busy', 'last', 'night.'],
+        4: ['Were', 'they', 'there', 'yesterday?']
+    };
+
+    let currentStep = 0;
+    const totalSteps = 8;
+
+    function shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[j], array[i]] = [array[i], array[j]];
+        }
+        return array;
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        // 並べ替えプールのシャッフル生成
+        Object.keys(sortData).forEach(stage => {
+            setupSortPool(stage, sortData[stage]);
+            new Sortable(document.getElementById(`drop-${stage}`), {
+                animation: 150,
+                ghostClass: 'sortable-ghost'
+            });
+        });
+        updateProgressBar(0);
+    });
+
+    function setupSortPool(stage, wordsArray) {
+        const pool = document.getElementById(`pool-${stage}`);
+        const copied = [...wordsArray];
+        shuffle(copied);
+
+        copied.forEach(word => {
+            const btn = document.createElement('button');
+            btn.className = 'word-btn';
+            if (['was', 'Were'].includes(word)) btn.classList.add('helper');
+            btn.textContent = word;
+            btn.onclick = () => handlePoolClick(stage, btn, word);
+            pool.appendChild(btn);
+        });
+    }
+
+    function handlePoolClick(stage, btnElement, word) {
+        if(btnElement.classList.contains('used')) return;
+
+        btnElement.classList.add('used');
+        const placed = document.createElement('div');
+        placed.className = 'placed-word';
+        if (['was', 'Were'].includes(word)) placed.classList.add('helper');
+        placed.textContent = word;
+        
+        placed.onclick = () => {
+            btnElement.classList.remove('used');
+            placed.remove();
+        };
+        document.getElementById(`drop-${stage}`).appendChild(placed);
+    }
+
+    // 4択・3択クイズ用判定
+    function selectQuizOption(btn, isCorrect, explanation, idx) {
+        const card = document.getElementById(`card-${idx}`);
+        const buttons = card.querySelectorAll('.choice-btn');
+        const expBox = document.getElementById(`exp-${idx}`);
+        const nextBtn = document.getElementById(`next-${idx}`);
+
+        if (isCorrect) {
+            btn.classList.add('correct');
+            showExcellent();
+            buttons.forEach(b => {
+                b.classList.add('disabled');
+                if(b !== btn) b.style.opacity = "0.5";
+            });
+            expBox.innerHTML = `<strong>🎉 解説:</strong> ${explanation}`;
+            expBox.style.display = 'block';
+            nextBtn.style.display = 'inline-block';
+        } else {
+            btn.classList.add('wrong');
+            alert("おしい！ヒントをもう一度読んでチャレンジしてみてね！");
+        }
+    }
+
+    // 並べ替え用の判定ロジック
+    function checkSortStep(stage, correctAnswer, explanation) {
+        const currentAnswers = Array.from(document.getElementById(`drop-${stage}`).children).map(c => c.textContent);
+        const expBox = document.getElementById(`exp-${stage}`);
+        
+        if(currentAnswers.join(' ') === correctAnswer) {
+            showExcellent();
+            document.getElementById(`check-${stage}`).style.display = 'none';
+            document.getElementById(`next-${stage}`).style.display = 'inline-block';
+            expBox.innerHTML = `<strong>🎉 正解！:</strong> ${explanation}`;
+            expBox.style.display = 'block';
+        } else {
+            alert("並び順がちょっと違うみたい。バブルを入れ替えるか、一度クリックして戻してやり直してみてね！");
+        }
+    }
+
+    function showExcellent() {
+        const popup = document.getElementById('excellentPopup');
+        popup.classList.add('show');
+        setTimeout(() => popup.classList.remove('show'), 1200);
+    }
+
+    function updateProgressBar(step) {
+        const percentage = (step / totalSteps) * 100;
+        document.getElementById('progressFill').style.width = percentage + '%';
+    }
+
+    function goNext(current) {
+        document.getElementById(`card-${current}`).classList.remove('active');
+        currentStep++;
+        
+        if (currentStep < totalSteps) {
+            document.getElementById(`card-${currentStep}`).classList.add('active');
+            updateProgressBar(currentStep);
+        } else {
+            updateProgressBar(totalSteps);
+            document.getElementById('card-result').classList.add('active');
+        }
+    }
+</script>
+</body>
+</html>
