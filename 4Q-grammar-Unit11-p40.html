@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>11章 過去の文 p40</title>
+<style>
+  :root {
+    --primary-blue: #0288d1;
+    --success-green: #2e7d32;
+    --bg-color: #f8fbff;
+    --border-color: #b3e5fc;
+    /* 印刷用倍率の初期値 */
+    --print-scale: 1.0;
+  }
+  
+  /* ==========================================================================
+     オンライン画面（iPad・電子黒板）用スタイル
+     ========================================================================== */
+  body { 
+    font-family: "Hiragino Maru Gothic ProN", "Hiragino Maru Gothic Pro", "Segoe UI", sans-serif; 
+    background-color: var(--bg-color); 
+    margin: 0; 
+    padding: 15px; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+  }
+  
+  .container { 
+    background: white; 
+    max-width: 850px; 
+    width: 100%; 
+    padding: 25px; 
+    border-radius: 20px; 
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1); 
+    position: relative; 
+    box-sizing: border-box;
+    margin-bottom: 20px;
+  }
+  
+  .header-area { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    margin-bottom: 20px; 
+    border-bottom: 2px solid #e1f5fe; 
+    padding-bottom: 10px; 
+  }
+  
+  h2 { color: var(--primary-blue); margin: 0; font-size: 1.4rem; }
+  
+  .mode-switch { display: flex; gap: 5px; background: #eee; padding: 4px; border-radius: 10px; }
+  .mode-switch button { padding: 6px 12px; cursor: pointer; border: none; border-radius: 8px; font-weight: bold; font-size: 0.85rem; background: none; transition: 0.2s; font-family: inherit; }
+  .mode-switch .active-mode { background: white; color: var(--primary-blue); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+  
+  .question-box { 
+    font-size: 1.2rem; 
+    margin-bottom: 20px; 
+    padding: 20px; 
+    background: #f9f9f9; 
+    border-radius: 12px; 
+    border-left: 8px solid var(--primary-blue); 
+    text-align: left; 
+  }
+  .dialog-line { display: block; margin-bottom: 10px; line-height: 1.6; }
+  .hint-text { font-size: 0.85rem; color: #7f8c8d; font-weight: normal; }
+
+  .choice-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  @media (max-width: 600px) { .choice-grid { grid-template-columns: 1fr; } }
+  
+  .choice-card-btn { 
+    padding: 14px 18px; 
+    border: 2px solid var(--border-color); 
+    background: white; 
+    border-radius: 12px; 
+    cursor: pointer; 
+    font-size: 1.1rem; 
+    text-align: left; 
+    transition: 0.2s; 
+    font-family: inherit;
+  }
+  .choice-card-btn.selected { background-color: #b3e5fc; border-color: var(--primary-blue); }
+
+  .answer-area { 
+    min-height: 55px; 
+    border-bottom: 3px solid var(--primary-blue); 
+    margin-bottom: 20px; 
+    display: flex; 
+    flex-wrap: wrap; 
+    gap: 8px; 
+    padding: 10px; 
+    background-color: #fafafa; 
+    border-radius: 10px; 
+    align-items: center; 
+    font-size: 1.2rem; 
+    text-align: left; 
+  }
+  
+  .sort-box-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    justify-content: flex-start;
+  }
+  .sort-box {
+    width: 45px;
+    height: 45px;
+    border: 2px solid #cbd5e1;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+    background: #f8fafc;
+  }
+  .sort-box.highlight {
+    border-color: #e74c3c;
+    background: #fce8e6;
+    color: #e74c3c;
+  }
+  
+  .word-btn { 
+    border: 2px solid var(--primary-blue); 
+    padding: 8px 16px; 
+    border-radius: 20px; 
+    cursor: pointer; 
+    background: white; 
+    font-weight: bold; 
+    font-size: 1.1rem; 
+    margin: 4px; 
+    font-family: inherit;
+  }
+  .word-btn.used { color: #ccc; border-color: #eee; cursor: default; }
+
+  .action-btn { 
+    padding: 14px 40px; 
+    font-size: 1.1rem; 
+    border-radius: 30px; 
+    cursor: pointer; 
+    border: none; 
+    font-weight: bold; 
+    margin: 10px auto; 
+    display: block; 
+    color: white; 
+    transition: 0.2s; 
+    font-family: inherit;
+  }
+  .correct-text { color: red; text-decoration: underline; font-weight: bold; }
+
+  /* 拡大・縮小コントロール用のデザイン（画面でのみ表示） */
+  .scale-controller {
+    background: #fff3e0;
+    border: 2px solid #ffe0b2;
+    padding: 15px;
+    border-radius: 12px;
+    max-width: 850px;
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    font-weight: bold;
+    color: #e65100;
+  }
+  .scale-controller input {
+    cursor: pointer;
+    width: 200px;
+  }
+
+  /* ==========================================================================
+     🖨️ 印刷専用スタイル（Command + P のみ有効）
+     ========================================================================== */
+  #worksheet-print-area { display: none; }
+  @media print {
+    body { background: white !important; padding: 0 !important; }
+    .container, #main-container, .action-btn, .scale-controller { display: none !important; }
+    #worksheet-print-area { display: block !important; width: 100% !important; padding: 0; margin: 0; }
+    
+    /* A4用紙のベース余白設定 */
+    @page { size: A4; margin: 25mm 20mm; }
+    
+    /* 【新機能】ツマミで指定された倍率をここに一元適用（文字、余白、下線すべて連動） */
+    .print-scaler {
+      transform-origin: top left;
+      font-size: calc(1rem * var(--print-scale));
+    }
+    
+    .ws-title { 
+      text-align: center; 
+      font-size: calc(1.8rem * var(--print-scale)); 
+      font-weight: bold; 
+      margin-bottom: calc(35px * var(--print-scale)); 
+      font-family: "Times New Roman", Times, "MS P明朝", serif; 
+      letter-spacing: 1px;
+    }
+    
+    .ws-section-title { 
+      font-weight: bold; 
+      font-size: calc(1.15rem * var(--print-scale)); 
+      margin: calc(40px * var(--print-scale)) 0 calc(25px * var(--print-scale)) 0; 
+      border-bottom: 1px solid #000; 
+      padding-bottom: calc(8px * var(--print-scale)); 
+      font-family: "Arial", "MS Pゴシック", sans-serif; 
+    }
+    
+    .ws-question { 
+      margin-bottom: calc(28px * var(--print-scale)); 
+      display: flex; 
+      flex-direction: column; 
+      page-break-inside: avoid; 
+      font-family: "Times New Roman", Times, "MS P明朝", serif; 
+      font-size: calc(1.2rem * var(--print-scale)); 
+    }
+    
+    .ws-q-main { display: flex; align-items: flex-start; margin-bottom: calc(10px * var(--print-scale)); line-height: 1.5; }
+    .ws-q-num { font-weight: bold; width: calc(35px * var(--print-scale)); }
+    
+    .ws-choice-row { display: flex; gap: calc(30px * var(--print-scale)); margin-left: calc(35px * var(--print-scale)); font-size: calc(1.1rem * var(--print-scale)); }
+    
+    .ws-page-break { page-break-before: always; }
+    
+    .ws-sort-container { margin-left: calc(35px * var(--print-scale)); margin-top: calc(10px * var(--print-scale)); }
+    .ws-sort-lines { display: flex; gap: calc(30px * var(--print-scale)); margin-top: calc(25px * var(--print-scale)); margin-bottom: calc(15px * var(--print-scale)); }
+    .ws-sort-line-item { display: flex; flex-direction: column; align-items: center; }
+    .ws-line { border-bottom: 1px solid #000; width: calc(100px * var(--print-scale)); height: calc(30px * var(--print-scale)); }
+    .ws-line-sub { font-size: calc(0.85rem * var(--print-scale)); color: #111; margin-top: calc(5px * var(--print-scale)); font-family: "Arial", "MS Pゴシック", sans-serif; }
+    .ws-sort-select { font-size: calc(1.05rem * var(--print-scale)); margin-top: calc(10px * var(--print-scale)); font-family: "MS Pゴシック", sans-serif; word-spacing: 5px; }
+  }
+</style>
+</head>
+<body onload="initApp()">
+
+<div class="container" id="main-container">
+  <div class="header-area">
+    <h2>11章 過去の文 p40</h2>
+    <div class="mode-switch">
+      <button id="btnLearn" class="active-mode" onclick="switchMode('learn')">練習問題</button>
+      <button id="btnTest" onclick="switchMode('test')">予想問題</button>
+    </div>
+  </div>
+
+  <div id="quiz-screen">
+    <div id="progressText" style="text-align: right; font-size: 0.9rem; color: #666; margin-bottom: 5px;"></div>
+    <div id="qText" class="question-box"></div>
+    <div id="ui-area"></div>
+    <div id="feedback-area" style="text-align: center; margin: 10px 0; min-height: 30px;"></div>
+    <button class="action-btn" id="checkBtn" style="display:none; background: var(--success-green);" onclick="handleCheck()">答え合わせ</button>
+    <button class="action-btn" id="nextBtn" style="display:none; background: var(--primary-blue);" onclick="nextQuestion()">次の問題へ</button>
+  </div>
+</div>
+
+<!-- 【新機能】画面の一番下に拡大・縮小コントロールを設置 -->
+<div class="scale-controller">
+  <span>🖨️ ワークシートの印刷サイズ調整:</span>
+  <input type="range" id="printScaleRange" min="0.7" max="1.3" step="0.05" value="1.0" oninput="changePrintScale(this.value)">
+  <span id="scaleDisplay">100% (標準)</span>
+</div>
+
+<!-- ================= 🖨️ 印刷専用ワークシート ================= -->
+<div id="worksheet-print-area">
+  <div class="print-scaler">
+    <div class="ws-title">11章 過去の文 p40</div>
+    <div id="ws-content"></div>
+  </div>
+</div>
+
+<script>
+  // 【セクション1：練習問題20問】
+  const learnData = [
+    { type: "choice", text: "1. I usually ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) to school on foot.", choices: ["go", "goes", "going", "went"], ans: "go" },
+    { type: "choice", text: "2. She ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) math. It's her favorite subject.", choices: ["like", "liked", "likes", "liking"], ans: "likes" },
+    { type: "choice", text: "3. It was his birthday yesterday. He ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) a new computer.", choices: ["get", "got", "gets", "getting"], ans: "got" },
+    { type: "choice", text: "4. Mr. Sato ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) a car last week. He loves his new car.", choices: ["buy", "buys", "bought", "buying"], ans: "bought" },
+    { type: "choice", text: "5. They ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) France last year.", choices: ["visited", "visiting", "visits", "visit"], ans: "visited" },
+    { type: "choice", text: "6. I ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) to the park with my friends now.", choices: ["goes", "am going", "is going", "went"], ans: "am going" },
+    { type: "choice", text: "7. I ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) my teacher at the museum yesterday.", choices: ["saw", "see", "seeing", "sees"], ans: "saw" },
+    { type: "choice", text: "8. She ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) coffee at Starbucks every morning.", choices: ["get", "gets", "got", "getting"], ans: "gets" },
+    { type: "choice", text: "9. Yesterday, the famous writer ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) a new book for children.", choices: ["write", "writes", "wrote", "writing"], ans: "wrote" },
+    { type: "choice", text: "10. He ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) to my house every Saturday.", choices: ["comes", "coming", "came", "come"], ans: "comes" },
+    { type: "choice", text: "11. They often ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) to the beach in summer.", choices: ["go", "went", "goes", "going"], ans: "go" },
+    { type: "choice", text: "12. My sister ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) to school today because she had a stomachache.", choices: ["is not going", "don't go", "didn't go", "goes"], ans: "didn't go" },
+    { type: "choice", text: "13. I ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) my grandparents every New Year.", choices: ["am visiting", "visit", "visited", "visits"], ans: "visit" },
+    { type: "choice", text: "14. The students went on a school trip yesterday.They ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) their own lunch.", choices: ["bring", "brings", "brought", "bringing"], ans: "brought" },
+    { type: "choice", text: "15. We went to the supermarket and ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) our shopping bag there.", choices: ["leave", "leaves", "left", "leaving"], ans: "left" },
+    { type: "choice", text: "16. Mr. Sato ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) pizza when he was a child, but now he doesn't.", choices: ["likes", "liked", "is liking", "like"], ans: "liked" },
+    { type: "choice", text: "17. You can ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) a free drink if you buy a hamburger.", choices: ["get", "getting", "got", "gets"], ans: "get" },
+    { type: "choice", text: "18. Many people ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) to our show last night.", choices: ["came", "come", "coming", "comes"], ans: "came" },
+    { type: "choice", text: "19. Yesterday, I ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) a beautiful rainbow in the sky!", choices: ["see", "saw", "seeing", "seen"], ans: "saw" },
+    { type: "choice", text: "20. Look! Mr. Sato ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) coffee with a beautiful woman!", choices: ["is drinking", "drinks", "drink", "drank"], ans: "is drinking" }
+  ];
+
+  // 【セクション2：予想問題5問】
+  const testData = [
+    { type: "test-choice", num: "(1)", text: "We went to Odawara on a school trip last Friday. My friends and I visited Odawara Castle and ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) pictures there.", choices: ["draw", "drawing", "to draw", "drew"], ans: "drew" },
+    { type: "test-choice", num: "(2)", text: "<span class='dialog-line'>A: Did Mr. Honda ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) at Narita Airport this morning?</span><span class='dialog-line'>B: Yes. He got there at ten.</span>", choices: ["arrive", "arrived", "arriving", "arrives"], ans: "arrive" },
+    { type: "test-choice", num: "(3)", text: "<span class='dialog-line'>A: Where did you go last weekend?</span><span class='dialog-line'>B: I went to the lake with my father. We ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) a lot of fish there.</span>", choices: ["caught", "taught", "made", "drew"], ans: "caught" },
+    { type: "test-choice", num: "(4)", text: "I ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) to the concert hall by taxi because it was snowing heavily.", choices: ["saw", "went", "worried", "arrived"], ans: "went" },
+    { 
+      type: "test-sort", 
+      num: "(5)",
+      ja: "祖父は私にこの町の歴史について話してくれました。", 
+      lead: "My grandfather",
+      trail: "this town.",
+      words: ["the history", "told", "about", "me", "of"], 
+      correct_2nd: "4", 
+      correct_4th: "1"  
+    }
+  ];
+
+  let currentIdx = 0, quizList = [], userSort = [], selectedChoice = null;
+
+  // 倍率変更のJavascript処理
+  function changePrintScale(val) {
+    document.documentElement.style.setProperty('--print-scale', val);
+    const display = document.getElementById('scaleDisplay');
+    const percent = Math.round(val * 100);
+    if(val == 1.0) display.textContent = "100% (標準)";
+    else if(val < 1.0) display.textContent = `${percent}% (少し縮小)`;
+    else display.textContent = `${percent}% (少し拡大)`;
+  }
+
+  function switchMode(mode) {
+    currentIdx = 0;
+    document.getElementById('btnLearn').className = mode === 'learn' ? 'active-mode' : '';
+    document.getElementById('btnTest').className = mode === 'test' ? 'active-mode' : '';
+    quizList = mode === 'learn' ? [...learnData] : [...testData];
+    loadQuestion();
+  }
+
+  function loadQuestion() {
+    const q = quizList[currentIdx];
+    const ui = document.getElementById('ui-area');
+    const qText = document.getElementById('qText');
+    
+    document.getElementById('progressText').textContent = `あと ${quizList.length - currentIdx} 問 / 全 ${quizList.length} 問`;
+    document.getElementById('nextBtn').style.display = "none";
+    document.getElementById('checkBtn').style.display = "none";
+    document.getElementById('feedback-area').innerHTML = "";
+    ui.innerHTML = "";
+    selectedChoice = null;
+    userSort = [];
+
+    if (q.type === "choice" || q.type === "test-choice") {
+      if(q.type === "choice") {
+        qText.innerHTML = q.text;
+      } else {
+        qText.innerHTML = `<span style="color:var(--primary-blue); font-weight:bold; margin-right:10px;">${q.num}</span>${q.text}`;
+      }
+      
+      const grid = document.createElement('div');
+      grid.className = 'choice-grid';
+      const displayChoices = [...q.choices].sort(() => Math.random() - 0.5);
+      
+      displayChoices.forEach(c => {
+        const btn = document.createElement('button');
+        btn.className = 'choice-card-btn';
+        btn.textContent = c;
+        btn.onclick = () => {
+          document.querySelectorAll('.choice-card-btn').forEach(b => b.classList.remove('selected'));
+          btn.classList.add('selected');
+          selectedChoice = c;
+          document.getElementById('checkBtn').style.display = "block";
+        };
+        grid.appendChild(btn);
+      });
+      ui.appendChild(grid);
+      
+    } else if (q.type === "test-sort") {
+      qText.innerHTML = `<span style="color:var(--primary-blue); font-weight:bold; margin-right:10px;">${q.num}</span>日本文の意味を表すように、下の語句を正しく並べ替えなさい。<br><div style="color:var(--primary-blue); font-weight:bold; margin-top:10px;">${q.ja}</div>`;
+      
+      const frameArea = document.createElement('div');
+      frameArea.style.cssText = "font-size:1.3rem; font-weight:bold; margin-bottom:15px; display:flex; flex-wrap:wrap; align-items:center; gap:8px;";
+      frameArea.innerHTML = `<span>${q.lead}</span>`;
+      
+      const boxContainer = document.createElement('div');
+      boxContainer.className = 'sort-box-container';
+      for(let i=1; i<=5; i++) {
+        const box = document.createElement('div');
+        box.className = 'sort-box';
+        box.id = `box-${i}`;
+        box.textContent = i;
+        if(i === 2 || i === 4) box.classList.add('highlight'); 
+        boxContainer.appendChild(box);
+      }
+      frameArea.appendChild(boxContainer);
+      frameArea.innerHTML += `<span>${q.trail}</span>`;
+      ui.appendChild(frameArea);
+      
+      const area = document.createElement('div');
+      area.className = 'answer-area'; area.id = 'answerArea';
+      area.innerHTML = `<span style="color:#aaa; font-size:1rem;">(下の単語をタップして並べ替え)</span>`;
+      
+      const bank = document.createElement('div');
+      bank.style.textAlign = "center";
+      q.words.forEach((w, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'word-btn'; btn.innerHTML = `<span style="font-size:0.8rem; color:#888; margin-right:5px;">${idx+1}</span>${w}`;
+        btn.onclick = () => {
+          if (btn.classList.contains('used')) return;
+          if (userSort.length === 0) area.innerHTML = "";
+          userSort.push({ text: w, index: idx + 1, btn: btn });
+          btn.classList.add('used'); renderSort();
+        };
+        bank.appendChild(btn);
+      });
+      ui.appendChild(area); ui.appendChild(bank);
+    }
+  }
+
+  function renderSort() {
+    const area = document.getElementById('answerArea'), q = quizList[currentIdx];
+    area.innerHTML = "";
+    for(let i=1; i<=5; i++) document.getElementById(`box-${i}`).textContent = i;
+    
+    userSort.forEach((item, idx) => {
+      const b = document.createElement('span');
+      b.style.cssText = "background:#e1f5fe; padding:4px 8px; border-radius:5px; cursor:pointer; font-weight:bold; margin:2px; border:1px solid var(--primary-blue); color:var(--primary-blue);";
+      b.textContent = item.text;
+      b.onclick = () => { item.btn.classList.remove('used'); userSort.splice(idx, 1); renderSort(); };
+      area.appendChild(b);
+      document.getElementById(`box-${idx+1}`).textContent = item.index;
+    });
+    document.getElementById('checkBtn').style.display = (userSort.length === q.words.length) ? "block" : "none";
+  }
+
+  function handleCheck() {
+    const q = quizList[currentIdx];
+    let isCorrect = false;
+    
+    if (q.type === "test-sort") {
+      const user2nd = userSort[1] ? String(userSort[1].index) : "";
+      const user4th = userSort[3] ? String(userSort[3].index) : "";
+      isCorrect = (user2nd === q.correct_2nd && user4th === q.correct_4th);
+    } else {
+      isCorrect = (selectedChoice === q.ans);
+    }
+    
+    if (isCorrect) {
+      if (q.type === "choice") {
+        document.getElementById('qText').innerHTML = q.text.replace("( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )", `<span class="correct-text">${q.ans}</span>`);
+      } else if (q.type === "test-choice") {
+        document.getElementById('qText').innerHTML = `<span style="color:var(--primary-blue); font-weight:bold; margin-right:10px;">${q.num}</span>` + q.text.replace("( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )", `<span class="correct-text">${q.ans}</span>`);
+      } else if (q.type === "test-sort") {
+        document.getElementById('qText').innerHTML = `<span style="color:var(--primary-blue); font-weight:bold; margin-right:10px;">${q.num}</span>🎉 正解！<br><div style="font-size:1.3rem; color:var(--success-green); margin-top:10px; font-weight:bold;">${q.lead} ${userSort.map(i=>i.text).join(" ")} ${q.trail}</div>`;
+      }
+      document.getElementById('feedback-area').innerHTML = "<b style='color:var(--success-green)'>正解！ Excellent! ✨</b>";
+      document.getElementById('checkBtn').style.display = "none";
+      document.getElementById('nextBtn').style.display = "block";
+    } else { alert("もう一度トライしてみよう！"); }
+  }
+
+  function nextQuestion() {
+    currentIdx++;
+    if (currentIdx < quizList.length) loadQuestion();
+    else {
+        alert("おめでとう！すべての問題をクリアしました。");
+        currentIdx = 0;
+        loadQuestion();
+    }
+  }
+
+  // 🖨️ 印刷用一括ワークシート生成ロジック
+  function generatePrintWorksheet() {
+    const wsContent = document.getElementById('ws-content');
+    wsContent.innerHTML = "";
+
+    // 【大問1】練習問題20問
+    const sec1 = document.createElement('div');
+    sec1.innerHTML = '<div class="ws-section-title">【1】 次の文の( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )に入れるのに最も適切なものを1つ選びなさい。</div>';
+    learnData.forEach((q, i) => {
+      const item = document.createElement('div'); item.className = "ws-question";
+      
+      const printChoices = [...q.choices].sort(() => Math.random() - 0.5);
+      const choiceHTML = printChoices.map((c, idx) => `<span>(${idx+1}) ${c}</span>`).join(" &nbsp;&nbsp; ");
+      
+      const cleanText = q.text.replace(/^\d+\.\s*/, "");
+      item.innerHTML = `<div class="ws-q-main"><div class="ws-q-num">(${i+1})</div><div class="ws-q-text">${cleanText}</div></div><div class="ws-choice-row">${choiceHTML}</div>`;
+      sec1.appendChild(item);
+    });
+    wsContent.appendChild(sec1);
+
+    // 【大問2】予想問題5問
+    const sec2 = document.createElement('div');
+    sec2.className = "ws-page-break";
+    sec2.innerHTML = '<div class="ws-section-title">【2】 つぎの(1)から(4)までの空欄を埋め、(5)は日本文に合うよう並べ替えなさい。</div>';
+    testData.forEach(q => {
+      const item = document.createElement('div'); item.className = "ws-question";
+      
+      if (q.type === "test-choice") {
+        const printChoices = [...q.choices].sort(() => Math.random() - 0.5);
+        const choiceHTML = printChoices.map((c, idx) => `<span>(${idx+1}) ${c}</span>`).join(" &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ");
+        
+        item.innerHTML = `<div class="ws-q-main"><div class="ws-q-num">${q.num}</div><div class="ws-q-text">${q.text}</div></div><div class="ws-choice-row">${choiceHTML}</div>`;
+      } else if (q.type === "test-sort") {
+        const wordOptions = q.words.map((w, idx) => `<span>${idx+1} ${w}</span>`).join(" &nbsp;&nbsp; ");
+        item.innerHTML = `
+          <div class="ws-q-main"><div class="ws-q-num">${q.num}</div><div class="ws-q-text">${q.ja}</div></div>
+          <div class="ws-sort-container">
+            <div style="font-size:1.2rem; letter-spacing:1px; margin-bottom:10px; font-weight: bold;">${q.lead} ＿＿＿＿ <u>&nbsp;★&nbsp;</u> ＿＿＿＿ <u>&nbsp;★&nbsp;</u> ＿＿＿＿ ${q.trail}</div>
+            <div class="ws-sort-select">( &nbsp;${wordOptions}&nbsp; )</div>
+            <div class="ws-sort-lines">
+              <div class="ws-sort-line-item"><div class="ws-line"></div><div class="ws-line-sub">2番目</div></div>
+              <div class="ws-sort-line-item"><div class="ws-line"></div><div class="ws-line-sub">4番目</div></div>
+            </div>
+          </div>`;
+      }
+      sec2.appendChild(item);
+    });
+    wsContent.appendChild(sec2);
+  }
+
+  function initApp() { switchMode('learn'); generatePrintWorksheet(); }
+</script>
+</body>
+</html>
