@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>16章 接続詞 when / if / because / before / after</title>
+<style>
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  :root {
+    --primary-orange: #ff9800;
+    --text-brown: #5d4037;
+    --bg-color: #fff8f0;
+    --border-color: #d7ccc8;
+  }
+
+  body {
+    font-family: "Hiragino Maru Gothic ProN", "Hiragino Maru Gothic Pro", "HGMaruGothicMPRO", sans-serif;
+    background-color: var(--bg-color);
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    color: #333;
+  }
+
+  .top-controls {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    gap: 10px;
+  }
+
+  .header-btn {
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: background-color 0.2s;
+  }
+  .print-launch-btn { background-color: #795548; }
+  .print-launch-btn:hover { background-color: #5d4037; }
+
+  .container {
+    background: white;
+    max-width: 900px;
+    width: 100%;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+    min-height: 550px;
+    margin-top: 40px;
+  }
+
+  h2 {
+    color: #e65100;
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  .progress-container {
+    width: 100%;
+    background-color: #eee;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    height: 8px;
+  }
+  .progress-bar {
+    height: 100%;
+    background-color: var(--primary-orange);
+    width: 0%;
+    transition: width 0.3s;
+  }
+
+  .question-box {
+    font-size: 1.3rem;
+    line-height: 2.0;
+    margin-bottom: 30px;
+    text-align: left;
+    min-height: 100px;
+  }
+
+  .choice-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+
+  .choice-card-btn {
+    padding: 15px 10px;
+    border: 2px solid var(--border-color);
+    background: white;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    text-align: center;
+    color: var(--text-brown);
+    transition: all 0.2s;
+    font-family: inherit;
+    font-weight: bold;
+  }
+
+  .choice-card-btn:hover {
+    border-color: var(--primary-orange);
+    background-color: #fffaf0;
+  }
+
+  .choice-card-btn.selected {
+    border-color: var(--primary-orange);
+    background-color: #fff3e0;
+  }
+
+  .word-btn {
+    background-color: white;
+    color: var(--text-brown);
+    border: 2px solid var(--primary-orange);
+    padding: 15px 25px;
+    border-radius: 25px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin: 8px;
+    display: inline-block;
+  }
+
+  .word-btn.used {
+    border-color: #eee;
+    color: #ccc;
+    pointer-events: none;
+  }
+
+  .correct-word {
+    color: #e74c3c;
+    font-weight: bold;
+    text-decoration: underline;
+    margin: 0 5px;
+  }
+
+  .answer-area {
+    min-height: 80px;
+    border-bottom: 2px solid #ffcc80;
+    margin-bottom: 30px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    background-color: #fffafb;
+    border-radius: 10px;
+  }
+
+  .celebration-text {
+    font-size: 2.4rem;
+    color: #2e7d32;
+    font-weight: bold;
+    text-align: center;
+    animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    line-height: 1.5;
+    padding: 30px 0;
+  }
+
+  @keyframes popIn {
+    0% { transform: scale(0.6); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .action-btn {
+    padding: 18px 50px;
+    font-size: 1.2rem;
+    background-color: #43a047;
+    color: white;
+    border: none;
+    border-radius: 35px;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 4px 0 #2e7d32;
+    display: block;
+    margin: 20px auto;
+  }
+
+  #printable-sheet { display: none; }
+
+  @media (max-width: 600px) {
+    .container { padding: 20px; }
+    .question-box { font-size: 1.1rem; line-height: 1.6; }
+    .choice-grid { grid-template-columns: 1fr; }
+    .choice-card-btn { padding: 15px; font-size: 1rem; text-align: left; }
+    .word-btn { font-size: 1.1rem; padding: 12px 20px; }
+    .celebration-text { font-size: 1.6rem; }
+  }
+
+  /* --- 印刷時のCSS設定 (拡大縮小に追従) --- */
+  @media print {
+    @page {
+      margin: 15mm 12mm;
+    }
+    
+    .container, h2, .top-controls { display: none !important; }
+    
+    body {
+      background-color: white;
+      padding: 0;
+      margin: 0;
+      color: black;
+      font-family: "Hiragino Maru Gothic ProN", "Hiragino Maru Gothic Pro", "HGMaruGothicMPRO", sans-serif;
+      width: 100% !important;
+      max-width: 100% !important;
+      display: block !important;
+    }
+    
+    #printable-sheet {
+      display: block !important;
+      width: 100% !important;
+      max-width: 100% !important;
+    }
+    
+    .sheet-header {
+      text-align: center;
+      border-bottom: 2px solid #333;
+      margin-bottom: 20px;
+      padding-bottom: 5px;
+    }
+    
+    .sheet-title {
+      font-size: 16pt;
+      font-weight: bold;
+      margin: 0 0 10px 0;
+    }
+
+    .section-title {
+      font-size: 11pt;
+      font-weight: bold;
+      margin: 20px 0 12px 0;
+      background-color: #f5f5f5 !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+      padding: 6px;
+      border-left: 4px solid #333;
+    }
+    
+    .sheet-question {
+      margin-bottom: 22px;
+      page-break-inside: avoid;
+    }
+    
+    .q-text {
+      font-size: 10.5pt;
+      margin-bottom: 6px;
+      line-height: 1.4;
+    }
+    
+    .q-line {
+      border-bottom: 1px dashed #666;
+      height: 32px;
+      width: 98%;
+      margin-bottom: 6px;
+    }
+
+    .word-hint {
+      font-size: 9.5pt;
+      color: #444;
+      font-family: "Times New Roman", serif;
+      font-style: italic;
+      padding-left: 15px;
+    }
+    
+    .answer-key-section {
+      page-break-before: always;
+      margin-top: 30px;
+      border-top: 2px dashed #333;
+      padding-top: 15px;
+      font-size: 10pt;
+    }
+    
+    .key-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .key-item { 
+      margin-bottom: 6px; 
+      page-break-inside: avoid;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="top-controls">
+  <button class="header-btn print-launch-btn" onclick="window.print()">🖨️ プリントを作成</button>
+</div>
+
+<h2>16章 接続詞 when / if / because / before / after</h2>
+
+<div class="container">
+  <div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+  
+  <div id="game-content">
+    <div class="question-box" id="qText"></div>
+    <div id="ui-area"></div>
+    <div id="feedback-area" style="text-align:center; min-height: 50px;"></div>
+    <button class="action-btn" id="checkBtn" style="display:none;" onclick="handleCheck()">答えをチェック</button>
+    <button class="action-btn" id="nextBtn" style="display:none; background-color: #ef6c00; box-shadow: 0 4px 0 #b33f00;" onclick="nextQuestion()">次の問題へ</button>
+  </div>
+</div>
+
+<div id="printable-sheet">
+  <div class="sheet-header">
+    <h1 class="sheet-title">16章 接続詞 when / if / because / before / after</h1>
+   
+  </div>
+  <div id="sheet-content"></div>
+  <div class="answer-key-section">
+    <h3>【Answer Key / 解答】</h3>
+    <div id="sheet-answers" class="key-grid"></div>
+  </div>
+</div>
+
+<script>
+  function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  }
+
+  // データ自体の選択肢の並び順をはじめからバラバラに定義
+  const quizData = [
+    // --- 穴埋め問題 ---
+    { type: "choice", base: "I stayed home <span id='blank'>( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )</span> it was raining.", print_base: "I stayed home ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) it was raining.", choices: ["after", "because", "but", "or"], ans: "because", ja: "雨が降っていたので、私は家にいました。" },
+    { type: "choice", base: "<span id='blank'>( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )</span> I was cooking dinner, the phone rang.", print_base: "( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) I was cooking dinner, the phone rang.", choices: ["If", "Before", "But", "When"], ans: "When", ja: "私が夕食を作っていたとき、電話が鳴りました。" },
+    { type: "choice", base: "You can go out <span id='blank'>( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )</span> you finish your homework.", print_base: "You can go out ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) you finish your homework.", choices: ["or", "if", "because", "before"], ans: "if", ja: "宿題を終えたら、出かけてもいいですよ。" },
+    { type: "choice", base: "Wash your hands <span id='blank'>( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )</span> you eat lunch.", print_base: "Wash your hands ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) you eat lunch.", choices: ["after", "because", "before", "or"], ans: "before", ja: "昼食を食べる前に、手を洗いなさい。" },
+    { type: "choice", base: "We went for a walk <span id='blank'>( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )</span> the rain stopped.", print_base: "We went for a walk ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) the rain stopped.", choices: ["but", "or", "if", "after"], ans: "after", ja: "雨がやんだあとで、私たちは散歩に出かけました。" },
+    { type: "choice", base: "Do you want juice <span id='blank'>( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )</span> milk?", print_base: "Do you want juice ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) milk?", choices: ["because", "or", "when", "after"], ans: "or", ja: "ジュースそれとも牛乳がほしいですか。" },
+    { type: "choice", base: "He was tired, <span id='blank'>( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )</span> he practiced soccer.", print_base: "He was tired, ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) he practiced soccer.", choices: ["if", "but", "because", "before"], ans: "but", ja: "彼は疲れていましたが、サッカーの練習をしました。" },
+    { type: "choice", base: "I'll call you <span id='blank'>( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )</span> I arrive at the station.", print_base: "I'll call you ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) I arrive at the station.", choices: ["because", "before", "when", "or"], ans: "when", ja: "駅に到着したとき、あなたに電話します。" },
+    
+    // --- 並べ替え問題 ---
+    { type: "sort", ja: "私が起きたとき、雨が降っていました。", en_full: "It was raining when I got up.", words: ["it was raining", "when", "I got up."] },
+    { type: "sort", ja: "もし明日晴れたら、私たちは公園に行きます。", en_full: "If it is sunny tomorrow, we will go to the park.", words: ["if", "it is sunny tomorrow,", "we will go to the park."] },
+    { type: "sort", ja: "彼女は遅れたので、走りました。", en_full: "She ran because she was late.", words: ["she ran", "because", "she was late."] },
+    { type: "sort", ja: "寝る前に、歯を磨きなさい。", en_full: "Brush your teeth before you go to bed.", words: ["brush your teeth", "before", "you go to bed."] },
+    { type: "sort", ja: "宿題を終えたあとで、私はテレビを見ました。", en_full: "After I finished my homework, I watched TV.", words: ["after", "I finished my homework,", "I watched TV."] },
+    { type: "sort", ja: "お腹が空いていたので、私はサンドイッチを食べました。", en_full: "I ate a sandwich because I was hungry.", words: ["I ate a sandwich", "because", "I was hungry."] },
+    { type: "sort", ja: "時間があるときに、私を手伝ってください。", en_full: "Please help me when you have time.", words: ["please help me", "when", "you have time."] },
+    { type: "sort", ja: "もし時間が空いていれば、私たちに加わってください。", en_full: "Please join us if you are free.", words: ["please join us", "if", "you are free."] }
+  ];
+
+  let currentIdx = 0;
+  let selectedChoice = null;
+  let userSort = [];
+
+  function loadQuestion() {
+    const q = quizData[currentIdx];
+    const ui = document.getElementById('ui-area');
+    const qText = document.getElementById('qText');
+    const feedback = document.getElementById('feedback-area');
+    
+    document.getElementById('progressBar').style.width = `${(currentIdx / quizData.length) * 100}%`;
+    document.getElementById('nextBtn').style.display = "none";
+    document.getElementById('checkBtn').style.display = "none";
+    feedback.innerHTML = "";
+    ui.innerHTML = "";
+    selectedChoice = null;
+
+    if (q.type === "choice") {
+      qText.innerHTML = `<div style="color:#ef6c00; font-size:1rem; margin-bottom:10px; font-weight:bold;">【穴埋め問題】${q.ja}</div>` + q.base;
+      const grid = document.createElement('div');
+      grid.className = 'choice-grid';
+      const shuffledChoices = shuffle([...q.choices]);
+      shuffledChoices.forEach(c => {
+        const btn = document.createElement('button');
+        btn.className = 'choice-card-btn';
+        btn.textContent = c;
+        btn.onclick = () => {
+          document.querySelectorAll('.choice-card-btn').forEach(b => b.classList.remove('selected'));
+          btn.classList.add('selected');
+          selectedChoice = c;
+          document.getElementById('checkBtn').style.display = "block";
+        };
+        grid.appendChild(btn);
+      });
+      ui.appendChild(grid);
+    } else {
+      qText.innerHTML = `<div style="color:#e65100; font-size:1.2rem; margin-bottom:15px; font-weight:bold;">【並べ替え問題】${q.ja}</div>`;
+      const area = document.createElement('div');
+      area.className = 'answer-area';
+      area.id = 'answerArea';
+      area.innerHTML = '<span style="color:#aaa;">下のパーツをタップして並べ替えてね</span>';
+      
+      const bank = document.createElement('div');
+      bank.style.textAlign = "center";
+      
+      userSort = [];
+      const shuffledWords = shuffle([...q.words]);
+      shuffledWords.forEach(w => {
+        const btn = document.createElement('button');
+        btn.className = 'word-btn';
+        btn.textContent = w;
+        btn.onclick = () => {
+          if (btn.classList.contains('used')) return;
+          if (userSort.length === 0) area.innerHTML = "";
+          userSort.push({ text: w, btn: btn });
+          btn.classList.add('used');
+          renderSort();
+        };
+        bank.appendChild(btn);
+      });
+      ui.appendChild(area);
+      ui.appendChild(bank);
+    }
+  }
+
+  function renderSort() {
+    const area = document.getElementById('answerArea');
+    area.innerHTML = "";
+    userSort.forEach((item, idx) => {
+      const b = document.createElement('button');
+      b.className = 'word-btn';
+      b.style.margin = "2px";
+      b.textContent = item.text;
+      b.onclick = () => {
+        item.btn.classList.remove('used');
+        userSort.splice(idx, 1);
+        renderSort();
+        if(userSort.length === 0) area.innerHTML = '<span style="color:#aaa;">下のパーツをタップして並べ替えてね</span>';
+      };
+      area.appendChild(b);
+    });
+    
+    if (userSort.length === quizData[currentIdx].words.length) {
+      document.getElementById('checkBtn').style.display = "block";
+    } else {
+      document.getElementById('checkBtn').style.display = "none";
+    }
+  }
+
+  function handleCheck() {
+    const q = quizData[currentIdx];
+    if (q.type === "choice") {
+      if (selectedChoice === q.ans) {
+        document.getElementById('blank').innerHTML = `<span class="correct-word">${q.ans}</span>`;
+        showSuccess();
+      } else {
+        alert("もういちど考えてみよう！");
+      }
+    } else {
+      let userStr = userSort.map(i => i.text).join(" ");
+      let cleanUser = userStr.replace(/[\.,]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
+      let cleanAns = q.en_full.replace(/[\.,]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
+
+      if (cleanUser === cleanAns) {
+        document.getElementById('ui-area').innerHTML = `<div class="celebration-text">✨ ${q.en_full} ✨</div>`;
+        showSuccess();
+      } else {
+        alert("語順を確認してね！");
+      }
+    }
+  }
+
+  function showSuccess() {
+    document.getElementById('checkBtn').style.display = "none";
+    document.getElementById('nextBtn').style.display = "block";
+  }
+
+  function nextQuestion() {
+    currentIdx++;
+    if (currentIdx < quizData.length) loadQuestion();
+    else {
+      document.getElementById('game-content').innerHTML = "<div class='celebration-text'>🎉 全問クリア！素晴らしい！ 🎉</div>";
+      document.getElementById('progressBar').style.width = "100%";
+    }
+  }
+
+  function generatePrintSheet() {
+    const contentDiv = document.getElementById('sheet-content');
+    const answerDiv = document.getElementById('sheet-answers');
+    
+    contentDiv.innerHTML = "";
+    answerDiv.innerHTML = "";
+
+    // 第1部：穴埋め問題
+    const sec1 = document.createElement('div');
+    sec1.className = 'section-title';
+    sec1.textContent = '【第1部】穴埋め問題：カッコ( )内に入る最も適切な接続詞を語群から選びなさい。';
+    contentDiv.appendChild(sec1);
+    
+    quizData.forEach((item, index) => {
+      if (item.type === "choice") {
+        // 元の順序に依存しないように複製して確実にシャッフル
+        let printChoices = shuffle([...item.choices]);
+
+        const qBlock = document.createElement('div');
+        qBlock.className = 'sheet-question';
+        qBlock.innerHTML = `
+          <div class="q-text">${index + 1}. ${item.ja}</div>
+          <div style="font-size:11pt; font-family:'Times New Roman', serif; margin: 4px 0 4px 20px;">${item.print_base}</div>
+          <div class="word-hint">選択肢：[ ${printChoices.join(' &nbsp;/ &nbsp;')} ]</div>
+        `;
+        contentDiv.appendChild(qBlock);
+
+        const aBlock = document.createElement('div');
+        aBlock.className = 'key-item';
+        aBlock.innerHTML = `<b>（${index + 1}）</b> ${item.ans}`;
+        answerDiv.appendChild(aBlock);
+      }
+    });
+
+    // 第2部：並べ替え問題
+    const sec2 = document.createElement('div');
+    sec2.className = 'section-title';
+    sec2.textContent = '【第2部】並べ替え問題：日本語の意味に合うように、[ ] 内のパーツを正しく並べ替えて英文を完成させなさい。';
+    contentDiv.appendChild(sec2);
+
+    quizData.forEach((item, index) => {
+      if (item.type === "sort") {
+        let shuffledWords = shuffle([...item.words]);
+        
+        const qBlock = document.createElement('div');
+        qBlock.className = 'sheet-question';
+        qBlock.innerHTML = `
+          <div class="q-text">${index + 1}. ${item.ja}</div>
+          <div class="q-line"></div>
+          <div class="word-hint">語群：[ &nbsp;${shuffledWords.join(' &nbsp; / &nbsp; ')}&nbsp; ]</div>
+        `;
+        contentDiv.appendChild(qBlock);
+
+        const aBlock = document.createElement('div');
+        aBlock.className = 'key-item';
+        aBlock.innerHTML = `<b>（${index + 1}）</b> ${item.en_full}`;
+        answerDiv.appendChild(aBlock);
+      }
+    });
+  }
+
+  window.onload = function() {
+    loadQuestion();
+    generatePrintSheet();
+  };
+</script>
+</body>
+</html>
