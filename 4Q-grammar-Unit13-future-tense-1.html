@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>13章 未来形 be going to, will</title>
+<style>
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  :root {
+    --primary-orange: #ff9800;
+    --text-brown: #5d4037;
+    --bg-color: #fff8f0;
+    --border-color: #d7ccc8;
+  }
+
+  body {
+    font-family: "Hiragino Maru Gothic ProN", "Hiragino Maru Gothic Pro", "HGMaruGothicMPRO", sans-serif;
+    background-color: var(--bg-color);
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    color: #333;
+  }
+
+  .top-controls {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    gap: 10px;
+  }
+
+  .header-btn {
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: background-color 0.2s;
+  }
+  .print-launch-btn { background-color: #795548; }
+  .print-launch-btn:hover { background-color: #5d4037; }
+
+  .container {
+    background: white;
+    max-width: 900px;
+    width: 100%;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+    min-height: 550px;
+    margin-top: 40px;
+  }
+
+  h2 {
+    color: #e65100;
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  .progress-container {
+    width: 100%;
+    background-color: #eee;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    height: 8px;
+  }
+  .progress-bar {
+    height: 100%;
+    background-color: var(--primary-orange);
+    width: 0%;
+    transition: width 0.3s;
+  }
+
+  .progress-text {
+    text-align: right;
+    font-size: 0.9rem;
+    color: var(--text-brown);
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+
+  .question-box {
+    font-size: 1.3rem;
+    line-height: 2.0;
+    margin-bottom: 30px;
+    text-align: left;
+    min-height: 100px;
+  }
+
+  .choice-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+
+  .choice-card-btn {
+    padding: 15px 10px;
+    border: 2px solid var(--border-color);
+    background: white;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    text-align: center;
+    color: var(--text-brown);
+    transition: all 0.2s;
+    font-family: inherit;
+    font-weight: bold;
+  }
+
+  .choice-card-btn:hover {
+    border-color: var(--primary-orange);
+    background-color: #fffaf0;
+  }
+
+  .choice-card-btn.selected {
+    border-color: var(--primary-orange);
+    background-color: #fff3e0;
+  }
+
+  .word-btn {
+    background-color: white;
+    color: var(--text-brown);
+    border: 2px solid var(--primary-orange);
+    padding: 12px 20px;
+    border-radius: 25px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin: 6px;
+    display: inline-block;
+  }
+
+  .word-btn.used {
+    border-color: #eee;
+    color: #ccc;
+    pointer-events: none;
+  }
+
+  .correct-word {
+    color: #e74c3c;
+    font-weight: bold;
+    text-decoration: underline;
+    margin: 0 5px;
+  }
+
+  .answer-area {
+    min-height: 80px;
+    border-bottom: 2px solid #ffcc80;
+    margin-bottom: 30px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+    padding: 15px;
+    background-color: #fffafb;
+    border-radius: 10px;
+  }
+
+  .celebration-text {
+    font-size: 2.2rem;
+    color: #2e7d32;
+    font-weight: bold;
+    text-align: center;
+    animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    line-height: 1.6;
+    padding: 30px 0;
+  }
+
+  @keyframes popIn {
+    0% { transform: scale(0.6); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .action-btn {
+    padding: 18px 50px;
+    font-size: 1.2rem;
+    background-color: #43a047;
+    color: white;
+    border: none;
+    border-radius: 35px;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 4px 0 #2e7d32;
+    display: block;
+    margin: 20px auto;
+  }
+
+  #printable-sheet { display: none; }
+
+  @media (max-width: 600px) {
+    .container { padding: 20px; }
+    .question-box { font-size: 1.1rem; line-height: 1.6; }
+    .choice-grid { grid-template-columns: 1fr; }
+    .choice-card-btn { padding: 15px; font-size: 1rem; text-align: left; }
+    .word-btn { font-size: 1.1rem; padding: 10px 15px; margin: 4px; }
+    .celebration-text { font-size: 1.5rem; }
+  }
+
+  /* --- 印刷時のCSS設定 --- */
+  @media print {
+    @page {
+      margin: 15mm 12mm;
+    }
+    
+    .container, h2, .top-controls { display: none !important; }
+    
+    body {
+      background-color: white;
+      padding: 0;
+      margin: 0;
+      color: black;
+      font-family: "Hiragino Maru Gothic ProN", "Hiragino Maru Gothic Pro", "HGMaruGothicMPRO", sans-serif;
+      width: 100% !important;
+      max-width: 100% !important;
+      display: block !important;
+    }
+    
+    #printable-sheet {
+      display: block !important;
+      width: 100% !important;
+      max-width: 100% !important;
+    }
+    
+    .sheet-header {
+      text-align: center;
+      border-bottom: 2px solid #333;
+      margin-bottom: 20px;
+      padding-bottom: 5px;
+    }
+    
+    .sheet-title {
+      font-size: 16pt;
+      font-weight: bold;
+      margin: 0 0 10px 0;
+    }
+
+    .section-title {
+      font-size: 11pt;
+      font-weight: bold;
+      margin: 20px 0 12px 0;
+      background-color: #f5f5f5 !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+      padding: 6px;
+      border-left: 4px solid #333;
+    }
+    
+    .sheet-question {
+      margin-bottom: 22px;
+      page-break-inside: avoid;
+    }
+    
+    .q-text {
+      font-size: 10.5pt;
+      margin-bottom: 6px;
+      line-height: 1.5;
+    }
+    
+    .q-line {
+      border-bottom: 1px dashed #666;
+      height: 32px;
+      width: 98%;
+      margin-bottom: 6px;
+    }
+
+    .word-hint {
+      font-size: 9.5pt;
+      color: #444;
+      font-family: "Times New Roman", serif;
+      font-style: italic;
+      padding-left: 15px;
+    }
+    
+    .answer-key-section {
+      page-break-before: always;
+      margin-top: 30px;
+      border-top: 2px dashed #333;
+      padding-top: 15px;
+      font-size: 10pt;
+    }
+    
+    .key-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .key-item { 
+      margin-bottom: 6px; 
+      page-break-inside: avoid;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="top-controls">
+  <button class="header-btn print-launch-btn" onclick="window.print()">🖨️ プリントを作成</button>
+</div>
+
+<h2>13章 未来形 be going to, will</h2>
+
+<div class="container">
+  <div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+  <div class="progress-text" id="progressText">0 / 0問目</div>
+  
+  <div id="game-content">
+    <div class="question-box" id="qText"></div>
+    <div id="ui-area"></div>
+    <div id="feedback-area" style="text-align:center; min-height: 50px;"></div>
+    <button class="action-btn" id="checkBtn" style="display:none;" onclick="handleCheck()">答えをチェック</button>
+    <button class="action-btn" id="nextBtn" style="display:none; background-color: #ef6c00; box-shadow: 0 4px 0 #b33f00;" onclick="nextQuestion()">次の問題へ</button>
+  </div>
+</div>
+
+<div id="printable-sheet">
+  <div class="sheet-header">
+    <h1 class="sheet-title">13章 未来形 be going to, will</h1>
+  </div>
+  <div id="sheet-content"></div>
+  <div class="answer-key-section">
+    <h3>【Answer Key / 解答】</h3>
+    <div id="sheet-answers" class="key-grid"></div>
+  </div>
+</div>
+
+<script>
+  function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  }
+
+  const quizData = [
+    // --- 穴埋め問題 (10問) ---
+    { type: "choice", base: "I <span id='blank'>( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )</span> to go shopping tomorrow.", print_base: "I ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) to go shopping tomorrow.", choices: ["am going", "will", "go", "going to"], ans: "am going", ja: "私は明日、買い物に行く予定です。" },
+    { type: "choice", base: "<span id='blank'>( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )</span> it rain tomorrow afternoon?", print_base: "( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) it rain tomorrow afternoon?", choices: ["Will", "Is", "Are", "Does"], ans: "Will", ja: "明日の午後、雨が降るでしょうか。" },
+    { type: "choice", base: "We are <span id='blank'>( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )</span> play video games tonight.", print_base: "We are ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) play video games tonight.", choices: ["not going to", "will not", "going not to", "don't"], ans: "not going to", ja: "私たちは今夜、テレビゲームをするつもりはありません。" },
+    { type: "choice", base: "“What <span id='blank'>( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )</span> to do this weekend?”<br>“I'll visit my grandparents.”", print_base: "“What ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) to do this weekend?”<br>“I'll visit my grandparents.”", choices: ["are you going", "will you", "do you go", "you are going"], ans: "are you going", ja: "「今週末は何をする予定ですか。」<br>「祖父母を訪ねるつもりです。」" },
+    { type: "choice", base: "It's hot here. I <span id='blank'>( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )</span> the window for you.", print_base: "It's hot here. I ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) the window for you.", choices: ["will open", "am opening", "going to open", "opened"], ans: "will open", ja: "ここは暑いですね。窓を開けてあげましょう。" },
+    { type: "choice", base: "<span id='blank'>( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )</span> to watch TV after dinner?", print_base: "( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) to watch TV after dinner?", choices: ["Are you going", "Will you", "Do you", "Are you"], ans: "Are you going", ja: "あなたは夕食のあとにテレビを見る予定ですか。" },
+    { type: "choice", base: "They <span id='blank'>( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )</span> come to the party next Sunday.", print_base: "They ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) come to the party next Sunday.", choices: ["will not", "are not", "don't", "not will"], ans: "will not", ja: "彼らは来週の日曜日、パーティーに来ないでしょう。" },
+    { type: "choice", base: "“The phone is ringing.”<br>“I <span id='blank'>( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )</span> answer it.”", print_base: "“The phone is ringing.”<br>“I ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) answer it.”", choices: ["will", "are going to", "do", "are"], ans: "will", choices_print: ["will", "are going to", "do", "are"], ja: "「電話が鳴っているよ。」<br>「僕が出よう。」" },
+    { type: "choice", base: "She is going to <span id='blank'>( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )</span> math tonight.", print_base: "She is going to ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) math tonight.", choices: ["study", "studying", "studies", "studied"], ans: "study", ja: "彼女は今夜、数学を勉強する予定です。" },
+    { type: "choice", base: "<span id='blank'>( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )</span> help me with my homework?", print_base: "( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) help me with my homework?", choices: ["Will you", "Are you", "Do you", "Going to"], ans: "Will you", ja: "私の宿題を手伝ってくれませんか。" },
+    
+    // --- 並べ替え問題 (6問) ---
+    { type: "sort", ja: "明日は何をする予定ですか。", en_full: "What are you going to do tomorrow?", words: ["What", "are", "you", "going", "to", "do", "tomorrow?"] },
+    { type: "sort", ja: "あなたは夕食のあとにテレビを見る予定ですか。", en_full: "Are you going to watch TV after dinner?", words: ["Are", "you", "going", "to", "watch", "TV", "after", "dinner?"] },
+    { type: "sort", ja: "あなたは放課後、サッカーの練習に行きますか。", en_full: "Will you go to soccer practice after school?", words: ["Will", "you", "go", "to", "soccer", "practice", "after", "school?"] },
+    { type: "sort", ja: "私は今日、ピアノの練習をするつもりはありません。", en_full: "I am not going to practice the piano today.", words: ["I", "am", "not", "going", "to", "practice", "the", "piano", "today."] },
+    { type: "sort", ja: "明日は曇りになると思います。", en_full: "I think it will be cloudy tomorrow.", words: ["I", "think", "it", "will", "be", "cloudy", "tomorrow."] },
+    { type: "sort", ja: "私たちは来週の土曜日にバーベキューをするつもりです。", en_full: "We will have a barbecue next Saturday.", words: ["We", "will", "have", "a", "barbecue", "next", "Saturday."] }
+  ];
+
+  let currentIdx = 0;
+  let selectedChoice = null;
+  let userSort = [];
+
+  function loadQuestion() {
+    const q = quizData[currentIdx];
+    const ui = document.getElementById('ui-area');
+    const qText = document.getElementById('qText');
+    const feedback = document.getElementById('feedback-area');
+    
+    document.getElementById('progressBar').style.width = `${((currentIdx) / quizData.length) * 100}%`;
+    document.getElementById('progressText').textContent = `${currentIdx + 1} / ${quizData.length} 問目`;
+    
+    document.getElementById('nextBtn').style.display = "none";
+    document.getElementById('checkBtn').style.display = "none";
+    feedback.innerHTML = "";
+    ui.innerHTML = "";
+    selectedChoice = null;
+
+    if (q.type === "choice") {
+      qText.innerHTML = `<div style="color:#ef6c00; font-size:1rem; margin-bottom:10px; font-weight:bold;">【穴埋め問題】${q.ja}</div>` + q.base;
+      const grid = document.createElement('div');
+      grid.className = 'choice-grid';
+      const shuffledChoices = shuffle([...q.choices]);
+      shuffledChoices.forEach(c => {
+        const btn = document.createElement('button');
+        btn.className = 'choice-card-btn';
+        btn.textContent = c;
+        btn.onclick = () => {
+          document.querySelectorAll('.choice-card-btn').forEach(b => b.classList.remove('selected'));
+          btn.classList.add('selected');
+          selectedChoice = c;
+          document.getElementById('checkBtn').style.display = "block";
+        };
+        grid.appendChild(btn);
+      });
+      ui.appendChild(grid);
+    } else {
+      qText.innerHTML = `<div style="color:#e65100; font-size:1.2rem; margin-bottom:15px; font-weight:bold;">【並べ替え問題】${q.ja}</div>`;
+      const area = document.createElement('div');
+      area.className = 'answer-area';
+      area.id = 'answerArea';
+      area.innerHTML = '<span style="color:#aaa;">下のパーツをタップして並べ替えてね</span>';
+      
+      const bank = document.createElement('div');
+      bank.style.textAlign = "center";
+      
+      userSort = [];
+      const shuffledWords = shuffle([...q.words]);
+      shuffledWords.forEach(w => {
+        const btn = document.createElement('button');
+        btn.className = 'word-btn';
+        btn.textContent = w;
+        btn.onclick = () => {
+          if (btn.classList.contains('used')) return;
+          if (userSort.length === 0) area.innerHTML = "";
+          userSort.push({ text: w, btn: btn });
+          btn.classList.add('used');
+          renderSort();
+        };
+        bank.appendChild(btn);
+      });
+      ui.appendChild(area);
+      ui.appendChild(bank);
+    }
+  }
+
+  function renderSort() {
+    const area = document.getElementById('answerArea');
+    area.innerHTML = "";
+    userSort.forEach((item, idx) => {
+      const b = document.createElement('button');
+      b.className = 'word-btn';
+      b.style.margin = "2px";
+      b.textContent = item.text;
+      b.onclick = () => {
+        item.btn.classList.remove('used');
+        userSort.splice(idx, 1);
+        renderSort();
+        if(userSort.length === 0) area.innerHTML = '<span style="color:#aaa;">下のパーツをタップして並べ替えてね</span>';
+      };
+      area.appendChild(b);
+    });
+    
+    if (userSort.length === quizData[currentIdx].words.length) {
+      document.getElementById('checkBtn').style.display = "block";
+    } else {
+      document.getElementById('checkBtn').style.display = "none";
+    }
+  }
+
+  function handleCheck() {
+    const q = quizData[currentIdx];
+    if (q.type === "choice") {
+      if (selectedChoice === q.ans) {
+        document.getElementById('blank').innerHTML = `<span class="correct-word">${q.ans}</span>`;
+        showSuccess();
+      } else {
+        alert("もういちど考えてみよう！");
+      }
+    } else {
+      let userStr = userSort.map(i => i.text).join(" ");
+      let cleanUser = userStr.replace(/[\.,\?]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
+      let cleanAns = q.en_full.replace(/[\.,\?]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
+
+      if (cleanUser === cleanAns) {
+        document.getElementById('ui-area').innerHTML = `<div class="celebration-text">✨ ${q.en_full} ✨</div>`;
+        showSuccess();
+      } else {
+        alert("語順を確認してね！");
+      }
+    }
+  }
+
+  function showSuccess() {
+    document.getElementById('checkBtn').style.display = "none";
+    document.getElementById('nextBtn').style.display = "block";
+  }
+
+  function nextQuestion() {
+    currentIdx++;
+    if (currentIdx < quizData.length) loadQuestion();
+    else {
+      document.getElementById('game-content').innerHTML = "<div class='celebration-text'>🎉 全問クリア！素晴らしい！ 🎉</div>";
+      document.getElementById('progressBar').style.width = "100%";
+      document.getElementById('progressText').textContent = `${quizData.length} / ${quizData.length} 問目`;
+    }
+  }
+
+  function generatePrintSheet() {
+    const contentDiv = document.getElementById('sheet-content');
+    const answerDiv = document.getElementById('sheet-answers');
+    
+    contentDiv.innerHTML = "";
+    answerDiv.innerHTML = "";
+
+    // 第1部：穴埋め問題
+    const sec1 = document.createElement('div');
+    sec1.className = 'section-title';
+    sec1.textContent = '【第1部】穴埋め問題：カッコ( )内に入る最も適切な語句を語群から選びなさい。';
+    contentDiv.appendChild(sec1);
+    
+    let choiceCount = 1;
+    quizData.forEach((item, index) => {
+      if (item.type === "choice") {
+        let printChoices = shuffle([...item.choices]);
+
+        const qBlock = document.createElement('div');
+        qBlock.className = 'sheet-question';
+        qBlock.innerHTML = `
+          <div class="q-text">${choiceCount}. ${item.ja}</div>
+          <div style="font-size:11pt; font-family:'Times New Roman', serif; margin: 4px 0 4px 20px;">${item.print_base}</div>
+          <div class="word-hint">選択肢：[ ${printChoices.join(' &nbsp;/ &nbsp;')} ]</div>
+        `;
+        contentDiv.appendChild(qBlock);
+
+        const aBlock = document.createElement('div');
+        aBlock.className = 'key-item';
+        aBlock.innerHTML = `<b>（${choiceCount}）</b> ${item.ans}`;
+        answerDiv.appendChild(aBlock);
+        choiceCount++;
+      }
+    });
+
+    // 第2部：並べ替え問題
+    const sec2 = document.createElement('div');
+    sec2.className = 'section-title';
+    sec2.textContent = '【第2部】並べ替え問題：日本語の意味に合うように、[ ] 内のパーツを正しく並べ替えて英文を完成させなさい。';
+    contentDiv.appendChild(sec2);
+
+    let sortCount = 1;
+    quizData.forEach((item, index) => {
+      if (item.type === "sort") {
+        let shuffledWords = shuffle([...item.words]);
+        
+        const qBlock = document.createElement('div');
+        qBlock.className = 'sheet-question';
+        qBlock.innerHTML = `
+          <div class="q-text">${sortCount}. ${item.ja}</div>
+          <div class="q-line"></div>
+          <div class="word-hint">語群：[ &nbsp;${shuffledWords.join(' &nbsp; / &nbsp; ')}&nbsp; ]</div>
+        `;
+        contentDiv.appendChild(qBlock);
+
+        const aBlock = document.createElement('div');
+        aBlock.className = 'key-item';
+        aBlock.innerHTML = `<b>（${sortCount}）</b> ${item.en_full}`;
+        answerDiv.appendChild(aBlock);
+        sortCount++;
+      }
+    });
+  }
+
+  window.onload = function() {
+    loadQuestion();
+    generatePrintSheet();
+  };
+</script>
+</body>
+</html>
