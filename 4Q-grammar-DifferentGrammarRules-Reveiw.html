@@ -264,7 +264,7 @@
       <button class="action-btn" id="s1-check-btn" onclick="checkStep1()">STEP 1 完了！</button>
     </div>
 
-    <!-- STEP 2: 並べ替え（旧STEP 3） -->
+    <!-- STEP 2: 並べ替え -->
     <div class="step-card" id="step2-card" style="display:none;">
       <div class="step-header">
         <span class="step-badge">STEP 2</span>
@@ -295,14 +295,14 @@ function shuffle(array) {
   return arr;
 }
 
-// 固定順の選択肢
+// 過去形・過去進行形を含めた固定選択肢
 const FIXED_GRAMMAR_KEYS = [
-  "現在形", "現在進行形 (-ing)", "be動詞",
+  "現在形", "過去形", "現在進行形 (-ing)", "過去進行形 (-ing)", "be動詞",
   "can", "will / be going to", "must / have to", "should", 
   "命令形", "There is / are"
 ];
 
-// 20問データ
+// 全20問データ（過去形・過去進行形をしっかりカバー）
 const baseQuestionsData = [
   {
     situation: "「私は週末に学校へ行きません」と言いたい時",
@@ -317,10 +317,16 @@ const baseQuestionsData = [
     correct: "Look! My brother is running in the park."
   },
   {
-    situation: "「彼女は有名なピアノの先生です」と言いたい時",
-    key: "be動詞",
-    words: ["She", "is", "a", "famous", "piano", "teacher."],
-    correct: "She is a famous piano teacher."
+    situation: "「私は昨日、公園でサッカーをしました」と言いたい時",
+    key: "過去形",
+    words: ["I", "played", "soccer", "in", "the", "park", "yesterday."],
+    correct: "I played soccer in the park yesterday."
+  },
+  {
+    situation: "「その時、私は夕食を食べていました」と言いたい時",
+    key: "過去進行形 (-ing)",
+    words: ["I", "was", "eating", "dinner", "at", "that", "time."],
+    correct: "I was eating dinner at that time."
   },
   {
     situation: "「彼らは昨日、図書館にいました」と言いたい時",
@@ -365,22 +371,16 @@ const baseQuestionsData = [
     correct: "There is a big dog under the tree."
   },
   {
-    situation: "「ケンは毎週火曜日にサッカーをします」と言いたい時",
-    key: "現在形",
-    words: ["Ken", "plays", "soccer", "every", "Tuesday."],
-    correct: "Ken plays soccer every Tuesday."
+    situation: "「彼女は新しい本を買いました」と言いたい時",
+    key: "過去形",
+    words: ["She", "bought", "a", "new", "book."],
+    correct: "She bought a new book."
   },
   {
-    situation: "「私たちは今、英語を勉強しています」と言いたい時",
-    key: "現在進行形 (-ing)",
-    words: ["We", "are", "studying", "English", "right", "now."],
-    correct: "We are studying English right now."
-  },
-  {
-    situation: "「昨晩、とても体調が悪かったです」と言いたい時",
-    key: "be動詞",
-    words: ["I", "was", "very", "sick", "last", "night."],
-    correct: "I was very sick last night."
+    situation: "「彼らはその時、テレビを見ていました」と言いたい時",
+    key: "過去進行形 (-ing)",
+    words: ["They", "were", "watching", "TV", "at", "that", "time."],
+    correct: "They were watching TV at that time."
   },
   {
     situation: "「フランス語を話すことができますか？」と言いたい時",
