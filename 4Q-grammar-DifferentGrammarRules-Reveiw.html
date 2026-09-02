@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>英検4級 文法マスター 20問チャレンジ</title>
+<style>
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  :root {
+    --primary-orange: #ff9800;
+    --primary-hover: #e65100;
+    --text-brown: #5d4037;
+    --bg-color: #fff8f0;
+    --border-color: #d7ccc8;
+    --accent-green: #2ecc71;
+  }
+
+  body {
+    font-family: "Hiragino Maru Gothic ProN", "Hiragino Maru Gothic Pro", "HGMaruGothicMPRO", "M PLUS Rounded 1c", sans-serif;
+    background-color: var(--bg-color);
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px;
+    color: #333;
+  }
+
+  .container {
+    background: white;
+    max-width: 850px;
+    width: 100%;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+    min-height: 520px;
+    margin-top: 10px;
+  }
+
+  h2 {
+    color: #e65100;
+    text-align: center;
+    margin: 0 0 15px 0;
+    font-size: 1.6rem;
+  }
+
+  /* タブUI */
+  .tab-container {
+    display: flex;
+    justify-content: flex-start;
+    gap: 6px;
+    margin-bottom: 15px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+  }
+
+  .tab-btn {
+    padding: 6px 14px;
+    border: 2px solid var(--primary-orange);
+    background-color: white;
+    color: var(--text-brown);
+    font-weight: bold;
+    border-radius: 16px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+
+  .tab-btn:hover {
+    background-color: #fff3e0;
+  }
+
+  .tab-btn.active {
+    background-color: var(--primary-orange);
+    color: white;
+  }
+
+  .progress-container {
+    width: 100%;
+    background-color: #eee;
+    border-radius: 10px;
+    margin-bottom: 6px;
+    height: 10px;
+  }
+  
+  .progress-bar {
+    height: 100%;
+    background-color: var(--primary-orange);
+    width: 5%;
+    border-radius: 10px;
+    transition: width 0.3s;
+  }
+
+  .progress-text {
+    text-align: right;
+    font-size: 0.95rem;
+    color: var(--text-brown);
+    font-weight: bold;
+    margin-bottom: 15px;
+  }
+
+  /* ステップカード */
+  .step-card {
+    background: #fffaf0;
+    border: 2px dashed #ffe0b2;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  .step-header {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #e65100;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .step-badge {
+    background-color: var(--primary-orange);
+    color: white;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+  }
+
+  .question-instruction {
+    font-size: 1.35rem;
+    font-weight: bold;
+    color: var(--text-brown);
+    margin-bottom: 15px;
+    line-height: 1.5;
+  }
+
+  .select-area {
+    font-size: 1.2rem;
+    line-height: 1.8;
+    margin-bottom: 15px;
+  }
+
+  select {
+    padding: 10px 14px;
+    font-size: 1.2rem;
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    background-color: white;
+    color: var(--text-brown);
+    font-family: inherit;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  select:focus {
+    border-color: var(--primary-orange);
+    outline: none;
+  }
+
+  /* 並べ替え問題スタイル */
+  .word-btn {
+    background-color: white;
+    color: var(--text-brown);
+    border: 2px solid var(--primary-orange);
+    padding: 10px 18px;
+    border-radius: 25px;
+    font-size: 1.25rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin: 5px;
+    display: inline-block;
+    font-family: inherit;
+  }
+
+  .word-btn.used {
+    border-color: #eee;
+    color: #ccc;
+    pointer-events: none;
+  }
+
+  .answer-area {
+    min-height: 80px;
+    border-bottom: 3px solid #ffcc80;
+    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+    background-color: #fffafb;
+    border-radius: 10px;
+  }
+
+  .celebration-text {
+    font-size: 1.8rem;
+    color: #2e7d32;
+    font-weight: bold;
+    text-align: center;
+    line-height: 1.6;
+    padding: 20px 0;
+  }
+
+  .action-btn {
+    padding: 14px 40px;
+    font-size: 1.2rem;
+    background-color: #43a047;
+    color: white;
+    border: none;
+    border-radius: 35px;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 4px 0 #2e7d32;
+    display: block;
+    margin: 15px auto;
+    font-family: inherit;
+    transition: transform 0.1s, background-color 0.2s;
+  }
+
+  .action-btn:hover {
+    background-color: #388e3c;
+  }
+
+  .action-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #2e7d32;
+  }
+
+  @media (max-width: 600px) {
+    .container { padding: 15px; }
+    .question-instruction { font-size: 1.15rem; }
+    .word-btn { font-size: 1rem; padding: 8px 14px; }
+    select { font-size: 1rem; padding: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<h2>英検4級 文法マスター 20問チャレンジ</h2>
+
+<div class="container">
+  <div class="tab-container" id="tabContainer"></div>
+
+  <div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+  <div class="progress-text" id="progressText">問 1 / 20</div>
+
+  <div id="game-content">
+    <!-- STEP 1: 文法ルール選択 -->
+    <div class="step-card" id="step1-card">
+      <div class="step-header">
+        <span class="step-badge">STEP 1</span>
+        <span>使う文法（キーとなる語）を選ぼう！</span>
+      </div>
+      <div class="question-instruction" id="s1-inst"></div>
+      <div class="select-area" id="s1-select-area"></div>
+      <button class="action-btn" id="s1-check-btn" onclick="checkStep1()">STEP 1 完了！</button>
+    </div>
+
+    <!-- STEP 2: 並べ替え（旧STEP 3） -->
+    <div class="step-card" id="step2-card" style="display:none;">
+      <div class="step-header">
+        <span class="step-badge">STEP 2</span>
+        <span>完成させた文を作ろう！（並べ替え）</span>
+      </div>
+      <div class="question-instruction" id="s2-inst"></div>
+      <div class="answer-area" id="answerArea"></div>
+      <div id="wordBank" style="text-align: center;"></div>
+      <button class="action-btn" id="s2-check-btn" style="display:none;" onclick="checkStep2()">答えをチェック</button>
+    </div>
+
+    <!-- 結果カード -->
+    <div id="result-card" class="step-card" style="display:none; text-align:center;">
+      <div class="celebration-text" id="result-text"></div>
+    </div>
+
+    <button class="action-btn" id="nextBtn" style="display:none; background-color: #ef6c00; box-shadow: 0 4px 0 #b33f00;" onclick="nextQuestion()">次の問題へ ➔</button>
+  </div>
+</div>
+
+<script>
+function shuffle(array) {
+  let arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+// 固定順の選択肢
+const FIXED_GRAMMAR_KEYS = [
+  "現在形", "現在進行形 (-ing)", "be動詞",
+  "can", "will / be going to", "must / have to", "should", 
+  "命令形", "There is / are"
+];
+
+// 20問データ
+const baseQuestionsData = [
+  {
+    situation: "「私は週末に学校へ行きません」と言いたい時",
+    key: "現在形",
+    words: ["I", "don't", "go", "to", "school", "on", "weekends."],
+    correct: "I don't go to school on weekends."
+  },
+  {
+    situation: "「見て！弟が公園で走っているよ」と言いたい時",
+    key: "現在進行形 (-ing)",
+    words: ["Look!", "My", "brother", "is", "running", "in", "the", "park."],
+    correct: "Look! My brother is running in the park."
+  },
+  {
+    situation: "「彼女は有名なピアノの先生です」と言いたい時",
+    key: "be動詞",
+    words: ["She", "is", "a", "famous", "piano", "teacher."],
+    correct: "She is a famous piano teacher."
+  },
+  {
+    situation: "「彼らは昨日、図書館にいました」と言いたい時",
+    key: "be動詞",
+    words: ["They", "were", "at", "the", "library", "yesterday."],
+    correct: "They were at the library yesterday."
+  },
+  {
+    situation: "「お父さんはとても速く泳ぐことができます」と言いたい時",
+    key: "can",
+    words: ["My", "father", "can", "swim", "very", "fast."],
+    correct: "My father can swim very fast."
+  },
+  {
+    situation: "「明日、おばあちゃんを訪ねる予定です」と言いたい時",
+    key: "will / be going to",
+    words: ["I", "am", "going", "to", "visit", "my", "grandmother", "tomorrow."],
+    correct: "I am going to visit my grandmother tomorrow."
+  },
+  {
+    situation: "「夕食の前に宿題を終わらせなければなりません」と言いたい時",
+    key: "must / have to",
+    words: ["You", "must", "finish", "your", "homework", "before", "dinner."],
+    correct: "You must finish your homework before dinner."
+  },
+  {
+    situation: "「今夜は早く寝た方がいいよ」と言いたい時",
+    key: "should",
+    words: ["You", "should", "go", "to", "bed", "early", "tonight."],
+    correct: "You should go to bed early tonight."
+  },
+  {
+    situation: "「窓を開けてください」と言いたい時",
+    key: "命令形",
+    words: ["Open", "the", "window,", "please."],
+    correct: "Open the window, please."
+  },
+  {
+    situation: "「木の下に大きな犬がいます」と言いたい時",
+    key: "There is / are",
+    words: ["There", "is", "a", "big", "dog", "under", "the", "tree."],
+    correct: "There is a big dog under the tree."
+  },
+  {
+    situation: "「ケンは毎週火曜日にサッカーをします」と言いたい時",
+    key: "現在形",
+    words: ["Ken", "plays", "soccer", "every", "Tuesday."],
+    correct: "Ken plays soccer every Tuesday."
+  },
+  {
+    situation: "「私たちは今、英語を勉強しています」と言いたい時",
+    key: "現在進行形 (-ing)",
+    words: ["We", "are", "studying", "English", "right", "now."],
+    correct: "We are studying English right now."
+  },
+  {
+    situation: "「昨晩、とても体調が悪かったです」と言いたい時",
+    key: "be動詞",
+    words: ["I", "was", "very", "sick", "last", "night."],
+    correct: "I was very sick last night."
+  },
+  {
+    situation: "「フランス語を話すことができますか？」と言いたい時",
+    key: "can",
+    words: ["Can", "you", "speak", "French?"],
+    correct: "Can you speak French?"
+  },
+  {
+    situation: "「今晩は雨が降るでしょう」と言いたい時",
+    key: "will / be going to",
+    words: ["It", "will", "rain", "this", "evening."],
+    correct: "It will rain this evening."
+  },
+  {
+    situation: "「生徒は制服を着なければなりません」と言いたい時",
+    key: "must / have to",
+    words: ["Students", "have", "to", "wear", "school", "uniforms."],
+    correct: "Students have to wear school uniforms."
+  },
+  {
+    situation: "「もっと野菜を食べた方がいいよ」と言いたい時",
+    key: "should",
+    words: ["You", "should", "eat", "more", "vegetables."],
+    correct: "You should eat more vegetables."
+  },
+  {
+    situation: "「その汚い箱に触ってはいけません」と言いたい時",
+    key: "命令形",
+    words: ["Don't", "touch", "that", "dirty", "box."],
+    correct: "Don't touch that dirty box."
+  },
+  {
+    situation: "「机の上に本が4冊あります」と言いたい時",
+    key: "There is / are",
+    words: ["There", "are", "four", "books", "on", "the", "desk."],
+    correct: "There are four books on the desk."
+  },
+  {
+    situation: "「彼らはその結果に満足しています」と言いたい時",
+    key: "be動詞",
+    words: ["They", "are", "happy", "with", "the", "results."],
+    correct: "They are happy with the results."
+  }
+];
+
+let questionsData = [];
+let currentIdx = 0;
+let userSort = [];
+
+function initGame() {
+  questionsData = shuffle(baseQuestionsData);
+  initTabs();
+  loadPage();
+}
+
+function initTabs() {
+  const container = document.getElementById('tabContainer');
+  container.innerHTML = "";
+  questionsData.forEach((p, idx) => {
+    const btn = document.createElement('button');
+    btn.className = `tab-btn ${idx === currentIdx ? 'active' : ''}`;
+    btn.textContent = `問 ${idx + 1}`;
+    btn.onclick = () => {
+      currentIdx = idx;
+      renderTabs();
+      loadPage();
+    };
+    container.appendChild(btn);
+  });
+}
+
+function renderTabs() {
+  const btns = document.querySelectorAll('.tab-btn');
+  btns.forEach((btn, idx) => {
+    if(idx === currentIdx) {
+      btn.classList.add('active');
+      btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    } else {
+      btn.classList.remove('active');
+    }
+  });
+}
+
+function loadPage() {
+  const data = questionsData[currentIdx];
+
+  document.getElementById('progressBar').style.width = `${((currentIdx + 1) / questionsData.length) * 100}%`;
+  document.getElementById('progressText').textContent = `問 ${currentIdx + 1} / ${questionsData.length}`;
+
+  document.getElementById('step1-card').style.display = "block";
+  document.getElementById('s1-check-btn').style.display = "block";
+
+  document.getElementById('step2-card').style.display = "none";
+  document.getElementById('s2-check-btn').style.display = "none";
+
+  document.getElementById('result-card').style.display = "none";
+  document.getElementById('nextBtn').style.display = "none";
+
+  // STEP 1
+  document.getElementById('s1-inst').textContent = data.situation;
+  renderFixedSelect('s1-select-area', 's1-select', FIXED_GRAMMAR_KEYS);
+
+  // STEP 2 (並べ替え)
+  document.getElementById('s2-inst').textContent = data.situation;
+  document.getElementById('answerArea').innerHTML = '<span style="color:#aaa; font-size:1.1rem;">下のパーツをタップして並べ替えてね</span>';
+
+  setupSortArea(data);
+}
+
+function renderFixedSelect(containerId, selectId, optionsArray) {
+  const area = document.getElementById(containerId);
+  area.innerHTML = `
+    <select id="${selectId}">
+      <option value="">-- 選んでね --</option>
+      ${optionsArray.map(o => `<option value="${o}">${o}</option>`).join('')}
+    </select>
+  `;
+}
+
+function checkStep1() {
+  const data = questionsData[currentIdx];
+  const val = document.getElementById('s1-select').value;
+
+  if (val === data.key) {
+    document.getElementById('s1-check-btn').style.display = "none";
+    document.getElementById('step2-card').style.display = "block";
+  } else {
+    alert("もう一度、選択肢を見直してみよう！");
+  }
+}
+
+function setupSortArea(data) {
+  userSort = [];
+  const bank = document.getElementById('wordBank');
+  if (!bank) return;
+  bank.innerHTML = "";
+
+  const shuffledWords = shuffle([...data.words]);
+  shuffledWords.forEach(w => {
+    const btn = document.createElement('button');
+    btn.className = 'word-btn';
+    btn.textContent = w;
+    btn.onclick = () => {
+      if (btn.classList.contains('used')) return;
+      const area = document.getElementById('answerArea');
+      if (userSort.length === 0) area.innerHTML = "";
+      userSort.push({ text: w, btn: btn });
+      btn.classList.add('used');
+      renderSort();
+    };
+    bank.appendChild(btn);
+  });
+}
+
+function renderSort() {
+  const area = document.getElementById('answerArea');
+  area.innerHTML = "";
+  userSort.forEach((item, idx) => {
+    const b = document.createElement('button');
+    b.className = 'word-btn';
+    b.textContent = item.text;
+    b.onclick = () => {
+      item.btn.classList.remove('used');
+      userSort.splice(idx, 1);
+      renderSort();
+      if(userSort.length === 0) area.innerHTML = '<span style="color:#aaa; font-size:1.1rem;">下のパーツをタップして並べ替えてね</span>';
+    };
+    area.appendChild(b);
+  });
+
+  const checkBtn = document.getElementById('s2-check-btn');
+  if (userSort.length === questionsData[currentIdx].words.length) {
+    checkBtn.style.display = "block";
+  } else {
+    checkBtn.style.display = "none";
+  }
+}
+
+function checkStep2() {
+  const data = questionsData[currentIdx];
+  let userStr = userSort.map(i => i.text).join(" ");
+  
+  let cleanUser = userStr.replace(/[.,?!]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
+  let cleanCorrect = data.correct.replace(/[.,?!]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
+
+  if (cleanUser === cleanCorrect) {
+    document.getElementById('step2-card').style.display = "none";
+    
+    const resultCard = document.getElementById('result-card');
+    resultCard.style.display = "block";
+    document.getElementById('result-text').innerHTML = `
+      ✨ 大正解！ PERFECT! ✨<br>
+      <span style="font-size:1.5rem; color:#333;">${data.correct}</span>
+    `;
+    
+    document.getElementById('nextBtn').style.display = "block";
+  } else {
+    alert("単語の順番を確認してみよう！");
+  }
+}
+
+function nextQuestion() {
+  if (currentIdx < questionsData.length - 1) {
+    currentIdx++;
+    renderTabs();
+    loadPage();
+  } else {
+    document.getElementById('game-content').innerHTML = `
+      <div class="celebration-text">
+        🎉 全20問クリア！素晴らしい！ 🎉<br>
+        <span style="font-size:1.3rem; color:#5d4037;">英検4級の重要文法マスター達成です！</span>
+      </div>
+    `;
+    document.getElementById('progressBar').style.width = "100%";
+    document.getElementById('progressText').textContent = "20 / 20 完成！";
+  }
+}
+
+window.onload = function() {
+  initGame();
+};
+</script>
+</body>
+</html>
