@@ -27,7 +27,8 @@
             list-style: none;
             padding: 0;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            /* 常に3カラム（3等分）に固定 */
+            grid-template-columns: repeat(3, minmax(0, 1fr));
             gap: 12px;
             max-width: 1000px;
             margin: 0 auto;
@@ -43,12 +44,25 @@
             font-weight: bold;
             transition: all 0.2s ease;
             box-shadow: 0 4px 0 #e6b800; /* ボタンっぽく立体的な影 */
+            height: 100%; /* 高さを統一 */
+            box-sizing: border-box;
         }
         /* マウスを乗せた時やタップした時 */
         li a:hover {
             transform: translateY(2px); /* 少し沈む動き */
             box-shadow: 0 2px 0 #e6b800;
             background-color: #fffdf0;
+        }
+
+        /* スマホなど画面幅が狭い場合の調整（オプション） */
+        @media (max-width: 600px) {
+            ul {
+                gap: 8px; /* 隙間を少し詰める */
+            }
+            li a {
+                font-size: 13px; /* 文字サイズを少し小さくして溢れを防止 */
+                padding: 10px 4px;
+            }
         }
     </style>
 </head>
@@ -122,7 +136,7 @@
         </a></li>
 
         <li><a href="4Q-grammar-Unit15-infinitives-gerunds.html">15章 不定詞&動名詞<br>
-       不定詞の副詞的用法<br>
+        不定詞の副詞的用法<br>
             不定詞の形容詞的用法<br>
             不定詞の名詞的用法&動名詞<br>
         並べ替え問題などなど<br>
@@ -130,14 +144,14 @@
         </a></li>
 
         <li><a href="4Q-grammar-Unit15-adverbial-infinitives.html">15章 不定詞副詞的用法<br>
-       1. フレーズを作る<br>
+        1. フレーズを作る<br>
             2. 並べ替え問題<br>
             3. ワークシート(センテンス構築)<br>
             パスワード入力、全5問
         </a></li>
 
         <li><a href="4Q-grammar-Unit15-adjectivial-infinitives.html">15章 不定詞形容詞的用法<br>
-       1. フレーズを作る<br>
+        1. フレーズを作る<br>
             2. 並べ替え問題<br>
             パスワード入力、全5問
         </a></li>
@@ -206,7 +220,7 @@
     </a></li>
 
         <li><a href="4Q-grammar-p66-67-Test">p66-67 予想テスト<br>
-       範囲は16章〜20章
+        範囲は16章〜20章
         </a></li>
 
         <li><a href="4Q-grammar-Unit21-Permission-Request.html">21章 許可・依頼の表現<br>
