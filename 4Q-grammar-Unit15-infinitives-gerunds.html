@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>15章 to + 動詞の原形、動名詞</title>
+<title>15章 動名詞＆不定詞の名詞的用法</title>
 <style>
   *, *::before, *::after {
     box-sizing: border-box;
@@ -15,6 +15,7 @@
     --text-brown: #5d4037;
     --bg-color: #fff8f0;
     --border-color: #d7ccc8;
+    --accent-green: #2ecc71;
   }
 
   body {
@@ -28,28 +29,6 @@
     color: #333;
   }
 
-  .top-controls {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    display: flex;
-    gap: 10px;
-  }
-
-  .header-btn {
-    color: white;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    font-weight: bold;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    transition: background-color 0.2s;
-  }
-  .print-launch-btn { background-color: #795548; }
-  .print-launch-btn:hover { background-color: #5d4037; }
-
   .container {
     background: white;
     max-width: 900px;
@@ -58,7 +37,7 @@
     border-radius: 20px;
     box-shadow: 0 8px 24px rgba(0,0,0,0.05);
     min-height: 580px;
-    margin-top: 40px;
+    margin-top: 20px;
   }
 
   h2 {
@@ -67,7 +46,7 @@
     margin-bottom: 20px;
   }
 
-  /* タブUIのスタイル */
+  /* タブUI */
   .tab-container {
     display: flex;
     justify-content: center;
@@ -98,146 +77,134 @@
     color: white;
   }
 
-  .progress-container {
-    width: 100%;
-    background-color: #eee;
-    border-radius: 10px;
-    margin-bottom: 10px;
-    height: 8px;
-  }
-  .progress-bar {
-    height: 100%;
-    background-color: var(--primary-orange);
-    width: 0%;
-    transition: width 0.3s;
-  }
-
-  .progress-text {
-    text-align: right;
-    font-size: 0.9rem;
-    color: var(--text-brown);
-    font-weight: bold;
-    margin-bottom: 20px;
-  }
-
-  .question-box {
-    font-size: 1.3rem;
-    line-height: 1.8;
-    margin-bottom: 30px;
-    text-align: left;
-    min-height: 90px;
-    font-family: inherit;
-  }
-
-  .choice-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
-    margin-bottom: 20px;
-  }
-
-  .choice-card-btn {
-    padding: 15px 10px;
-    border: 2px solid var(--border-color);
-    background: white;
-    border-radius: 12px;
-    cursor: pointer;
-    font-size: 1.1rem;
-    text-align: center;
-    color: var(--text-brown);
-    transition: all 0.2s;
-    font-family: inherit;
-    font-weight: bold;
-  }
-
-  .choice-card-btn:hover {
-    border-color: var(--primary-orange);
-    background-color: #fffaf0;
-  }
-
-  .choice-card-btn.selected {
-    border-color: var(--primary-orange);
-    background-color: #fff3e0;
-  }
-
-  /* ◯/❌専用ボタンのデザイン */
-  .ox-grid {
-    display: flex;
-    justify-content: center;
-    gap: 30px;
+  /* ステップカード */
+  .card {
+    background: #fffaf0;
+    border: 2px dashed #ffe0b2;
+    border-radius: 15px;
+    padding: 25px;
     margin-bottom: 25px;
   }
 
-  .ox-btn {
-    width: 120px;
-    height: 90px;
-    font-size: 2.5rem;
+  .card-header {
+    font-size: 1.2rem;
     font-weight: bold;
-    border: 3px solid var(--border-color);
-    background: white;
-    border-radius: 20px;
-    cursor: pointer;
-    transition: all 0.2s;
-    color: var(--text-brown);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: inherit;
+    color: #e65100;
+    margin-bottom: 15px;
   }
 
-  .ox-btn:hover {
-    border-color: var(--primary-orange);
-    background-color: #fffaf0;
-  }
-
-  .ox-btn.selected {
-    border-color: var(--primary-orange);
-    background-color: #fff3e0;
-  }
-
-  /* 直感的理由選択（3択） */
-  .reason-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    margin-bottom: 20px;
-  }
-
-  .reason-card-btn {
-    padding: 18px 10px;
-    border: 2px solid var(--border-color);
-    background: white;
-    border-radius: 15px;
-    cursor: pointer;
+  .question-instruction {
     font-size: 1.1rem;
-    text-align: center;
+    font-weight: bold;
     color: var(--text-brown);
-    transition: all 0.2s;
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+
+  /* チップ＆ドロップエリア */
+  .chip-pool {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    min-height: 48px;
+    padding: 10px;
+    background: #fff3e0;
+    border-radius: 12px;
+  }
+
+  .interactive-chip {
+    padding: 8px 16px;
+    background: white;
+    border: 2px solid var(--primary-orange);
+    border-radius: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    user-select: none;
+    transition: transform 0.1s, background-color 0.2s;
+  }
+
+  .interactive-chip.selected {
+    background: var(--primary-orange);
+    color: white;
+    transform: scale(1.05);
+  }
+
+  .drop-targets {
+    display: flex;
+    gap: 15px;
+    justify-content: space-around;
+    flex-wrap: wrap;
+  }
+
+  .target-box {
+    flex: 1;
+    min-width: 200px;
+    background: white;
+    border: 2px dashed var(--primary-orange);
+    border-radius: 12px;
+    padding: 12px;
+    min-height: 140px;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+
+  .target-box:hover {
+    background-color: #fffde7;
+  }
+
+  .target-title {
+    font-weight: bold;
+    color: var(--text-brown);
+    border-bottom: 2px solid #ffe0b2;
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+  }
+
+  .assigned-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
+  }
+
+  /* Part 3 用スタイル */
+  .q-item {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ffe0b2;
+    font-size: 1.1rem;
+  }
+
+  select {
+    padding: 6px 12px;
+    font-size: 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    background-color: white;
+    color: var(--text-brown);
     font-family: inherit;
     font-weight: bold;
+    cursor: pointer;
+    margin: 0 5px;
   }
 
-  .reason-card-btn:hover {
-    border-color: var(--primary-orange);
-    background-color: #fffaf0;
-  }
-
-  .reason-card-btn.selected {
-    border-color: var(--primary-orange);
-    background-color: #fff3e0;
-  }
-
+  /* Part 4 用スタイル */
   .word-btn {
     background-color: white;
     color: var(--text-brown);
     border: 2px solid var(--primary-orange);
-    padding: 10px 18px;
+    padding: 8px 16px;
     border-radius: 25px;
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     font-weight: bold;
     cursor: pointer;
     transition: all 0.2s;
-    margin: 5px;
+    margin: 4px;
     display: inline-block;
     font-family: inherit;
   }
@@ -248,45 +215,22 @@
     pointer-events: none;
   }
 
-  .correct-word {
-    color: #e74c3c;
-    font-weight: bold;
-    text-decoration: underline;
-    margin: 0 5px;
-  }
-
   .answer-area {
-    min-height: 75px;
+    min-height: 60px;
     border-bottom: 2px solid #ffcc80;
-    margin-bottom: 25px;
+    margin-bottom: 20px;
     display: flex;
     flex-wrap: wrap;
-    justify-content: flex-start;
     align-items: center;
-    gap: 8px;
-    padding: 12px;
+    gap: 6px;
+    padding: 10px;
     background-color: #fffafb;
     border-radius: 10px;
   }
 
-  .celebration-text {
-    font-size: 2rem;
-    color: #2e7d32;
-    font-weight: bold;
-    text-align: center;
-    animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    line-height: 1.6;
-    padding: 20px 0;
-  }
-
-  @keyframes popIn {
-    0% { transform: scale(0.6); opacity: 0; }
-    100% { transform: scale(1); opacity: 1; }
-  }
-
   .action-btn {
-    padding: 16px 45px;
-    font-size: 1.2rem;
+    padding: 12px 35px;
+    font-size: 1.1rem;
     background-color: #43a047;
     color: white;
     border: none;
@@ -295,28 +239,19 @@
     font-weight: bold;
     box-shadow: 0 4px 0 #2e7d32;
     display: block;
-    margin: 20px auto;
+    margin: 20px auto 0;
     font-family: inherit;
   }
 
+  .action-btn:hover { background-color: #388e3c; }
+
   #printable-sheet { display: none; }
 
-  @media (max-width: 600px) {
-    .container { padding: 20px; }
-    .question-box { font-size: 1.1rem; line-height: 1.6; }
-    .choice-grid { grid-template-columns: 1fr; }
-    .reason-grid { grid-template-columns: 1fr; }
-    .choice-card-btn { padding: 15px; font-size: 1rem; text-align: left; }
-    .word-btn { font-size: 1rem; padding: 8px 12px; margin: 3px; }
-    .celebration-text { font-size: 1.4rem; }
-    .ox-btn { width: 90px; height: 70px; font-size: 2rem; }
-  }
-
-  /* --- 印刷用スタイルの完全最適化 --- */
+  /* 印刷用スタイル（余白と拡大縮小対応の修正版） */
   @media print {
     @page {
       size: A4 portrait;
-      margin: 12mm 10mm;
+      margin: 12mm 12mm; /* 適切な左右余白を確保 */
     }
 
     html, body {
@@ -324,133 +259,182 @@
       color: black !important;
       margin: 0 !important;
       padding: 0 !important;
-      width: 100% !important;
+      width: auto !important;
       height: auto !important;
-      overflow: visible !important;
     }
 
-    .container, h2, .top-controls, .tab-container {
+    .container, h2, .tab-container {
       display: none !important;
     }
 
     #printable-sheet {
       display: block !important;
-      position: relative !important;
-      left: 0 !important;
-      top: 0 !important;
       width: 100% !important;
-      margin: 0 !important;
+      max-width: 100% !important;
+      margin: 0 auto !important;
       padding: 0 !important;
-      font-family: "Hiragino Maru Gothic ProN", "Hiragino Maru Gothic Pro", "HGMaruGothicMPRO", sans-serif !important;
+      font-family: "Hiragino Maru Gothic ProN", "Hiragino Maru Gothic Pro", sans-serif !important;
     }
 
     .sheet-header {
       text-align: center;
       border-bottom: 2px solid #000;
-      margin-bottom: 15px;
-      padding-bottom: 5px;
+      margin-bottom: 12px;
+      padding-bottom: 4px;
     }
 
     .sheet-title {
-      font-size: 15pt;
+      font-size: 16pt;
       font-weight: bold;
-      margin: 0 0 5px 0;
+      margin: 0;
     }
 
     .section-title {
       font-size: 11pt;
       font-weight: bold;
-      margin: 15px 0 10px 0;
+      margin: 12px 0 6px 0;
       background-color: #f0f0f0 !important;
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
-      padding: 5px 8px;
+      padding: 3px 6px;
       border-left: 4px solid #333;
     }
 
+    .ws-instruction {
+      font-size: 9.5pt;
+      margin-bottom: 6px;
+    }
+
     .sheet-question {
-      margin-bottom: 14px;
+      margin-bottom: 10px;
       page-break-inside: avoid;
     }
 
     .q-text {
       font-size: 10pt;
-      margin-bottom: 4px;
-      line-height: 1.3;
+      margin-bottom: 3px;
     }
 
     .q-line {
       border-bottom: 1px dashed #666;
-      height: 24px;
-      width: 98%;
-      margin-bottom: 4px;
-    }
-
-    .word-hint {
-      font-size: 9pt;
-      color: #333;
-      padding-left: 10px;
+      height: 20px;
+      width: 100%;
     }
 
     .answer-key-section {
       page-break-before: always;
       margin-top: 20px;
       border-top: 2px dashed #000;
-      padding-top: 15px;
+      padding-top: 12px;
       font-size: 9.5pt;
-    }
-
-    .key-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-    }
-
-    .key-item {
-      margin-bottom: 4px;
-      page-break-inside: avoid;
     }
   }
 </style>
 </head>
 <body>
 
-<div class="top-controls">
-  <button class="header-btn print-launch-btn" onclick="triggerPrint()">🖨️ プリントを作成</button>
-</div>
-
-<h2>15章  to + 動詞の原形、動名詞</h2>
+<h2>15章 動名詞＆不定詞の名詞的用法</h2>
 
 <div class="container">
-  <!-- タブ領域 -->
-  <div class="tab-container">
-    <button class="tab-btn active" onclick="switchSection('adverbial')">1. 不定詞の副詞的用法</button>
-    <button class="tab-btn" onclick="switchSection('adjective')">2. 不定詞の形容詞的用法</button>
-    <button class="tab-btn" onclick="switchSection('noun_gerund')">3. 不定詞の名詞的用法 & 動名詞</button>
+  <div class="tab-container" id="tabContainer">
+    <button class="tab-btn active" onclick="switchPart(1)">Part 1</button>
+    <button class="tab-btn" onclick="switchPart(2)">Part 2</button>
+    <button class="tab-btn" onclick="switchPart(3)">Part 3</button>
+    <button class="tab-btn" onclick="switchPart(4)">Part 4</button>
   </div>
 
-  <div class="progress-container">
-    <div class="progress-bar" id="progressBar"></div>
+  <!-- Part 1 -->
+  <div id="part1" class="card">
+    <div class="card-header">Part 1: 見た目を判断しよう</div>
+    <div class="question-instruction">
+      単語を選んでから、入れる先のボックスをタップして放り込んでください。
+    </div>
+    <div class="chip-pool" id="p1-chip-pool"></div>
+    <div class="drop-targets">
+      <div class="target-box" onclick="assignPart1('gerund')">
+        <div class="target-title">動名詞</div>
+        <div class="assigned-chips" id="p1-gerund-box"></div>
+      </div>
+      <div class="target-box" onclick="assignPart1('infinitive')">
+        <div class="target-title">不定詞</div>
+        <div class="assigned-chips" id="p1-infinitive-box"></div>
+      </div>
+    </div>
+    <button class="action-btn" onclick="checkPart1()">答え合わせ</button>
   </div>
-  <div class="progress-text" id="progressText">0 / 0問目</div>
 
-  <div id="game-content">
-    <div class="question-box" id="qText"></div>
-    <div id="ui-area"></div>
-    <div id="feedback-area" style="text-align:center; min-height: 40px;"></div>
-    <button class="action-btn" id="checkBtn" style="display:none;" onclick="handleCheck()">答えをチェック</button>
-    <button class="action-btn" id="nextBtn" style="display:none; background-color: #ef6c00; box-shadow: 0 4px 0 #b33f00;" onclick="nextQuestion()">次の問題へ</button>
+  <!-- Part 2 -->
+  <div id="part2" class="card" style="display:none;">
+    <div class="card-header">Part 2: 目的語のルールで仕分けよう</div>
+    <div class="question-instruction">
+      動詞を選んでから、入れる先の枠をタップしてグループ分けしてください。
+    </div>
+    <div class="chip-pool" id="p2-chip-pool"></div>
+    <div class="drop-targets">
+      <div class="target-box" onclick="assignPart2('both')">
+        <div class="target-title">両方OK</div>
+        <div class="assigned-chips" id="p2-both-box"></div>
+      </div>
+      <div class="target-box" onclick="assignPart2('infinitive')">
+        <div class="target-title">不定詞だけ</div>
+        <div class="assigned-chips" id="p2-infinitive-box"></div>
+      </div>
+      <div class="target-box" onclick="assignPart2('gerund')">
+        <div class="target-title">動名詞だけ</div>
+        <div class="assigned-chips" id="p2-gerund-box"></div>
+      </div>
+    </div>
+    <button class="action-btn" onclick="checkPart2()">答え合わせ</button>
   </div>
+
+  <!-- Part 3 -->
+  <div id="part3" class="card" style="display:none;">
+    <div class="card-header">Part 3: 適切な形を選ぼう (全10問)</div>
+    <div class="question-instruction">文脈に合う最も適切な形（動名詞・不定詞・どちらもOK）を選択してください。</div>
+    <div id="p3-questions"></div>
+    <button class="action-btn" onclick="checkPart3()">答え合わせ</button>
+  </div>
+
+  <!-- Part 4 -->
+  <div id="part4" class="card" style="display:none;">
+    <div class="card-header" id="p4-header">Part 4: 並べ替え問題</div>
+    <div class="question-instruction" id="p4-inst"></div>
+    <div class="answer-area" id="p4-answerArea"></div>
+    <div id="p4-wordBank" style="text-align: center;"></div>
+    <button class="action-btn" id="p4-nextBtn" onclick="checkOrNextPart4()">判定</button>
+  </div>
+
 </div>
 
+<!-- 印刷用ワークシート -->
 <div id="printable-sheet">
   <div class="sheet-header">
-    <h1 class="sheet-title">15章 { to + 動詞の原形、動名詞 } 演習プリント</h1>
+    <h1 class="sheet-title">15章 動名詞＆不定詞の名詞的用法 演習ワークシート</h1>
   </div>
-  <div id="sheet-content"></div>
+
+  <div class="section-title">PART 1: 形の確認</div>
+  <div class="ws-instruction">次の語群の中から、①動名詞 ②不定詞 に該当するものをそれぞれ書き出しなさい。</div>
+  <div style="margin-bottom:6px; font-weight:bold;">【語群】 play / plays / playing / played / to play</div>
+  <div class="q-text">① 動名詞：______________________ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ② 不定詞：______________________</div>
+
+  <div class="section-title">PART 2: 動詞の分類</div>
+  <div class="ws-instruction">次の8つの動詞を、目的語に取れる形ごとに正しく分類して書きなさい。</div>
+  <div style="margin-bottom:6px; font-weight:bold;">【動詞】 like / love / want / enjoy / stop / start / finish / decide</div>
+  <div class="q-text">・両方（動名詞・不定詞）取れる動詞：( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )</div>
+  <div class="q-text">・不定詞だけを取る動詞：( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )</div>
+  <div class="q-text">・動名詞だけを取る動詞：( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )</div>
+
+  <div class="section-title">PART 3: 穴埋め問題</div>
+  <div class="ws-instruction">カッコ内から適切な語句を選び、○を付けなさい。（「どちらもOK」の場合は両方に○）</div>
+  <div id="ws-part3"></div>
+
+  <div class="section-title">PART 4: 並べ替え問題</div>
+  <div class="ws-instruction">日本文の意味に合うように、( ) 内の語群を並べ替えて正しい英文を完成させなさい。</div>
+  <div id="ws-part4"></div>
+
   <div class="answer-key-section">
     <h3>【Answer Key / 解答】</h3>
-    <div id="sheet-answers" class="key-grid"></div>
+    <div id="sheet-answers"></div>
   </div>
 </div>
 
@@ -464,500 +448,346 @@
     return arr;
   }
 
-  // --- 添付PDFに基づく全問題データ ---
-  const allQuizData = {
-    // 1. 副詞的用法（〜するために）
-    adverbial: [
-      { type: "sort", section: "adverbial", ja: "私は英語を話すために外国に行きました。", en_full: "I went abroad to speak English.", words: ["I", "went", "abroad", "to", "speak", "English."] },
-      { type: "sort", section: "adverbial", ja: "彼女はバスに間に合うように（乗るために）速く走った。", en_full: "She ran fast to catch the bus.", words: ["She", "ran", "fast", "to", "catch", "the", "bus."] },
-      { type: "sort", section: "adverbial", ja: "彼らは先生に質問をするために教室に残りました。", en_full: "They stayed in the classroom to ask their teacher a question.", words: ["They", "stayed", "in", "the", "classroom", "to", "ask", "their", "teacher", "a", "question."] },
-      { type: "sort", section: "adverbial", ja: "私は新しい人々に会うためにクラブに入りました。", en_full: "I joined the club to meet new people.", words: ["I", "joined", "the", "club", "to", "meet", "new", "people."] },
-      { type: "sort", section: "adverbial", ja: "彼は夕食を買うためにスーパーへ行った。", en_full: "He went to the supermarket to buy dinner.", words: ["He", "went", "to", "the", "supermarket", "to", "buy", "dinner."] },
-      {
-        type: "error", section: "adverbial",
-        sentence: "I went to the supermarket buying some vegetables.",
-        ja: "私は野菜を買うためにスーパーに行った。",
-        isCorrect: false,
-        reasons: ["buying ➔ to buy", "went ➔ go", "to ➔ for"],
-        correctReasonIdx: 0,
-        correctSentence: "I went to the supermarket to buy some vegetables."
-      },
-      {
-        type: "error", section: "adverbial",
-        sentence: "We stayed at the library finish our homework.",
-        ja: "私たちは宿題を終わらせるために図書館に残った。",
-        isCorrect: false,
-        reasons: ["finish ➔ to finish", "stayed ➔ stay", "at ➔ in"],
-        correctReasonIdx: 0,
-        correctSentence: "We stayed at the library to finish our homework."
-      },
-      {
-        type: "choice", section: "adverbial",
-        base: "She came to the park <span id='blank'>( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )</span> with her friends.",
-        print_base: "She came to the park ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) with her friends.",
-        choices: ["to talk", "talking", "talked", "talks"],
-        ans: "to talk",
-        ja: "彼女は友達と話すために公園に来ました。"
-      },
-      {
-        type: "choice", section: "adverbial",
-        base: "They climbed the mountain <span id='blank'>( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )</span> the sunset.",
-        print_base: "They climbed the mountain ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) the sunset.",
-        choices: ["to see", "seeing", "saw", "see"],
-        ans: "to see",
-        ja: "彼らは夕日を見るために山に登った。"
-      },
-      {
-        type: "choice", section: "adverbial",
-        base: "He turned on the TV <span id='blank'>( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )</span> an interesting movie.",
-        print_base: "He turned on the TV ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) an interesting movie.",
-        choices: ["to watch", "watched", "watching", "watches"],
-        ans: "to watch",
-        ja: "彼は面白い映画を見るためにテレビをつけました。"
+  /* --- Part 1 --- */
+  const p1Words = ["play", "plays", "playing", "played", "to play"];
+  let selectedP1Word = null;
+  let p1State = { gerund: null, infinitive: null };
+
+  function initPart1UI() {
+    const pool = document.getElementById('p1-chip-pool');
+    pool.innerHTML = "";
+    p1Words.forEach(w => {
+      if (p1State.gerund !== w && p1State.infinitive !== w) {
+        const chip = document.createElement('div');
+        chip.className = `interactive-chip ${selectedP1Word === w ? 'selected' : ''}`;
+        chip.textContent = w;
+        chip.onclick = () => {
+          selectedP1Word = selectedP1Word === w ? null : w;
+          initPart1UI();
+        };
+        pool.appendChild(chip);
       }
-    ],
-
-    // 2. 形容詞的用法（〜するための／〜するべき）
-    adjective: [
-      { type: "sort", section: "adjective", ja: "彼女は、食べるためのサンドイッチが欲しい。", en_full: "She wants a sandwich to eat.", words: ["She", "wants", "a", "sandwich", "to", "eat."] },
-      { type: "sort", section: "adjective", ja: "私たちは、飲むための水が必要だ。", en_full: "We need some water to drink.", words: ["We", "need", "some", "water", "to", "drink."] },
-      { type: "sort", section: "adjective", ja: "彼は、読むための本を持っている。", en_full: "He has a book to read.", words: ["He", "has", "a", "book", "to", "read."] },
-      { type: "sort", section: "adjective", ja: "私は、友達にあげるプレゼントがある。", en_full: "I have a present to give to a friend.", words: ["I", "have", "a", "present", "to", "give", "to", "a", "friend."] },
-      { type: "sort", section: "adjective", ja: "私には、やるべき宿題がたくさんあります。", en_full: "I have a lot of homework to do.", words: ["I", "have", "a", "lot", "of", "homework", "to", "do."] },
-      {
-        type: "error", section: "adjective",
-        sentence: "She has the key open the box.",
-        ja: "彼女はその箱を開けるためのカギを持っています。",
-        isCorrect: false,
-        reasons: ["open ➔ to open", "has ➔ have", "the key ➔ key"],
-        correctReasonIdx: 0,
-        correctSentence: "She has the key to open the box."
-      },
-      {
-        type: "error", section: "adjective",
-        sentence: "He needs a pen writing a letter.",
-        ja: "彼は手紙を書くためのペンが必要です。",
-        isCorrect: false,
-        reasons: ["writing ➔ to write", "needs ➔ need", "a letter ➔ letters"],
-        correctReasonIdx: 0,
-        correctSentence: "He needs a pen to write a letter."
-      },
-      {
-        type: "choice", section: "adjective",
-        base: "They need money <span id='blank'>( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )</span> to school.",
-        print_base: "They need money ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) to school.",
-        choices: ["to bring", "bring", "bringing", "brought"],
-        ans: "to bring",
-        ja: "彼らは、学校に持っていくためのお金が必要です。"
-      },
-      {
-        type: "choice", section: "adjective",
-        base: "I have a dog <span id='blank'>( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )</span>.",
-        print_base: "I have a dog ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ).",
-        choices: ["to love", "loved", "loving", "loves"],
-        ans: "to love",
-        ja: "私には、愛すべき（可愛がるべき）犬がいます。"
-      },
-      {
-        type: "choice", section: "adjective",
-        base: "We have some food <span id='blank'>( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )</span> at lunch.",
-        print_base: "We have some food ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) at lunch.",
-        choices: ["to eat", "eating", "ate", "eats"],
-        ans: "to eat",
-        ja: "私たちには、昼食の時に食べるための食べ物があります。"
-      }
-    ],
-
-    // 3. 名詞的用法 & 動名詞（〜すること）
-    noun_gerund: [
-      { type: "sort", section: "noun_gerund", ja: "私は音楽を聴くのが好きです。（不定詞）", en_full: "I like to listen to music.", words: ["I", "like", "to", "listen", "to", "music."] },
-      { type: "sort", section: "noun_gerund", ja: "私は新しい場所を訪れるのが好きです。（不定詞）", en_full: "I like to visit new places.", words: ["I", "like", "to", "visit", "new", "places."] },
-      { type: "sort", section: "noun_gerund", ja: "私は友達と話すのが好きです。（動名詞）", en_full: "I like talking with my friends.", words: ["I", "like", "talking", "with", "my", "friends."] },
-      { type: "sort", section: "noun_gerund", ja: "私はプールで泳ぐのが好きです。（動名詞）", en_full: "I like swimming in the pool.", words: ["I", "like", "swimming", "in", "the", "pool."] },
-      { type: "sort", section: "noun_gerund", ja: "私は本を読むのを楽しんでいます。（動名詞）", en_full: "I enjoy reading books.", words: ["I", "enjoy", "reading", "books."] },
-      {
-        type: "error", section: "noun_gerund",
-        sentence: "I enjoy to play soccer with my friends after school.",
-        ja: "私は放課後、友達とサッカーをするのを楽しみます。",
-        isCorrect: false,
-        reasons: ["to play ➔ playing", "enjoy ➔ enjoys", "with ➔ to"],
-        correctReasonIdx: 0,
-        correctSentence: "I enjoy playing soccer with my friends after school."
-      },
-      {
-        type: "error", section: "noun_gerund",
-        sentence: "He wants visiting the museum tomorrow.",
-        ja: "彼は明日、博物館を訪れたいと思っています。",
-        isCorrect: false,
-        reasons: ["visiting ➔ to visit", "wants ➔ want", "the ➔ a"],
-        correctReasonIdx: 0,
-        correctSentence: "He wants to visit the museum tomorrow."
-      },
-      {
-        type: "choice", section: "noun_gerund",
-        base: "I like <span id='blank'>( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )</span> TV in the evening.",
-        print_base: "I like ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) TV in the evening.",
-        choices: ["to watch", "watched", "watches", "watch"],
-        ans: "to watch",
-        ja: "私は夕方にテレビを見るのが好きです。"
-      },
-      {
-        type: "choice", section: "noun_gerund",
-        base: "She finished <span id='blank'>( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )</span> the dishes.",
-        print_base: "She finished ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) the dishes.",
-        choices: ["washing", "to wash", "washed", "wash"],
-        ans: "washing",
-        ja: "彼女はお皿を洗い終えました。（finishの後は動名詞）"
-      },
-      {
-        type: "choice", section: "noun_gerund",
-        base: "My brother likes <span id='blank'>( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )</span> his bike in the park.",
-        print_base: "My brother likes ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) his bike in the park.",
-        choices: ["riding", "ride", "rode", "to riding"],
-        ans: "riding",
-        ja: "私の兄（弟）は公園で自転車に乗るのが好きです。"
-      }
-    ]
-  };
-
-  let currentSection = 'adverbial';
-  let currentQuizList = [];
-  let currentIdx = 0;
-
-  // 状態管理変数
-  let selectedChoice = null;
-  let userSort = [];
-  let errorStep = 1;
-  let selectedOX = null;
-  let selectedReasonIdx = null;
-
-  function switchSection(secKey) {
-    currentSection = secKey;
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-      btn.classList.remove('active');
     });
-    if(window.event && window.event.target) {
-      window.event.target.classList.add('active');
-    }
-    
-    currentQuizList = allQuizData[secKey];
-    currentIdx = 0;
-    loadQuestion();
+    renderP1Boxes();
   }
 
-  function loadQuestion() {
-    const q = currentQuizList[currentIdx];
-    const ui = document.getElementById('ui-area');
-    const qText = document.getElementById('qText');
-    const feedback = document.getElementById('feedback-area');
-    
-    document.getElementById('progressBar').style.width = `${((currentIdx) / currentQuizList.length) * 100}%`;
-    document.getElementById('progressText').textContent = `${currentIdx + 1} / ${currentQuizList.length} 問目`;
-    
-    document.getElementById('nextBtn').style.display = "none";
-    document.getElementById('checkBtn').style.display = "none";
-    feedback.innerHTML = "";
-    ui.innerHTML = "";
-    
-    selectedChoice = null;
-    selectedOX = null;
-    selectedReasonIdx = null;
-    errorStep = 1;
-
-    if (q.type === "choice") {
-      qText.innerHTML = `<div style="color:#ef6c00; font-size:1rem; margin-bottom:8px; font-weight:bold;">【選択問題】カッコに入る正しい形を選ぼう！<br><span style="color:#5d4037; font-weight:normal;">（${q.ja}）</span></div>` + q.base;
-      const grid = document.createElement('div');
-      grid.className = 'choice-grid';
-      const shuffledChoices = shuffle([...q.choices]);
-      shuffledChoices.forEach(c => {
-        const btn = document.createElement('button');
-        btn.className = 'choice-card-btn';
-        btn.textContent = c;
-        btn.onclick = () => {
-          document.querySelectorAll('.choice-card-btn').forEach(b => b.classList.remove('selected'));
-          btn.classList.add('selected');
-          selectedChoice = c;
-          document.getElementById('checkBtn').style.display = "block";
+  function renderP1Boxes() {
+    ['gerund', 'infinitive'].forEach(type => {
+      const box = document.getElementById(`p1-${type}-box`);
+      box.innerHTML = "";
+      if (p1State[type]) {
+        const chip = document.createElement('div');
+        chip.className = 'interactive-chip';
+        chip.textContent = p1State[type];
+        chip.onclick = (e) => {
+          e.stopPropagation();
+          p1State[type] = null;
+          initPart1UI();
         };
-        grid.appendChild(btn);
-      });
-      ui.appendChild(grid);
-    } else if (q.type === "error") {
-      renderErrorStep1();
+        box.appendChild(chip);
+      }
+    });
+  }
+
+  function assignPart1(targetType) {
+    if (!selectedP1Word) return;
+    p1State[targetType] = selectedP1Word;
+    selectedP1Word = null;
+    initPart1UI();
+  }
+
+  function checkPart1() {
+    if (p1State.gerund === 'playing' && p1State.infinitive === 'to play') {
+      alert('✨ 正解です！形を見分けられましたね！');
     } else {
-      qText.innerHTML = `<div style="color:#e65100; font-size:1.1rem; margin-bottom:12px; font-weight:bold;">【並べ替え問題】正しい順番に並べ替えよう！</div><div style="color:#5d4037; font-weight:bold;">日本語：${q.ja}</div>`;
-      const area = document.createElement('div');
-      area.className = 'answer-area';
-      area.id = 'answerArea';
-      area.innerHTML = '<span style="color:#aaa;">下のパーツをタップして並べ替えてね</span>';
-      
-      const bank = document.createElement('div');
-      bank.style.textAlign = "center";
-      
-      userSort = [];
-      const shuffledWords = shuffle([...q.words]);
-      shuffledWords.forEach(w => {
-        const btn = document.createElement('button');
-        btn.className = 'word-btn';
-        btn.textContent = w;
-        btn.onclick = () => {
-          if (btn.classList.contains('used')) return;
-          if (userSort.length === 0) area.innerHTML = "";
-          userSort.push({ text: w, btn: btn });
-          btn.classList.add('used');
-          renderSort();
-        };
-        bank.appendChild(btn);
-      });
-      ui.appendChild(area);
-      ui.appendChild(bank);
+      alert('もう一度確認して入れ直してみよう！');
     }
   }
 
-  function renderErrorStep1() {
-    const q = currentQuizList[currentIdx];
-    const qText = document.getElementById('qText');
-    const ui = document.getElementById('ui-area');
-    
-    qText.innerHTML = `
-      <div style="color:#e65100; font-size:1rem; margin-bottom:5px; font-weight:bold;">【間違い探し】この英文は正しい？それともまちがい？</div>
-      <div style="font-size: 1.2rem; color:#5d4037; font-weight:bold; margin-bottom:5px;">${q.sentence}</div>
-      <div style="font-size: 0.95rem; color:#666;">（${q.ja}）</div>
-    `;
-    
-    ui.innerHTML = "";
-    const oxDiv = document.createElement('div');
-    oxDiv.className = 'ox-grid';
+  /* --- Part 2 --- */
+  const p2Verbs = ["like", "love", "want", "enjoy", "stop", "start", "finish", "decide"];
+  let selectedP2Verb = null;
+  let p2State = { both: [], infinitive: [], gerund: [] };
 
-    const btnO = document.createElement('button');
-    btnO.className = 'ox-btn';
-    btnO.textContent = '◯';
-    btnO.onclick = () => {
-      document.querySelectorAll('.ox-btn').forEach(b => b.classList.remove('selected'));
-      btnO.classList.add('selected');
-      selectedOX = true;
-      document.getElementById('checkBtn').style.display = "block";
-    };
-
-    const btnX = document.createElement('button');
-    btnX.className = 'ox-btn';
-    btnX.textContent = '❌';
-    btnX.onclick = () => {
-      document.querySelectorAll('.ox-btn').forEach(b => b.classList.remove('selected'));
-      btnX.classList.add('selected');
-      selectedOX = false;
-      document.getElementById('checkBtn').style.display = "block";
-    };
-
-    oxDiv.appendChild(btnO);
-    oxDiv.appendChild(btnX);
-    ui.appendChild(oxDiv);
-  }
-
-  function renderErrorStep2() {
-    errorStep = 2;
-    const q = currentQuizList[currentIdx];
-    const qText = document.getElementById('qText');
-    const ui = document.getElementById('ui-area');
-    document.getElementById('checkBtn').style.display = "none";
-
-    qText.innerHTML = `
-      <div style="color:#d32f2f; font-size:1rem; margin-bottom:5px; font-weight:bold;">【間違い探し】どこをどう直せばいいかな？</div>
-      <div style="font-size: 1.2rem; color:#5d4037; font-weight:bold; margin-bottom:15px;">${q.sentence}</div>
-    `;
-
-    ui.innerHTML = "";
-    const reasonDiv = document.createElement('div');
-    reasonDiv.className = 'reason-grid';
-
-    let indexedReasons = q.reasons.map((r, i) => ({ text: r, originalIndex: i }));
-    let shuffledReasons = shuffle([...indexedReasons]);
-
-    shuffledReasons.forEach(item => {
-      const btn = document.createElement('button');
-      btn.className = 'reason-card-btn';
-      btn.textContent = item.text;
-      btn.onclick = () => {
-        document.querySelectorAll('.reason-card-btn').forEach(b => b.classList.remove('selected'));
-        btn.classList.add('selected');
-        selectedReasonIdx = item.originalIndex;
-        document.getElementById('checkBtn').style.display = "block";
-      };
-      reasonDiv.appendChild(btn);
+  function initPart2UI() {
+    const pool = document.getElementById('p2-chip-pool');
+    pool.innerHTML = "";
+    p2Verbs.forEach(v => {
+      const isAssigned = p2State.both.includes(v) || p2State.infinitive.includes(v) || p2State.gerund.includes(v);
+      if (!isAssigned) {
+        const chip = document.createElement('div');
+        chip.className = `interactive-chip ${selectedP2Verb === v ? 'selected' : ''}`;
+        chip.textContent = v;
+        chip.onclick = () => {
+          selectedP2Verb = selectedP2Verb === v ? null : v;
+          initPart2UI();
+        };
+        pool.appendChild(chip);
+      }
     });
-
-    ui.appendChild(reasonDiv);
+    renderP2Boxes();
   }
 
-  function renderSort() {
-    const area = document.getElementById('answerArea');
+  function renderP2Boxes() {
+    ['both', 'infinitive', 'gerund'].forEach(type => {
+      const box = document.getElementById(`p2-${type}-box`);
+      box.innerHTML = "";
+      p2State[type].forEach(v => {
+        const chip = document.createElement('div');
+        chip.className = 'interactive-chip';
+        chip.textContent = v;
+        chip.onclick = (e) => {
+          e.stopPropagation();
+          p2State[type] = p2State[type].filter(item => item !== v);
+          initPart2UI();
+        };
+        box.appendChild(chip);
+      });
+    });
+  }
+
+  function assignPart2(targetType) {
+    if (!selectedP2Verb) return;
+    ['both', 'infinitive', 'gerund'].forEach(t => {
+      p2State[t] = p2State[t].filter(v => v !== selectedP2Verb);
+    });
+    p2State[targetType].push(selectedP2Verb);
+    selectedP2Verb = null;
+    initPart2UI();
+  }
+
+  function checkPart2() {
+    const correctBoth = ["like", "love", "start"].sort();
+    const correctInf = ["want", "decide"].sort();
+    const correctGer = ["enjoy", "stop", "finish"].sort();
+
+    const uBoth = [...p2State.both].sort();
+    const uInf = [...p2State.infinitive].sort();
+    const uGer = [...p2State.gerund].sort();
+
+    const isBothOk = JSON.stringify(correctBoth) === JSON.stringify(uBoth);
+    const isInfOk = JSON.stringify(correctInf) === JSON.stringify(uInf);
+    const isGerOk = JSON.stringify(correctGer) === JSON.stringify(uGer);
+
+    if (isBothOk && isInfOk && isGerOk) {
+      alert('✨ 全問正解です！完璧に分類できました！');
+    } else {
+      alert('分類を確認してみよう！（※startは両方OK、stop/finishは動名詞だけです）');
+    }
+  }
+
+  /* --- Part 3 --- */
+  const rawP3Data = [
+    { text: "I like ( playing / to play / どちらもOK ) soccer.", ans: "どちらもOK", printAns: "playing / to play (どちらもOK)" },
+    { text: "She wants ( to be / being / どちらもOK ) a teacher.", ans: "to be", printAns: "to be" },
+    { text: "We enjoyed ( to swim / swimming / どちらもOK ) in the sea.", ans: "swimming", printAns: "swimming" },
+    { text: "He finished ( doing / to do / どちらもOK ) his homework.", ans: "doing", printAns: "doing" },
+    { text: "They decided ( to visit / visiting / どちらもOK ) Kyoto.", ans: "to visit", printAns: "to visit" },
+    { text: "It started ( to rain / raining / どちらもOK ) in the afternoon.", ans: "どちらもOK", printAns: "to rain / raining (どちらもOK)" },
+    { text: "My sister loves ( to sing / singing / どちらもOK ) songs.", ans: "どちらもOK", printAns: "to sing / singing (どちらもOK)" },
+    { text: "Please stop ( to make / making / どちらもOK ) noise.", ans: "making", printAns: "making" },
+    { text: "I want ( buying / to buy / どちらもOK ) a new bike.", ans: "to buy", printAns: "to buy" },
+    { text: "Do you enjoy ( reading / to read / どちらもOK ) books?", ans: "reading", printAns: "reading" }
+  ];
+  let p3Data = [];
+
+  function initPart3() {
+    p3Data = shuffle(rawP3Data);
+    const container = document.getElementById('p3-questions');
+    container.innerHTML = "";
+    p3Data.forEach((q, idx) => {
+      const textHtml = q.text.replace(/\( (.*?) \)/, (match, p1) => {
+        const opts = p1.split(' / ');
+        let selectHtml = `<select id="p3-sel-${idx}"><option value="">--選択--</option>`;
+        opts.forEach(o => selectHtml += `<option value="${o}">${o}</option>`);
+        selectHtml += `</select>`;
+        return selectHtml;
+      });
+
+      const div = document.createElement('div');
+      div.className = 'q-item';
+      div.innerHTML = `<b>Q${idx+1}.</b> ${textHtml}`;
+      container.appendChild(div);
+    });
+  }
+
+  function checkPart3() {
+    let allCorrect = true;
+    p3Data.forEach((q, idx) => {
+      const val = document.getElementById(`p3-sel-${idx}`).value;
+      if(val !== q.ans) allCorrect = false;
+    });
+    if(allCorrect) {
+      alert('✨ 全問正解です！素晴らしい！');
+    } else {
+      alert('間違っている問題があります。もう一度確かめよう！');
+    }
+  }
+
+  /* --- Part 4 --- */
+  const p4Data = [
+    {
+      ja: "宿題を終えましたか？",
+      words: ["Did", "you", "finish", "doing", "your", "homework?"],
+      ans: "Did you finish doing your homework?"
+    },
+    {
+      ja: "私は来週、新しい本を買いに行きたいです。",
+      words: ["I", "want", "to", "buy", "a", "new", "book", "next", "week."],
+      ans: "I want to buy a new book next week."
+    },
+    {
+      ja: "彼は宿題をするためにテレビを見るのをやめました。",
+      words: ["He", "stopped", "watching", "TV", "to", "do", "his", "homework."],
+      ans: "He stopped watching TV to do his homework."
+    },
+    {
+      ja: "雨が降っていたので、私たちは外に行きたくありませんでした。",
+      words: ["We", "didn't", "want", "to", "go", "outside", "because", "it", "was", "raining."],
+      ans: "We didn't want to go outside because it was raining."
+    },
+    {
+      ja: "私は昨夜、その本を読み終えました。",
+      words: ["I", "finished", "reading", "the", "book", "last", "night."],
+      ans: "I finished reading the book last night."
+    },
+    {
+      ja: "彼女はカナダで英語を勉強することに決めました。",
+      words: ["She", "decided", "to", "study", "English", "in", "Canada."],
+      ans: "She decided to study English in Canada."
+    }
+  ];
+  let p4CurrentIdx = 0;
+  let p4UserSort = [];
+
+  function loadPart4Question() {
+    if(p4CurrentIdx >= p4Data.length) {
+      document.getElementById('part4').innerHTML = `
+        <div style="text-align:center; padding: 20px;">
+          <h3 style="color:#2e7d32;">🎉 Part 4 クリア！全問正解です！</h3>
+        </div>
+      `;
+      return;
+    }
+    const data = p4Data[p4CurrentIdx];
+    document.getElementById('p4-header').textContent = `Part 4: 並べ替え問題 (問 ${p4CurrentIdx + 1} / ${p4Data.length})`;
+    document.getElementById('p4-inst').textContent = data.ja;
+    
+    p4UserSort = [];
+    renderP4Sort();
+
+    const bank = document.getElementById('p4-wordBank');
+    bank.innerHTML = "";
+    const shuffled = shuffle([...data.words]);
+    shuffled.forEach(w => {
+      const btn = document.createElement('button');
+      btn.className = 'word-btn';
+      btn.textContent = w;
+      btn.onclick = () => {
+        if(btn.classList.contains('used')) return;
+        p4UserSort.push({ text: w, btn: btn });
+        btn.classList.add('used');
+        renderP4Sort();
+      };
+      bank.appendChild(btn);
+    });
+  }
+
+  function renderP4Sort() {
+    const area = document.getElementById('p4-answerArea');
     area.innerHTML = "";
-    userSort.forEach((item, idx) => {
+    if(p4UserSort.length === 0) {
+      area.innerHTML = '<span style="color:#aaa;">タップして単語を並べ替えてね</span>';
+      return;
+    }
+    p4UserSort.forEach((item, idx) => {
       const b = document.createElement('button');
       b.className = 'word-btn';
-      b.style.margin = "2px";
       b.textContent = item.text;
       b.onclick = () => {
         item.btn.classList.remove('used');
-        userSort.splice(idx, 1);
-        renderSort();
-        if(userSort.length === 0) area.innerHTML = '<span style="color:#aaa;">下のパーツをタップして並べ替えてね</span>';
+        p4UserSort.splice(idx, 1);
+        renderP4Sort();
       };
       area.appendChild(b);
     });
-    
-    if (userSort.length === currentQuizList[currentIdx].words.length) {
-      document.getElementById('checkBtn').style.display = "block";
+  }
+
+  function checkOrNextPart4() {
+    const data = p4Data[p4CurrentIdx];
+    const userStr = p4UserSort.map(i => i.text).join(" ");
+    if(userStr === data.ans) {
+      alert("✨ 大正解！");
+      p4CurrentIdx++;
+      loadPart4Question();
     } else {
-      document.getElementById('checkBtn').style.display = "none";
+      alert("語順を確認してね！");
     }
   }
 
-  function handleCheck() {
-    const q = currentQuizList[currentIdx];
-
-    if (q.type === "choice") {
-      if (selectedChoice === q.ans) {
-        if(document.getElementById('blank')) {
-          document.getElementById('blank').innerHTML = `<span class="correct-word">${q.ans}</span>`;
-        }
-        showSuccess();
-      } else {
-        alert("もう一度よく考えてみよう！");
-      }
-    } else if (q.type === "error") {
-      if (errorStep === 1) {
-        if (selectedOX === q.isCorrect) {
-          if (q.isCorrect === false) {
-            renderErrorStep2();
-          } else {
-            showSuccess();
-          }
-        } else {
-          alert("ざんねん！ もう一度文をよく見てみよう。");
-        }
-      } else if (errorStep === 2) {
-        if (selectedReasonIdx === q.correctReasonIdx) {
-          document.getElementById('ui-area').innerHTML = `
-            <div class="celebration-text">
-              ✨ 大正解！ ✨<br>
-              <span style="font-size:1.2rem; color:#333; font-weight:normal;">正しい文：<b>${q.correctSentence}</b></span>
-            </div>
-          `;
-          showSuccess();
-        } else {
-          alert("どこを直すか、もう一度考えてみよう！");
-        }
-      }
-    } else {
-      let userStr = userSort.map(i => i.text).join(" ");
-      let cleanUser = userStr.replace(/[\.,\?]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
-      let cleanAns = q.en_full.replace(/[\.,\?]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
-
-      if (cleanUser === cleanAns) {
-        document.getElementById('ui-area').innerHTML = `<div class="celebration-text">✨ 大正解！ ✨<br><span style="font-size:1.3rem; color:#333;">${q.en_full}</span></div>`;
-        showSuccess();
-      } else {
-        alert("語順を確認してね！");
-      }
-    }
-  }
-
-  function showSuccess() {
-    document.getElementById('checkBtn').style.display = "none";
-    document.getElementById('nextBtn').style.display = "block";
-  }
-
-  function nextQuestion() {
-    currentIdx++;
-    if (currentIdx < currentQuizList.length) {
-      loadQuestion();
-    } else {
-      document.getElementById('game-content').innerHTML = "<div class='celebration-text'>🎉 このセクションをクリア！素晴らしい！ 🎉</div>";
-      document.getElementById('progressBar').style.width = "100%";
-      document.getElementById('progressText').textContent = `${currentQuizList.length} / ${currentQuizList.length} 問目`;
-    }
-  }
-
-  // 印刷用プリントの生成処理
-  function generatePrintSheet() {
-    const contentDiv = document.getElementById('sheet-content');
-    const answerDiv = document.getElementById('sheet-answers');
-    
-    contentDiv.innerHTML = "";
-    answerDiv.innerHTML = "";
-
-    const sectionsInfo = [
-      { key: "adverbial", name: "【第1部】不定詞の副詞的用法（〜するために）" },
-      { key: "adjective", name: "【第2部】不定詞の形容詞的用法（〜するための／〜するべき）" },
-      { key: "noun_gerund", name: "【第3部】不定詞の名詞的用法 & 動名詞（〜すること）" }
-    ];
-
-    sectionsInfo.forEach((sec) => {
-      const secTitle = document.createElement('div');
-      secTitle.className = 'section-title';
-      secTitle.textContent = sec.name;
-      contentDiv.appendChild(secTitle);
-
-      const items = allQuizData[sec.key];
-
-      items.forEach((item, index) => {
-        const qBlock = document.createElement('div');
-        qBlock.className = 'sheet-question';
-
-        if (item.type === "sort") {
-          let shuffledWords = shuffle([...item.words]);
-          qBlock.innerHTML = `
-            <div class="q-text">${index + 1}. [並べ替え] ${item.ja}</div>
-            <div class="q-line"></div>
-            <div class="word-hint">語群：[ &nbsp;${shuffledWords.join(' &nbsp; / &nbsp; ')}&nbsp; ]</div>
-          `;
-          const aBlock = document.createElement('div');
-          aBlock.className = 'key-item';
-          aBlock.innerHTML = `<b>${sec.name.slice(0, 5)} (${index + 1})</b> ${item.en_full}`;
-          answerDiv.appendChild(aBlock);
-
-        } else if (item.type === "error") {
-          qBlock.innerHTML = `
-            <div class="q-text">${index + 1}. [間違い探し] 次の英文が正しければ◯、間違っていれば❌を書き、❌の場合は正しい文にしなさい。</div>
-            <div class="q-text" style="padding-left:15px;">( &nbsp;&nbsp;&nbsp;&nbsp; ) ${item.sentence}</div>
-            <div class="q-line"></div>
-          `;
-          const aBlock = document.createElement('div');
-          aBlock.className = 'key-item';
-          let correctStr = item.isCorrect ? "◯ (正しい文)" : `❌ → ${item.correctSentence}`;
-          aBlock.innerHTML = `<b>${sec.name.slice(0, 5)} (${index + 1})</b> ${correctStr}`;
-          answerDiv.appendChild(aBlock);
-
-        } else if (item.type === "choice") {
-          let printChoices = shuffle([...item.choices]);
-          qBlock.innerHTML = `
-            <div class="q-text">${index + 1}. [穴埋め選択] ${item.ja}</div>
-            <div style="font-size:10.5pt; margin: 3px 0 3px 15px;">${item.print_base}</div>
-            <div class="word-hint">選択肢：[ ${printChoices.join(' &nbsp;/ &nbsp;')} ]</div>
-          `;
-          const aBlock = document.createElement('div');
-          aBlock.className = 'key-item';
-          aBlock.innerHTML = `<b>${sec.name.slice(0, 5)} (${index + 1})</b> ${item.ans}`;
-          answerDiv.appendChild(aBlock);
-        }
-
-        contentDiv.appendChild(qBlock);
-      });
+  /* --- タブ切り替え --- */
+  function switchPart(partNum) {
+    const btns = document.querySelectorAll('.tab-btn');
+    btns.forEach((b, idx) => {
+      if(idx === partNum - 1) b.classList.add('active');
+      else b.classList.remove('active');
     });
+
+    document.getElementById('part1').style.display = partNum === 1 ? 'block' : 'none';
+    document.getElementById('part2').style.display = partNum === 2 ? 'block' : 'none';
+    document.getElementById('part3').style.display = partNum === 3 ? 'block' : 'none';
+    document.getElementById('part4').style.display = partNum === 4 ? 'block' : 'none';
   }
 
-  // 印刷ボタン実行用の関数（確実に要素を準備してからダイアログを起動）
-  function triggerPrint() {
-    generatePrintSheet();
-    setTimeout(() => {
-      window.print();
-    }, 100);
+  /* --- 印刷用ワークシート生成 --- */
+  function generatePrintSheet() {
+    const p3Div = document.getElementById('ws-part3');
+    const p4Div = document.getElementById('ws-part4');
+    const ansDiv = document.getElementById('sheet-answers');
+
+    p3Div.innerHTML = "";
+    p4Div.innerHTML = "";
+    ansDiv.innerHTML = "";
+
+    rawP3Data.forEach((q, idx) => {
+      const qEl = document.createElement('div');
+      qEl.className = 'sheet-question';
+      qEl.innerHTML = `<div class="q-text">${idx+1}. ${q.text}</div>`;
+      p3Div.appendChild(qEl);
+    });
+
+    p4Data.forEach((q, idx) => {
+      const qEl = document.createElement('div');
+      qEl.className = 'sheet-question';
+      const scramble = shuffle([...q.words]).join(" / ");
+      qEl.innerHTML = `
+        <div class="q-text">${idx+1}. ${q.ja}</div>
+        <div style="font-size:8.5pt; color:#555;">( ${scramble} )</div>
+        <div class="q-line"></div>
+      `;
+      p4Div.appendChild(qEl);
+    });
+
+    ansDiv.innerHTML = `
+      <div style="font-weight:bold; margin-bottom:4px;">【PART 1 解答】</div>
+      <div>① 動名詞：playing &nbsp;&nbsp; ② 不定詞：to play</div>
+
+      <div style="font-weight:bold; margin-top:8px; margin-bottom:4px;">【PART 2 解答】</div>
+      <div>・両方：like, love, start &nbsp;&nbsp; ・不定詞のみ：want, decide &nbsp;&nbsp; ・動名詞のみ：enjoy, stop, finish</div>
+
+      <div style="font-weight:bold; margin-top:8px; margin-bottom:4px;">【PART 3 解答】</div>
+      ${rawP3Data.map((q, i) => `<div>${i+1}. <b>${q.printAns}</b></div>`).join('')}
+
+      <div style="font-weight:bold; margin-top:8px; margin-bottom:4px;">【PART 4 解答】</div>
+      ${p4Data.map((q, i) => `<div>${i+1}. <b>${q.ans}</b></div>`).join('')}
+    `;
   }
 
   window.onload = function() {
-    currentQuizList = allQuizData[currentSection];
-    loadQuestion();
+    initPart1UI();
+    initPart2UI();
+    initPart3();
+    loadPart4Question();
     generatePrintSheet();
   };
 </script>
