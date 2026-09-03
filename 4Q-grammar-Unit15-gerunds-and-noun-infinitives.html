@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>15章 動名詞＆不定詞の名詞的用法</title>
+<style>
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  :root {
+    --primary-orange: #ff9800;
+    --primary-hover: #e65100;
+    --text-brown: #5d4037;
+    --bg-color: #fff8f0;
+    --border-color: #d7ccc8;
+    --accent-green: #2ecc71;
+  }
+
+  body {
+    font-family: "Hiragino Maru Gothic ProN", "Hiragino Maru Gothic Pro", "HGMaruGothicMPRO", sans-serif;
+    background-color: var(--bg-color);
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    color: #333;
+  }
+
+  .container {
+    background: white;
+    max-width: 900px;
+    width: 100%;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+    min-height: 580px;
+    margin-top: 20px;
+  }
+
+  h2 {
+    color: #e65100;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  /* タブUI */
+  .tab-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+  }
+
+  .tab-btn {
+    padding: 10px 18px;
+    border: 2px solid var(--primary-orange);
+    background-color: white;
+    color: var(--text-brown);
+    font-weight: bold;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+
+  .tab-btn:hover {
+    background-color: #fff3e0;
+  }
+
+  .tab-btn.active {
+    background-color: var(--primary-orange);
+    color: white;
+  }
+
+  /* カード */
+  .card {
+    background: #fffaf0;
+    border: 2px dashed #ffe0b2;
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 25px;
+  }
+
+  .card-header {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #e65100;
+    margin-bottom: 15px;
+  }
+
+  .question-instruction {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: var(--text-brown);
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+
+  /* チップ＆ドロップエリア */
+  .chip-pool {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    min-height: 48px;
+    padding: 10px;
+    background: #fff3e0;
+    border-radius: 12px;
+  }
+
+  .interactive-chip {
+    padding: 8px 16px;
+    background: white;
+    border: 2px solid var(--primary-orange);
+    border-radius: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    user-select: none;
+    transition: transform 0.1s, background-color 0.2s;
+  }
+
+  .interactive-chip.selected {
+    background: var(--primary-orange);
+    color: white;
+    transform: scale(1.05);
+  }
+
+  .drop-targets {
+    display: flex;
+    gap: 15px;
+    justify-content: space-around;
+    flex-wrap: wrap;
+  }
+
+  .target-box {
+    flex: 1;
+    min-width: 200px;
+    background: white;
+    border: 2px dashed var(--primary-orange);
+    border-radius: 12px;
+    padding: 12px;
+    min-height: 140px;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+
+  .target-box:hover {
+    background-color: #fffde7;
+  }
+
+  .target-title {
+    font-weight: bold;
+    color: var(--text-brown);
+    border-bottom: 2px solid #ffe0b2;
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+  }
+
+  .assigned-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
+  }
+
+  /* Part 3 用スタイル */
+  .q-item {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ffe0b2;
+    font-size: 1.1rem;
+  }
+
+  select {
+    padding: 6px 12px;
+    font-size: 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    background-color: white;
+    color: var(--text-brown);
+    font-family: inherit;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 0 5px;
+  }
+
+  /* Part 4 用スタイル */
+  .word-btn {
+    background-color: white;
+    color: var(--text-brown);
+    border: 2px solid var(--primary-orange);
+    padding: 8px 16px;
+    border-radius: 25px;
+    font-size: 1.05rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin: 4px;
+    display: inline-block;
+    font-family: inherit;
+  }
+
+  .word-btn.used {
+    border-color: #eee;
+    color: #ccc;
+    pointer-events: none;
+  }
+
+  .answer-area {
+    min-height: 60px;
+    border-bottom: 2px solid #ffcc80;
+    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    padding: 10px;
+    background-color: #fffafb;
+    border-radius: 10px;
+  }
+
+  .action-btn {
+    padding: 12px 35px;
+    font-size: 1.1rem;
+    background-color: #43a047;
+    color: white;
+    border: none;
+    border-radius: 35px;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 4px 0 #2e7d32;
+    display: block;
+    margin: 20px auto 0;
+    font-family: inherit;
+  }
+
+  .action-btn:hover { background-color: #388e3c; }
+
+  #printable-sheet { display: none; }
+
+  /* ==========================================
+     印刷用スタイル（余白・スケール拡張版）
+     ========================================== */
+  @media print {
+    @page {
+      size: A4 portrait;
+      margin: 15mm 20mm; /* 左右に20mmのゆったりした余白を確保 */
+    }
+
+    html, body {
+      background-color: white !important;
+      color: black !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      width: 100% !important;
+    }
+
+    .container, h2, .tab-container {
+      display: none !important;
+    }
+
+    #printable-sheet {
+      display: block !important;
+      width: 100% !important;
+      margin: 0 auto !important;
+      padding: 0 5mm !important; /* 安全用インナー余白 */
+      font-family: "Hiragino Maru Gothic ProN", "Hiragino Maru Gothic Pro", sans-serif !important;
+    }
+
+    .sheet-header {
+      text-align: center;
+      border-bottom: 2px solid #000;
+      margin-bottom: 15px;
+      padding-bottom: 6px;
+    }
+
+    .sheet-title {
+      font-size: 16pt;
+      font-weight: bold;
+      margin: 0;
+    }
+
+    .section-title {
+      font-size: 11pt;
+      font-weight: bold;
+      margin: 14px 0 6px 0;
+      background-color: #f0f0f0 !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+      padding: 4px 8px;
+      border-left: 4px solid #333;
+    }
+
+    .ws-instruction {
+      font-size: 9.5pt;
+      margin-bottom: 6px;
+      line-height: 1.4;
+    }
+
+    .sheet-question {
+      margin-bottom: 12px;
+      page-break-inside: avoid;
+    }
+
+    .q-text {
+      font-size: 10pt;
+      margin-bottom: 4px;
+      line-height: 1.4;
+    }
+
+    .q-line {
+      border-bottom: 1px dashed #666;
+      height: 22px;
+      width: 100%;
+    }
+
+    .answer-key-section {
+      page-break-before: always;
+      margin-top: 20px;
+      border-top: 2px dashed #000;
+      padding-top: 15px;
+      font-size: 9.5pt;
+    }
+  }
+</style>
+</head>
+<body>
+
+<h2>15章 動名詞＆不定詞の名詞的用法</h2>
+
+<div class="container">
+  <div class="tab-container" id="tabContainer">
+    <button class="tab-btn active" onclick="switchPart(1)">Part 1</button>
+    <button class="tab-btn" onclick="switchPart(2)">Part 2</button>
+    <button class="tab-btn" onclick="switchPart(3)">Part 3</button>
+    <button class="tab-btn" onclick="switchPart(4)">Part 4</button>
+  </div>
+
+  <!-- Part 1 -->
+  <div id="part1" class="card">
+    <div class="card-header">Part 1: 見た目を判断しよう</div>
+    <div class="question-instruction">
+      単語を選んでから、入れる先のボックスをタップして放り込んでください。
+    </div>
+    <div class="chip-pool" id="p1-chip-pool"></div>
+    <div class="drop-targets">
+      <div class="target-box" onclick="assignPart1('gerund')">
+        <div class="target-title">動名詞</div>
+        <div class="assigned-chips" id="p1-gerund-box"></div>
+      </div>
+      <div class="target-box" onclick="assignPart1('infinitive')">
+        <div class="target-title">不定詞</div>
+        <div class="assigned-chips" id="p1-infinitive-box"></div>
+      </div>
+    </div>
+    <button class="action-btn" onclick="checkPart1()">答え合わせ</button>
+  </div>
+
+  <!-- Part 2 -->
+  <div id="part2" class="card" style="display:none;">
+    <div class="card-header">Part 2: 目的語のルールで仕分けよう</div>
+    <div class="question-instruction">
+      動詞を選んでから、入れる先の枠をタップしてグループ分けしてください。
+    </div>
+    <div class="chip-pool" id="p2-chip-pool"></div>
+    <div class="drop-targets">
+      <div class="target-box" onclick="assignPart2('both')">
+        <div class="target-title">両方OK</div>
+        <div class="assigned-chips" id="p2-both-box"></div>
+      </div>
+      <div class="target-box" onclick="assignPart2('infinitive')">
+        <div class="target-title">不定詞だけ</div>
+        <div class="assigned-chips" id="p2-infinitive-box"></div>
+      </div>
+      <div class="target-box" onclick="assignPart2('gerund')">
+        <div class="target-title">動名詞だけ</div>
+        <div class="assigned-chips" id="p2-gerund-box"></div>
+      </div>
+    </div>
+    <button class="action-btn" onclick="checkPart2()">答え合わせ</button>
+  </div>
+
+  <!-- Part 3 -->
+  <div id="part3" class="card" style="display:none;">
+    <div class="card-header">Part 3: 適切な形を選ぼう (全10問)</div>
+    <div class="question-instruction">文脈に合う最も適切な形（動名詞・不定詞・どちらもOK）を選択してください。</div>
+    <div id="p3-questions"></div>
+    <button class="action-btn" onclick="checkPart3()">答え合わせ</button>
+  </div>
+
+  <!-- Part 4 -->
+  <div id="part4" class="card" style="display:none;">
+    <div class="card-header" id="p4-header">Part 4: 並べ替え問題</div>
+    <div class="question-instruction" id="p4-inst"></div>
+    <div class="answer-area" id="p4-answerArea"></div>
+    <div id="p4-wordBank" style="text-align: center;"></div>
+    <button class="action-btn" id="p4-nextBtn" onclick="checkOrNextPart4()">判定</button>
+  </div>
+
+</div>
+
+<!-- 印刷用ワークシート -->
+<div id="printable-sheet">
+  <div class="sheet-header">
+    <h1 class="sheet-title">15章 動名詞＆不定詞の名詞的用法 演習ワークシート</h1>
+  </div>
+
+  <div class="section-title">PART 1: 形の確認</div>
+  <div class="ws-instruction">次の語群の中から、①動名詞 ②不定詞 に該当するものをそれぞれ書き出しなさい。</div>
+  <div style="margin-bottom:6px; font-weight:bold;">【語群】 play / plays / playing / played / to play</div>
+  <div class="q-text">① 動名詞：______________________ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ② 不定詞：______________________</div>
+
+  <div class="section-title">PART 2: 動詞の分類</div>
+  <div class="ws-instruction">次の8つの動詞を、目的語に取れる形ごとに正しく分類して書きなさい。</div>
+  <div style="margin-bottom:6px; font-weight:bold;">【動詞】 like / love / want / enjoy / stop / start / finish / decide</div>
+  <div class="q-text">・両方（動名詞・不定詞）取れる動詞：( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )</div>
+  <div class="q-text">・不定詞だけを取る動詞：( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )</div>
+  <div class="q-text">・動名詞だけを取る動詞：( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )</div>
+
+  <div class="section-title">PART 3: 穴埋め問題</div>
+  <div class="ws-instruction">カッコ内から適切な語句を選び、○を付けなさい。（「どちらもOK」の場合は両方に○）</div>
+  <div id="ws-part3"></div>
+
+  <div class="section-title">PART 4: 並べ替え問題</div>
+  <div class="ws-instruction">日本文の意味に合うように、( ) 内の語群を並べ替えて正しい英文を完成させなさい。</div>
+  <div id="ws-part4"></div>
+
+  <div class="answer-key-section">
+    <h3>【Answer Key / 解答】</h3>
+    <div id="sheet-answers"></div>
+  </div>
+</div>
+
+<script>
+  function shuffle(array) {
+    let arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  /* --- Part 1 --- */
+  const p1Words = ["play", "plays", "playing", "played", "to play"];
+  let selectedP1Word = null;
+  let p1State = { gerund: null, infinitive: null };
+
+  function initPart1UI() {
+    const pool = document.getElementById('p1-chip-pool');
+    pool.innerHTML = "";
+    p1Words.forEach(w => {
+      if (p1State.gerund !== w && p1State.infinitive !== w) {
+        const chip = document.createElement('div');
+        chip.className = `interactive-chip ${selectedP1Word === w ? 'selected' : ''}`;
+        chip.textContent = w;
+        chip.onclick = () => {
+          selectedP1Word = selectedP1Word === w ? null : w;
+          initPart1UI();
+        };
+        pool.appendChild(chip);
+      }
+    });
+    renderP1Boxes();
+  }
+
+  function renderP1Boxes() {
+    ['gerund', 'infinitive'].forEach(type => {
+      const box = document.getElementById(`p1-${type}-box`);
+      box.innerHTML = "";
+      if (p1State[type]) {
+        const chip = document.createElement('div');
+        chip.className = 'interactive-chip';
+        chip.textContent = p1State[type];
+        chip.onclick = (e) => {
+          e.stopPropagation();
+          p1State[type] = null;
+          initPart1UI();
+        };
+        box.appendChild(chip);
+      }
+    });
+  }
+
+  function assignPart1(targetType) {
+    if (!selectedP1Word) return;
+    p1State[targetType] = selectedP1Word;
+    selectedP1Word = null;
+    initPart1UI();
+  }
+
+  function checkPart1() {
+    if (p1State.gerund === 'playing' && p1State.infinitive === 'to play') {
+      alert('✨ 正解です！形を見分けられましたね！');
+    } else {
+      alert('もう一度確認して入れ直してみよう！');
+    }
+  }
+
+  /* --- Part 2 --- */
+  const p2Verbs = ["like", "love", "want", "enjoy", "stop", "start", "finish", "decide"];
+  let selectedP2Verb = null;
+  let p2State = { both: [], infinitive: [], gerund: [] };
+
+  function initPart2UI() {
+    const pool = document.getElementById('p2-chip-pool');
+    pool.innerHTML = "";
+    p2Verbs.forEach(v => {
+      const isAssigned = p2State.both.includes(v) || p2State.infinitive.includes(v) || p2State.gerund.includes(v);
+      if (!isAssigned) {
+        const chip = document.createElement('div');
+        chip.className = `interactive-chip ${selectedP2Verb === v ? 'selected' : ''}`;
+        chip.textContent = v;
+        chip.onclick = () => {
+          selectedP2Verb = selectedP2Verb === v ? null : v;
+          initPart2UI();
+        };
+        pool.appendChild(chip);
+      }
+    });
+    renderP2Boxes();
+  }
+
+  function renderP2Boxes() {
+    ['both', 'infinitive', 'gerund'].forEach(type => {
+      const box = document.getElementById(`p2-${type}-box`);
+      box.innerHTML = "";
+      p2State[type].forEach(v => {
+        const chip = document.createElement('div');
+        chip.className = 'interactive-chip';
+        chip.textContent = v;
+        chip.onclick = (e) => {
+          e.stopPropagation();
+          p2State[type] = p2State[type].filter(item => item !== v);
+          initPart2UI();
+        };
+        box.appendChild(chip);
+      });
+    });
+  }
+
+  function assignPart2(targetType) {
+    if (!selectedP2Verb) return;
+    ['both', 'infinitive', 'gerund'].forEach(t => {
+      p2State[t] = p2State[t].filter(v => v !== selectedP2Verb);
+    });
+    p2State[targetType].push(selectedP2Verb);
+    selectedP2Verb = null;
+    initPart2UI();
+  }
+
+  function checkPart2() {
+    const correctBoth = ["like", "love", "start"].sort();
+    const correctInf = ["want", "decide"].sort();
+    const correctGer = ["enjoy", "stop", "finish"].sort();
+
+    const uBoth = [...p2State.both].sort();
+    const uInf = [...p2State.infinitive].sort();
+    const uGer = [...p2State.gerund].sort();
+
+    const isBothOk = JSON.stringify(correctBoth) === JSON.stringify(uBoth);
+    const isInfOk = JSON.stringify(correctInf) === JSON.stringify(uInf);
+    const isGerOk = JSON.stringify(correctGer) === JSON.stringify(uGer);
+
+    if (isBothOk && isInfOk && isGerOk) {
+      alert('✨ 全問正解です！完璧に分類できました！');
+    } else {
+      alert('分類を確認してみよう！（※startは両方OK、stop/finishは動名詞だけです）');
+    }
+  }
+
+  /* --- Part 3 --- */
+  const rawP3Data = [
+    { text: "I like ( playing / to play / どちらもOK ) soccer.", ans: "どちらもOK", printAns: "playing / to play (どちらもOK)" },
+    { text: "She wants ( to be / being / どちらもOK ) a teacher.", ans: "to be", printAns: "to be" },
+    { text: "We enjoyed ( to swim / swimming / どちらもOK ) in the sea.", ans: "swimming", printAns: "swimming" },
+    { text: "He finished ( doing / to do / どちらもOK ) his homework.", ans: "doing", printAns: "doing" },
+    { text: "They decided ( to visit / visiting / どちらもOK ) Kyoto.", ans: "to visit", printAns: "to visit" },
+    { text: "It started ( to rain / raining / どちらもOK ) in the afternoon.", ans: "どちらもOK", printAns: "to rain / raining (どちらもOK)" },
+    { text: "My sister loves ( to sing / singing / どちらもOK ) songs.", ans: "どちらもOK", printAns: "to sing / singing (どちらもOK)" },
+    { text: "Please stop ( to make / making / どちらもOK ) noise.", ans: "making", printAns: "making" },
+    { text: "I want ( buying / to buy / どちらもOK ) a new bike.", ans: "to buy", printAns: "to buy" },
+    { text: "Do you enjoy ( reading / to read / どちらもOK ) books?", ans: "reading", printAns: "reading" }
+  ];
+  let p3Data = [];
+
+  function initPart3() {
+    p3Data = shuffle(rawP3Data);
+    const container = document.getElementById('p3-questions');
+    container.innerHTML = "";
+    p3Data.forEach((q, idx) => {
+      const textHtml = q.text.replace(/\( (.*?) \)/, (match, p1) => {
+        const opts = p1.split(' / ');
+        let selectHtml = `<select id="p3-sel-${idx}"><option value="">--選択--</option>`;
+        opts.forEach(o => selectHtml += `<option value="${o}">${o}</option>`);
+        selectHtml += `</select>`;
+        return selectHtml;
+      });
+
+      const div = document.createElement('div');
+      div.className = 'q-item';
+      div.innerHTML = `<b>Q${idx+1}.</b> ${textHtml}`;
+      container.appendChild(div);
+    });
+  }
+
+  function checkPart3() {
+    let allCorrect = true;
+    p3Data.forEach((q, idx) => {
+      const val = document.getElementById(`p3-sel-${idx}`).value;
+      if(val !== q.ans) allCorrect = false;
+    });
+    if(allCorrect) {
+      alert('✨ 全問正解です！素晴らしい！');
+    } else {
+      alert('間違っている問題があります。もう一度確かめよう！');
+    }
+  }
+
+  /* --- Part 4 --- */
+  const p4Data = [
+    {
+      ja: "宿題を終えましたか？",
+      words: ["Did", "you", "finish", "doing", "your", "homework?"],
+      ans: "Did you finish doing your homework?"
+    },
+    {
+      ja: "私は来週、新しい本を買いに行きたいです。",
+      words: ["I", "want", "to", "buy", "a", "new", "book", "next", "week."],
+      ans: "I want to buy a new book next week."
+    },
+    {
+      ja: "彼は宿題をするためにテレビを見るのをやめました。",
+      words: ["He", "stopped", "watching", "TV", "to", "do", "his", "homework."],
+      ans: "He stopped watching TV to do his homework."
+    },
+    {
+      ja: "雨が降っていたので、私たちは外に行きたくありませんでした。",
+      words: ["We", "didn't", "want", "to", "go", "outside", "because", "it", "was", "raining."],
+      ans: "We didn't want to go outside because it was raining."
+    },
+    {
+      ja: "私は昨夜、その本を読み終えました。",
+      words: ["I", "finished", "reading", "the", "book", "last", "night."],
+      ans: "I finished reading the book last night."
+    },
+    {
+      ja: "彼女はカナダで英語を勉強することに決めました。",
+      words: ["She", "decided", "to", "study", "English", "in", "Canada."],
+      ans: "She decided to study English in Canada."
+    }
+  ];
+  let p4CurrentIdx = 0;
+  let p4UserSort = [];
+
+  function loadPart4Question() {
+    if(p4CurrentIdx >= p4Data.length) {
+      document.getElementById('part4').innerHTML = `
+        <div style="text-align:center; padding: 20px;">
+          <h3 style="color:#2e7d32;">🎉 Part 4 クリア！全問正解です！</h3>
+        </div>
+      `;
+      return;
+    }
+    const data = p4Data[p4CurrentIdx];
+    document.getElementById('p4-header').textContent = `Part 4: 並べ替え問題 (問 ${p4CurrentIdx + 1} / ${p4Data.length})`;
+    document.getElementById('p4-inst').textContent = data.ja;
+    
+    p4UserSort = [];
+    renderP4Sort();
+
+    const bank = document.getElementById('p4-wordBank');
+    bank.innerHTML = "";
+    const shuffled = shuffle([...data.words]);
+    shuffled.forEach(w => {
+      const btn = document.createElement('button');
+      btn.className = 'word-btn';
+      btn.textContent = w;
+      btn.onclick = () => {
+        if(btn.classList.contains('used')) return;
+        p4UserSort.push({ text: w, btn: btn });
+        btn.classList.add('used');
+        renderP4Sort();
+      };
+      bank.appendChild(btn);
+    });
+  }
+
+  function renderP4Sort() {
+    const area = document.getElementById('p4-answerArea');
+    area.innerHTML = "";
+    if(p4UserSort.length === 0) {
+      area.innerHTML = '<span style="color:#aaa;">タップして単語を並べ替えてね</span>';
+      return;
+    }
+    p4UserSort.forEach((item, idx) => {
+      const b = document.createElement('button');
+      b.className = 'word-btn';
+      b.textContent = item.text;
+      b.onclick = () => {
+        item.btn.classList.remove('used');
+        p4UserSort.splice(idx, 1);
+        renderP4Sort();
+      };
+      area.appendChild(b);
+    });
+  }
+
+  function checkOrNextPart4() {
+    const data = p4Data[p4CurrentIdx];
+    const userStr = p4UserSort.map(i => i.text).join(" ");
+    if(userStr === data.ans) {
+      alert("✨ 大正解！");
+      p4CurrentIdx++;
+      loadPart4Question();
+    } else {
+      alert("語順を確認してね！");
+    }
+  }
+
+  /* --- タブ切り替え --- */
+  function switchPart(partNum) {
+    const btns = document.querySelectorAll('.tab-btn');
+    btns.forEach((b, idx) => {
+      if(idx === partNum - 1) b.classList.add('active');
+      else b.classList.remove('active');
+    });
+
+    document.getElementById('part1').style.display = partNum === 1 ? 'block' : 'none';
+    document.getElementById('part2').style.display = partNum === 2 ? 'block' : 'none';
+    document.getElementById('part3').style.display = partNum === 3 ? 'block' : 'none';
+    document.getElementById('part4').style.display = partNum === 4 ? 'block' : 'none';
+  }
+
+  /* --- 印刷用ワークシート生成 --- */
+  function generatePrintSheet() {
+    const p3Div = document.getElementById('ws-part3');
+    const p4Div = document.getElementById('ws-part4');
+    const ansDiv = document.getElementById('sheet-answers');
+
+    p3Div.innerHTML = "";
+    p4Div.innerHTML = "";
+    ansDiv.innerHTML = "";
+
+    rawP3Data.forEach((q, idx) => {
+      const qEl = document.createElement('div');
+      qEl.className = 'sheet-question';
+      qEl.innerHTML = `<div class="q-text">${idx+1}. ${q.text}</div>`;
+      p3Div.appendChild(qEl);
+    });
+
+    p4Data.forEach((q, idx) => {
+      const qEl = document.createElement('div');
+      qEl.className = 'sheet-question';
+      const scramble = shuffle([...q.words]).join(" / ");
+      qEl.innerHTML = `
+        <div class="q-text">${idx+1}. ${q.ja}</div>
+        <div style="font-size:8.5pt; color:#555;">( ${scramble} )</div>
+        <div class="q-line"></div>
+      `;
+      p4Div.appendChild(qEl);
+    });
+
+    ansDiv.innerHTML = `
+      <div style="font-weight:bold; margin-bottom:4px;">【PART 1 解答】</div>
+      <div>① 動名詞：playing &nbsp;&nbsp; ② 不定詞：to play</div>
+
+      <div style="font-weight:bold; margin-top:8px; margin-bottom:4px;">【PART 2 解答】</div>
+      <div>・両方：like, love, start &nbsp;&nbsp; ・不定詞のみ：want, decide &nbsp;&nbsp; ・動名詞のみ：enjoy, stop, finish</div>
+
+      <div style="font-weight:bold; margin-top:8px; margin-bottom:4px;">【PART 3 解答】</div>
+      ${rawP3Data.map((q, i) => `<div>${i+1}. <b>${q.printAns}</b></div>`).join('')}
+
+      <div style="font-weight:bold; margin-top:8px; margin-bottom:4px;">【PART 4 解答】</div>
+      ${p4Data.map((q, i) => `<div>${i+1}. <b>${q.ans}</b></div>`).join('')}
+    `;
+  }
+
+  window.onload = function() {
+    initPart1UI();
+    initPart2UI();
+    initPart3();
+    loadPart4Question();
+    generatePrintSheet();
+  };
+</script>
+</body>
+</html>
