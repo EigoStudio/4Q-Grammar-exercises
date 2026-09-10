@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>15章 感情の不定詞 & 動名詞と不定詞の復習問題！</title>
+<script src="auth.js"></script>
+<style>
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  :root {
+    --primary-orange: #ff9800;
+    --primary-hover: #e65100;
+    --text-brown: #5d4037;
+    --bg-color: #fff8f0;
+    --border-color: #d7ccc8;
+    --accent-green: #2ecc71;
+  }
+
+  body {
+    font-family: "Hiragino Maru Gothic ProN", "Hiragino Maru Gothic Pro", "HGMaruGothicMPRO", sans-serif;
+    background-color: var(--bg-color);
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    color: #333;
+  }
+
+  .top-controls {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    gap: 10px;
+  }
+
+  .header-btn {
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: background-color 0.2s;
+  }
+  .print-launch-btn { background-color: #795548; }
+  .print-launch-btn:hover { background-color: #5d4037; }
+
+  .container {
+    background: white;
+    max-width: 900px;
+    width: 100%;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+    min-height: 580px;
+    margin-top: 40px;
+  }
+
+  h2 {
+    color: #e65100;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  /* タブUI */
+  .tab-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+  }
+
+  .tab-btn {
+    padding: 10px 18px;
+    border: 2px solid var(--primary-orange);
+    background-color: white;
+    color: var(--text-brown);
+    font-weight: bold;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+
+  .tab-btn:hover { background-color: #fff3e0; }
+  .tab-btn.active {
+    background-color: var(--primary-orange);
+    color: white;
+  }
+
+  .progress-container {
+    width: 100%;
+    background-color: #eee;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    height: 8px;
+  }
+  .progress-bar {
+    height: 100%;
+    background-color: var(--primary-orange);
+    width: 0%;
+    transition: width 0.3s;
+  }
+
+  .progress-text {
+    text-align: right;
+    font-size: 0.9rem;
+    color: var(--text-brown);
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+
+  /* カード・ステップスタイル */
+  .step-card {
+    background: #fffaf0;
+    border: 2px dashed #ffe0b2;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 25px;
+  }
+
+  .step-header {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #e65100;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .step-badge {
+    background-color: var(--primary-orange);
+    color: white;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+  }
+
+  .question-instruction {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--text-brown);
+    margin-bottom: 15px;
+  }
+
+  .phrase-select-area {
+    font-size: 1.25rem;
+    line-height: 2;
+    margin-bottom: 15px;
+  }
+
+  select {
+    padding: 8px 12px;
+    font-size: 1.1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    background-color: white;
+    color: var(--text-brown);
+    font-family: inherit;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  select:focus {
+    border-color: var(--primary-orange);
+    outline: none;
+  }
+
+  /* 並べ替えパーツ */
+  .word-btn {
+    background-color: white;
+    color: var(--text-brown);
+    border: 2px solid var(--primary-orange);
+    padding: 10px 18px;
+    border-radius: 25px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin: 5px;
+    display: inline-block;
+    font-family: inherit;
+  }
+
+  .word-btn.used {
+    border-color: #eee;
+    color: #ccc;
+    pointer-events: none;
+  }
+
+  .answer-area {
+    min-height: 75px;
+    border-bottom: 2px solid #ffcc80;
+    margin-bottom: 25px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+    background-color: #fffafb;
+    border-radius: 10px;
+  }
+
+  /* 4択グリッド (Part2) */
+  .choice-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+
+  .choice-card-btn {
+    padding: 15px 10px;
+    border: 2px solid var(--border-color);
+    background: white;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    text-align: center;
+    color: var(--text-brown);
+    transition: all 0.2s;
+    font-family: inherit;
+    font-weight: bold;
+  }
+
+  .choice-card-btn:hover {
+    border-color: var(--primary-orange);
+    background-color: #fffaf0;
+  }
+
+  .choice-card-btn.selected {
+    border-color: var(--primary-orange);
+    background-color: #fff3e0;
+  }
+
+  .celebration-text {
+    font-size: 1.8rem;
+    color: #2e7d32;
+    font-weight: bold;
+    text-align: center;
+    animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    line-height: 1.6;
+    padding: 20px 0;
+  }
+
+  @keyframes popIn {
+    0% { transform: scale(0.6); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .action-btn {
+    padding: 14px 40px;
+    font-size: 1.1rem;
+    background-color: #43a047;
+    color: white;
+    border: none;
+    border-radius: 35px;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 4px 0 #2e7d32;
+    display: block;
+    margin: 15px auto;
+    font-family: inherit;
+    transition: transform 0.1s, background-color 0.2s;
+  }
+
+  .action-btn:hover { background-color: #388e3c; }
+  .action-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #2e7d32;
+  }
+
+  #printable-sheet { display: none; }
+
+  @media (max-width: 600px) {
+    .container { padding: 20px; }
+    .question-instruction { font-size: 1.05rem; }
+    .word-btn { font-size: 0.95rem; padding: 8px 12px; margin: 3px; }
+    .choice-grid { grid-template-columns: 1fr; }
+    .celebration-text { font-size: 1.3rem; }
+    select { font-size: 0.95rem; padding: 5px; }
+  }
+
+  /* --- 印刷用スタイル --- */
+  @media print {
+    @page {
+      size: A4 portrait;
+      margin: 12mm 12mm;
+    }
+
+    html, body {
+      background-color: white !important;
+      color: black !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      width: 100% !important;
+      height: auto !important;
+      overflow: visible !important;
+    }
+
+    .container, h2, .top-controls, .tab-container {
+      display: none !important;
+    }
+
+    #printable-sheet {
+      display: block !important;
+      position: relative !important;
+      left: 0 !important;
+      top: 0 !important;
+      width: 100% !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      font-family: "Hiragino Maru Gothic ProN", "Hiragino Maru Gothic Pro", "HGMaruGothicMPRO", sans-serif !important;
+      color: #000 !important;
+    }
+
+    .sheet-header {
+      text-align: center;
+      border-bottom: 2px solid #000;
+      margin-bottom: 15px;
+      padding-bottom: 6px;
+    }
+
+    .sheet-title {
+      font-size: 16pt;
+      font-weight: bold;
+      margin: 0 0 5px 0;
+    }
+
+    .section-title {
+      font-size: 12pt;
+      font-weight: bold;
+      margin: 16px 0 10px 0;
+      background-color: #f0f0f0 !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+      padding: 5px 10px;
+      border-left: 5px solid #000;
+      color: #000 !important;
+    }
+
+    /* Part2 から改ページ */
+    .page-break-before {
+      page-break-before: always;
+    }
+
+    .ws-instruction {
+      font-size: 10.5pt;
+      margin-bottom: 10px;
+      color: #000 !important;
+      font-weight: bold;
+      line-height: 1.5;
+    }
+
+    .ws-box {
+      border: 1.5px solid #000;
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-bottom: 14px;
+      background-color: #ffffff !important;
+      color: #000 !important;
+      font-size: 11pt;
+      line-height: 1.6;
+    }
+
+    .sheet-question {
+      margin-bottom: 18px;
+      page-break-inside: avoid;
+    }
+
+    .q-text {
+      font-size: 11.5pt;
+      margin-bottom: 6px;
+      line-height: 1.5;
+      color: #000 !important;
+    }
+
+    .q-line {
+      border-bottom: 1.5px dashed #000;
+      height: 32px;
+      width: 98%;
+      margin-top: 4px;
+      margin-bottom: 8px;
+    }
+
+    .choice-text-black {
+      font-size: 10.5pt;
+      color: #000 !important;
+      margin: 4px 0 6px 12px;
+      line-height: 1.5;
+      font-weight: bold;
+    }
+
+    .answer-key-section {
+      page-break-before: always;
+      margin-top: 20px;
+      border-top: 2px dashed #000;
+      padding-top: 15px;
+      font-size: 10pt;
+      color: #000 !important;
+    }
+
+    .key-grid {
+      display: grid;
+      grid-template-columns: repeat(1, 1fr);
+      gap: 8px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="top-controls">
+  <button class="header-btn print-launch-btn" onclick="triggerPrint()">🖨️ プリントを作成</button>
+</div>
+
+<h2>15章 感情の不定詞 & 復習問題！</h2>
+
+<div class="container">
+  <!-- タブ領域 -->
+  <div class="tab-container" id="tabContainer">
+    <button class="tab-btn active" onclick="switchPart(1)">Part 1: 感情の原因を表す不定詞（2ステップ）</button>
+    <button class="tab-btn" onclick="switchPart(2)">Part 2: 不定詞・動名詞 総合ミックス（予想問題）</button>
+  </div>
+
+  <div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+  <div class="progress-text" id="progressText">問 1 / 5</div>
+
+  <div id="game-content">
+    <!-- Part1 / Part2 の動的描画エリア -->
+  </div>
+</div>
+
+<!-- 印刷用ワークシート -->
+<div id="printable-sheet">
+  <div class="sheet-header">
+    <h1 class="sheet-title">15章 感情の不定詞 & 復習問題！</h1>
+  </div>
+  
+  <div class="section-title">PART 1: 感情の原因を表す不定詞</div>
+  
+  <div class="ws-instruction">1. 次の【感情のことば】から適するものを選び、短文を完成させなさい。</div>
+  <div class="ws-box" id="ws-adj-list"></div>
+
+  <div id="ws-part1-stepA"></div>
+
+  <div class="ws-instruction" style="margin-top: 15px;">2. 【動作のフレーズ】を参考にして、和文に合う完全な英文を作りなさい。</div>
+  <div class="ws-box" id="ws-phrase-list"></div>
+
+  <div id="ws-part1-stepB"></div>
+
+  <div class="section-title page-break-before" style="margin-top:25px;">PART 2: 予想問題</div>
+  <div id="ws-part2"></div>
+
+  <div class="answer-key-section">
+    <h3>【Answer Key / 解答】</h3>
+    <div id="sheet-answers" class="key-grid"></div>
+  </div>
+</div>
+
+<script>
+  function shuffle(array) {
+    let arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  // --- Part 1 データ：感情の原因を表す不定詞 (2ステップ) ---
+  const part1Data = [
+    {
+      pageNum: 1,
+      step1: {
+        inst: "「私は嬉しい」という感情の文を完成させよう！",
+        opts: ["happy", "sad", "surprised", "sorry"],
+        ans: "happy",
+        prefix: "I am ( ", suffix: " ).",
+        jaShort: "私は嬉しい",
+        targetAdj: "happy",
+        linePrefix: "I am ____________________."
+      },
+      step2: {
+        inst: "「あなたに会えて嬉しいです。」の英文を作りましょう。（並べ替え）",
+        words: ["I", "am", "happy", "to", "see", "you."],
+        correct: "I am happy to see you.",
+        jaFull: "1. あなたに会えて嬉しいです。"
+      }
+    },
+    {
+      pageNum: 2,
+      step1: {
+        inst: "「私は驚いた」という感情の文を完成させよう！",
+        opts: ["surprised", "happy", "glad", "excited"],
+        ans: "surprised",
+        prefix: "I was ( ", suffix: " ).",
+        jaShort: "私は驚いた",
+        targetAdj: "surprised",
+        linePrefix: "I was ____________________."
+      },
+      step2: {
+        inst: "「そのニュースを聞いて驚きました。」の英文を作りましょう。（並べ替え）",
+        words: ["I", "was", "surprised", "to", "hear", "the", "news."],
+        correct: "I was surprised to hear the news.",
+        jaFull: "2. そのニュースを聞いて驚きました。"
+      }
+    },
+    {
+      pageNum: 3,
+      step1: {
+        inst: "「彼女は悲しい」という感情の文を完成させよう！",
+        opts: ["sad", "happy", "excited", "surprised"],
+        ans: "sad",
+        prefix: "She is ( ", suffix: " ).",
+        jaShort: "彼女は悲しい",
+        targetAdj: "sad",
+        linePrefix: "She is ____________________."
+      },
+      step2: {
+        inst: "「彼女はそれについて聞いて悲しいです。」の英文を作りましょう。（並べ替え）",
+        words: ["She", "is", "sad", "to", "hear", "about", "it."],
+        correct: "She is sad to hear about it.",
+        jaFull: "3. 彼女はそれについて聞いて悲しいです。"
+      }
+    },
+    {
+      pageNum: 4,
+      step1: {
+        inst: "「私たちは喜んでいる（光栄だ）」という感情の文を完成させよう！",
+        opts: ["glad", "sorry", "surprised", "sad"],
+        ans: "glad",
+        prefix: "We are ( ", suffix: " ).",
+        jaShort: "私たちは嬉しい（光栄だ）",
+        targetAdj: "glad",
+        linePrefix: "We are ____________________."
+      },
+      step2: {
+        inst: "「あなたを助けることができて嬉しいです。」の英文を作りましょう。（並べ替え）",
+        words: ["We", "are", "glad", "to", "help", "you."],
+        correct: "We are glad to help you.",
+        jaFull: "4. あなたを助けることができて嬉しいです。"
+      }
+    },
+    {
+      pageNum: 5,
+      step1: {
+        inst: "「彼はワクワクしている」という感情の文を完成させよう！",
+        opts: ["excited", "sorry", "sad", "cold"],
+        ans: "excited",
+        prefix: "He is ( ", suffix: " ).",
+        jaShort: "彼はワクワクしている",
+        targetAdj: "excited",
+        linePrefix: "He is ____________________."
+      },
+      step2: {
+        inst: "「彼は日本を訪れることにワクワクしています。」の英文を作りましょう。（並べ替え）",
+        words: ["He", "is", "excited", "to", "visit", "Japan."],
+        correct: "He is excited to visit Japan.",
+        jaFull: "5. 彼は日本を訪れることにワクワクしています。"
+      }
+    }
+  ];
+
+  // --- Part 2 データ：総合ミックス問題 ---
+  const part2Data = [
+    {
+      type: "choice",
+      qText: "My brother and I went to the park _________________ soccer.",
+      choices: ["1  played", "2  to play", "3  playing", "4  play"],
+      ans: "2  to play",
+      ansPrint: "2 (to play)",
+      fullSentence: "My brother and I went to the park to play soccer."
+    },
+    {
+      type: "choice",
+      qText: "A: Did you finish _________________ your homework?<br>B: Yes. Can I play games now, Mom?",
+      choices: ["1  do", "2  to do", "3  doing", "4  did"],
+      ans: "3  doing",
+      ansPrint: "3 (doing)",
+      fullSentence: "A: Did you finish doing your homework? B: Yes. Can I play games now, Mom?"
+    },
+    {
+      type: "choice",
+      qText: "A: What city do you _________________ to visit?<br>B: Paris! Visiting the Eiffel Tower is my dream.",
+      choices: ["1  live", "2  enjoy", "3  want", "4  stop"],
+      ans: "3  want",
+      ansPrint: "3 (want)",
+      fullSentence: "A: What city do you want to visit? B: Paris! Visiting the Eiffel Tower is my dream."
+    },
+    {
+      type: "sort",
+      qText: "【並べ替え】単語を正しく並べ替えて英文を完成させよう！",
+      ja: "何か温かい飲み物はありますか？",
+      words: ["Do", "you", "have", "something", "warm", "to", "drink?"],
+      correct: "Do you have something warm to drink?",
+      ansPrint: "Do you have something warm to drink?"
+    },
+    {
+      type: "choice",
+      qText: "I was very happy _________________ your letter yesterday.",
+      choices: ["1  get", "2  to get", "3  getting", "4  got"],
+      ans: "2  to get",
+      ansPrint: "2 (to get)",
+      fullSentence: "I was very happy to get your letter yesterday."
+    },
+    {
+      type: "choice",
+      qText: "They stopped _________________ pictures when the rain started.",
+      choices: ["1  taking", "2  to take", "3  took", "4  take"],
+      ans: "1  taking",
+      ansPrint: "1 (taking)",
+      fullSentence: "They stopped taking pictures when the rain started."
+    },
+    {
+      type: "choice",
+      qText: "I have a lot of things _________________ today.",
+      choices: ["1  do", "2  doing", "3  to do", "4  did"],
+      ans: "3  to do",
+      ansPrint: "3 (to do)",
+      fullSentence: "I have a lot of things to do today."
+    },
+    {
+      type: "sort",
+      qText: "【並べ替え】単語を正しく並べ替えて英文を完成させよう！",
+      ja: "私は図書室に本を借りに行きました。",
+      words: ["I", "went", "to", "the", "library", "to", "borrow", "a", "book."],
+      correct: "I went to the library to borrow a book.",
+      ansPrint: "I went to the library to borrow a book."
+    },
+    {
+      type: "choice",
+      qText: "We enjoyed _________________ in the river last Sunday.",
+      choices: ["1  swim", "2  to swim", "3  swimming", "4  swam"],
+      ans: "3  swimming",
+      ansPrint: "3 (swimming)",
+      fullSentence: "We enjoyed swimming in the river last Sunday."
+    },
+    {
+      type: "choice",
+      qText: "She decided _________________ tennis with her friends.",
+      choices: ["1  to play", "2  playing", "3  played", "4  play"],
+      ans: "1  to play",
+      ansPrint: "1 (to play)",
+      fullSentence: "She decided to play tennis with her friends."
+    }
+  ];
+
+  let currentPart = 1;
+  let currentIdx = 0;
+  let userSort = [];
+  let selectedChoice = null;
+
+  function switchPart(partNum) {
+    currentPart = partNum;
+    currentIdx = 0;
+    
+    const btns = document.querySelectorAll('.tab-btn');
+    btns.forEach((b, idx) => {
+      if(idx === partNum - 1) b.classList.add('active');
+      else b.classList.remove('active');
+    });
+
+    loadQuestion();
+  }
+
+  function loadQuestion() {
+    const totalQ = currentPart === 1 ? part1Data.length : part2Data.length;
+
+    document.getElementById('progressBar').style.width = `${((currentIdx + 1) / totalQ) * 100}%`;
+    document.getElementById('progressText').textContent = `問 ${currentIdx + 1} / ${totalQ}`;
+
+    if (currentPart === 1) {
+      loadPart1Question();
+    } else {
+      loadPart2Question();
+    }
+  }
+
+  /* --- Part 1 画面表示 --- */
+  function loadPart1Question() {
+    const data = part1Data[currentIdx];
+    const gameContent = document.getElementById('game-content');
+
+    gameContent.innerHTML = `
+      <!-- STEP 1 -->
+      <div class="step-card" id="p1-step1-card">
+        <div class="step-header">
+          <span class="step-badge">STEP 1</span>
+          <span>感情を表す形容詞を選ぼう！</span>
+        </div>
+        <div class="question-instruction">${data.step1.inst}</div>
+        <div class="phrase-select-area">
+          ${data.step1.prefix}
+          <select id="p1-s1-select">
+            <option value="">--選択--</option>
+            ${shuffle([...data.step1.opts]).map(o => `<option value="${o}">${o}</option>`).join('')}
+          </select>
+          ${data.step1.suffix}
+        </div>
+        <button class="action-btn" id="p1-s1-btn" onclick="checkPart1Step1()">STEP 1 完了！</button>
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="step-card" id="p1-step2-card" style="display:none;">
+        <div class="step-header">
+          <span class="step-badge">STEP 2</span>
+          <span>感情の原因を表す不定詞を使って文を完成させよう！</span>
+        </div>
+        <div class="question-instruction">${data.step2.inst}</div>
+        <div class="answer-area" id="answerArea"><span style="color:#aaa;">下のパーツをタップして並べ替えてね</span></div>
+        <div id="wordBank" style="text-align: center;"></div>
+        <button class="action-btn" id="p1-s2-btn" style="display:none;" onclick="checkPart1Step2()">答えをチェック</button>
+      </div>
+
+      <div id="feedback-area"></div>
+      <button class="action-btn" id="nextBtn" style="display:none; background-color: #ef6c00; box-shadow: 0 4px 0 #b33f00;" onclick="nextQuestion()">次の問題へ ➔</button>
+    `;
+
+    setupSortArea(data.step2);
+  }
+
+  function checkPart1Step1() {
+    const data = part1Data[currentIdx].step1;
+    const val = document.getElementById('p1-s1-select').value;
+
+    if (val === data.ans) {
+      document.getElementById('p1-s1-btn').style.display = "none";
+      document.getElementById('p1-step2-card').style.display = "block";
+    } else {
+      alert("感情の言葉をもう一度見直してみよう！");
+    }
+  }
+
+  function setupSortArea(step2Data) {
+    userSort = [];
+    const bank = document.getElementById('wordBank');
+    if (!bank) return;
+    bank.innerHTML = "";
+
+    const shuffledWords = shuffle([...step2Data.words]);
+    shuffledWords.forEach(w => {
+      const btn = document.createElement('button');
+      btn.className = 'word-btn';
+      btn.textContent = w;
+      btn.onclick = () => {
+        if (btn.classList.contains('used')) return;
+        const area = document.getElementById('answerArea');
+        if (userSort.length === 0) area.innerHTML = "";
+        userSort.push({ text: w, btn: btn });
+        btn.classList.add('used');
+        renderSort('p1-s2-btn', step2Data.words.length);
+      };
+      bank.appendChild(btn);
+    });
+  }
+
+  function renderSort(btnId, targetLength) {
+    const area = document.getElementById('answerArea');
+    area.innerHTML = "";
+    userSort.forEach((item, idx) => {
+      const b = document.createElement('button');
+      b.className = 'word-btn';
+      b.style.margin = "2px";
+      b.textContent = item.text;
+      b.onclick = () => {
+        item.btn.classList.remove('used');
+        userSort.splice(idx, 1);
+        renderSort(btnId, targetLength);
+        if(userSort.length === 0) area.innerHTML = '<span style="color:#aaa;">下のパーツをタップして並べ替えてね</span>';
+      };
+      area.appendChild(b);
+    });
+
+    const checkBtn = document.getElementById(btnId);
+    if (userSort.length === targetLength) {
+      if (checkBtn) checkBtn.style.display = "block";
+    } else {
+      if (checkBtn) checkBtn.style.display = "none";
+    }
+  }
+
+  function checkPart1Step2() {
+    const data = part1Data[currentIdx].step2;
+    let userStr = userSort.map(i => i.text).join(" ");
+    let cleanUser = userStr.replace(/[.,?]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
+    let cleanAns = data.correct.replace(/[.,?]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
+
+    if (cleanUser === cleanAns) {
+      document.getElementById('p1-step2-card').innerHTML = `
+        <div class="celebration-text">
+          ✨ 大正解！ PERFECT! ✨<br>
+          <span style="font-size:1.3rem; color:#333;">${data.correct}</span>
+        </div>
+      `;
+      document.getElementById('nextBtn').style.display = "block";
+    } else {
+      alert("語順を確認してね！");
+    }
+  }
+
+  /* --- Part 2 画面表示 --- */
+  function normalizeText(str) {
+    return str.replace(/\s+/g, " ").trim();
+  }
+
+  function loadPart2Question() {
+    const data = part2Data[currentIdx];
+    const gameContent = document.getElementById('game-content');
+    selectedChoice = null;
+    userSort = [];
+
+    if (data.type === "choice") {
+      let html = `
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">予想問題</span>
+            <span>問 ${currentIdx + 1}</span>
+          </div>
+          <div class="question-instruction" style="font-size:1.2rem; line-height:1.6;">
+            ${data.qText}
+          </div>
+
+          <div class="choice-grid">
+            ${data.choices.map(c => `
+              <button class="choice-card-btn" onclick="selectChoice(this, \`${c}\`)">${c}</button>
+            `).join('')}
+          </div>
+
+          <button class="action-btn" id="p2-check-btn" style="display:none;" onclick="checkPart2Choice()">答えをチェック</button>
+        </div>
+        <div id="feedback-area"></div>
+        <button class="action-btn" id="nextBtn" style="display:none; background-color: #ef6c00; box-shadow: 0 4px 0 #b33f00;" onclick="nextQuestion()">次の問題へ ➔</button>
+      `;
+      gameContent.innerHTML = html;
+    } else if (data.type === "sort") {
+      let html = `
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">予想問題</span>
+            <span>問 ${currentIdx + 1}</span>
+          </div>
+          <div class="question-instruction" style="font-size:1.1rem; line-height:1.6;">
+            ${data.qText}<br>
+            <span style="color:#5d4037; font-weight:bold;">日本語：${data.ja}</span>
+          </div>
+
+          <div class="answer-area" id="answerArea"><span style="color:#aaa;">下のパーツをタップして並べ替えてね</span></div>
+          <div id="wordBank" style="text-align: center;"></div>
+
+          <button class="action-btn" id="p2-sort-check-btn" style="display:none;" onclick="checkPart2Sort()">答えをチェック</button>
+        </div>
+        <div id="feedback-area"></div>
+        <button class="action-btn" id="nextBtn" style="display:none; background-color: #ef6c00; box-shadow: 0 4px 0 #b33f00;" onclick="nextQuestion()">次の問題へ ➔</button>
+      `;
+      gameContent.innerHTML = html;
+      setupPart2Sort(data);
+    }
+  }
+
+  function selectChoice(btn, choiceText) {
+    document.querySelectorAll('.choice-card-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedChoice = choiceText;
+    document.getElementById('p2-check-btn').style.display = "block";
+  }
+
+  function checkPart2Choice() {
+    const data = part2Data[currentIdx];
+    if (normalizeText(selectedChoice) === normalizeText(data.ans)) {
+      document.getElementById('p2-check-btn').style.display = "none";
+      document.getElementById('feedback-area').innerHTML = `
+        <div class="celebration-text">
+          ✨ 大正解！ ✨<br>
+          ${data.fullSentence ? `<span style="font-size:1.2rem; color:#333; font-weight:normal;">${data.fullSentence}</span>` : ''}
+        </div>
+      `;
+      document.getElementById('nextBtn').style.display = "block";
+    } else {
+      alert("もう一度よく考えて選んでみよう！");
+    }
+  }
+
+  function setupPart2Sort(sortData) {
+    userSort = [];
+    const bank = document.getElementById('wordBank');
+    if (!bank) return;
+    bank.innerHTML = "";
+
+    const shuffledWords = shuffle([...sortData.words]);
+    shuffledWords.forEach(w => {
+      const btn = document.createElement('button');
+      btn.className = 'word-btn';
+      btn.textContent = w;
+      btn.onclick = () => {
+        if (btn.classList.contains('used')) return;
+        const area = document.getElementById('answerArea');
+        if (userSort.length === 0) area.innerHTML = "";
+        userSort.push({ text: w, btn: btn });
+        btn.classList.add('used');
+        renderSort('p2-sort-check-btn', sortData.words.length);
+      };
+      bank.appendChild(btn);
+    });
+  }
+
+  function checkPart2Sort() {
+    const data = part2Data[currentIdx];
+    let userStr = userSort.map(i => i.text).join(" ");
+    let cleanUser = userStr.replace(/[.,?]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
+    let cleanAns = data.correct.replace(/[.,?]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
+
+    if (cleanUser === cleanAns) {
+      document.getElementById('p2-sort-check-btn').style.display = "none";
+      document.getElementById('feedback-area').innerHTML = `
+        <div class="celebration-text">
+          ✨ 大正解！ PERFECT! ✨<br>
+          <span style="font-size:1.3rem; color:#333; font-weight:normal;">${data.correct}</span>
+        </div>
+      `;
+      document.getElementById('nextBtn').style.display = "block";
+    } else {
+      alert("語順を確認してね！");
+    }
+  }
+
+  function nextQuestion() {
+    const totalQ = currentPart === 1 ? part1Data.length : part2Data.length;
+    currentIdx++;
+
+    if (currentIdx < totalQ) {
+      loadQuestion();
+    } else {
+      document.getElementById('game-content').innerHTML = `
+        <div class='celebration-text'>
+          🎉 Part ${currentPart} 全問クリア！素晴らしい！ 🎉<br>
+          <span style="font-size:1.2rem; color:#5d4037;">文法マスターに一歩近づきました！</span>
+        </div>
+      `;
+      document.getElementById('progressBar').style.width = "100%";
+      document.getElementById('progressText').textContent = `${totalQ} / ${totalQ} 完成！`;
+    }
+  }
+
+  /* --- 印刷用シート自動生成 (小学生向け見やすさ・和訳削除最適化) --- */
+  function generatePrintSheet() {
+    const p1StepADiv = document.getElementById('ws-part1-stepA');
+    const p1StepBDiv = document.getElementById('ws-part1-stepB');
+    const p2Div = document.getElementById('ws-part2');
+    const ansDiv = document.getElementById('sheet-answers');
+
+    p1StepADiv.innerHTML = "";
+    p1StepBDiv.innerHTML = "";
+    p2Div.innerHTML = "";
+    ansDiv.innerHTML = "";
+
+    // 【1】Part 1 形容詞リストのシャッフル生成
+    const adjList = shuffle(["happy", "sad", "surprised", "glad", "excited"]);
+    document.getElementById('ws-adj-list').innerHTML = `
+      <b>【感情のことば】</b> &nbsp;&nbsp; ${adjList.join(" &nbsp;&nbsp;&nbsp; / &nbsp;&nbsp;&nbsp; ")}
+    `;
+
+    // Part 1 Step A（短いフレーズ問題：点線枠形式）
+    part1Data.forEach((item, idx) => {
+      const q = document.createElement('div');
+      q.className = 'sheet-question';
+      q.innerHTML = `
+        <div class="q-text">(${idx + 1}) ${item.step1.jaShort} &nbsp;➔&nbsp; ${item.step1.linePrefix}</div>
+      `;
+      p1StepADiv.appendChild(q);
+    });
+
+    // 【2】Part 1 動作フレーズリストの生成（和訳削除）
+    const phraseListNoJa = [
+      "see you",
+      "hear the news",
+      "hear about it",
+      "help you",
+      "visit Japan"
+    ];
+    document.getElementById('ws-phrase-list').innerHTML = `
+      <b>【動作のフレーズ】</b><br>
+      ${phraseListNoJa.join(" &nbsp;&nbsp;&nbsp; / &nbsp;&nbsp;&nbsp; ")}
+    `;
+
+    // Part 1 Step B（完全文の作成問題）
+    part1Data.forEach((item, idx) => {
+      const q = document.createElement('div');
+      q.className = 'sheet-question';
+      q.innerHTML = `
+        <div class="q-text">(${idx + 1}) ${item.step2.jaFull}</div>
+        <div class="q-line"></div>
+      `;
+      p1StepBDiv.appendChild(q);
+    });
+
+    // 【3】Part 2（予想問題）
+    part2Data.forEach((item, idx) => {
+      const q = document.createElement('div');
+      q.className = 'sheet-question';
+      if (item.type === "choice") {
+        q.innerHTML = `
+          <div class="q-text">${idx + 1}. ${item.qText}</div>
+          <div class="choice-text-black">${item.choices.join(' &nbsp;&nbsp;&nbsp;&nbsp; ')}</div>
+        `;
+      } else if (item.type === "sort") {
+        let shuffled = shuffle([...item.words]);
+        q.innerHTML = `
+          <div class="q-text">${idx + 1}. ${item.ja}</div>
+          <div class="q-line"></div>
+          <div class="choice-text-black" style="margin-left:0;">[ ${shuffled.join(' &nbsp; / &nbsp; ')} ]</div>
+        `;
+      }
+      p2Div.appendChild(q);
+    });
+
+    // 【4】解答群
+    ansDiv.innerHTML = `
+      <div style="font-weight:bold; margin-bottom:5px;">【PART 1 解答】</div>
+      <div style="margin-bottom:6px;">
+        1: ${part1Data.map((p, i) => `(${i+1}) ${p.step1.linePrefix.replace('____________________', p.step1.targetAdj)}`).join(' &nbsp;&nbsp; ')}
+      </div>
+      <div>
+        2: ${part1Data.map((p, i) => `<br>(${i+1}) <b>${p.step2.correct}</b>`).join('')}
+      </div>
+
+      <div style="font-weight:bold; margin-top:12px; margin-bottom:5px;">【PART 2 解答】</div>
+      ${part2Data.map((p, i) => `<div>(${i+1}) <b>${p.ansPrint}</b></div>`).join('')}
+    `;
+  }
+
+  function triggerPrint() {
+    generatePrintSheet();
+    setTimeout(() => {
+      window.print();
+    }, 100);
+  }
+
+  window.onload = function() {
+    loadQuestion();
+    generatePrintSheet();
+  };
+</script>
+</body>
+</html>
