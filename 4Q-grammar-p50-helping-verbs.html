@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>p50 もっと！4級の重要単語・熟語③ [助動詞]</title>
+<script src="auth.js"></script>
+<style>
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  :root {
+    --primary-orange: #ff9800;
+    --primary-hover: #e65100;
+    --text-brown: #5d4037;
+    --bg-color: #fff8f0;
+    --border-color: #d7ccc8;
+    --accent-green: #2ecc71;
+  }
+
+  body {
+    font-family: "Hiragino Maru Gothic ProN", "Hiragino Maru Gothic Pro", "HGMaruGothicMPRO", sans-serif;
+    background-color: var(--bg-color);
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    color: #333;
+  }
+
+  .container {
+    background: white;
+    max-width: 900px;
+    width: 100%;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+    min-height: 580px;
+    margin-top: 20px;
+  }
+
+  h2 {
+    color: #e65100;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  /* タブUI */
+  .tab-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+  }
+
+  .tab-btn {
+    padding: 10px 18px;
+    border: 2px solid var(--primary-orange);
+    background-color: white;
+    color: var(--text-brown);
+    font-weight: bold;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+
+  .tab-btn:hover { background-color: #fff3e0; }
+  .tab-btn.active {
+    background-color: var(--primary-orange);
+    color: white;
+  }
+
+  .progress-container {
+    width: 100%;
+    background-color: #eee;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    height: 8px;
+  }
+  .progress-bar {
+    height: 100%;
+    background-color: var(--primary-orange);
+    width: 0%;
+    transition: width 0.3s;
+  }
+
+  .progress-text {
+    text-align: right;
+    font-size: 0.9rem;
+    color: var(--text-brown);
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+
+  /* カード・ステップスタイル */
+  .step-card {
+    background: #fffaf0;
+    border: 2px dashed #ffe0b2;
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 25px;
+  }
+
+  .step-header {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #e65100;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .step-badge {
+    background-color: var(--primary-orange);
+    color: white;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+  }
+
+  .question-instruction {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--text-brown);
+    margin-bottom: 15px;
+    line-height: 1.5;
+  }
+
+  .phrase-select-area {
+    font-size: 1.3rem;
+    line-height: 2;
+    margin-bottom: 15px;
+  }
+
+  select {
+    padding: 8px 12px;
+    font-size: 1.1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    background-color: white;
+    color: var(--text-brown);
+    font-family: inherit;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  select:focus {
+    border-color: var(--primary-orange);
+    outline: none;
+  }
+
+  /* 並べ替えパーツ */
+  .word-btn {
+    background-color: white;
+    color: var(--text-brown);
+    border: 2px solid var(--primary-orange);
+    padding: 10px 18px;
+    border-radius: 25px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin: 5px;
+    display: inline-block;
+    font-family: inherit;
+  }
+
+  .word-btn.used {
+    border-color: #eee;
+    color: #ccc;
+    pointer-events: none;
+  }
+
+  .answer-area {
+    min-height: 75px;
+    border-bottom: 2px solid #ffcc80;
+    margin-bottom: 25px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+    background-color: #fffafb;
+    border-radius: 10px;
+  }
+
+  .celebration-text {
+    font-size: 1.8rem;
+    color: #2e7d32;
+    font-weight: bold;
+    text-align: center;
+    animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    line-height: 1.6;
+    padding: 20px 0;
+  }
+
+  @keyframes popIn {
+    0% { transform: scale(0.6); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .action-btn {
+    padding: 14px 40px;
+    font-size: 1.1rem;
+    background-color: #43a047;
+    color: white;
+    border: none;
+    border-radius: 35px;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 4px 0 #2e7d32;
+    display: block;
+    margin: 15px auto;
+    font-family: inherit;
+    transition: transform 0.1s, background-color 0.2s;
+  }
+
+  .action-btn:hover { background-color: #388e3c; }
+  .action-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #2e7d32;
+  }
+
+  #printable-sheet { display: none; }
+
+  @media (max-width: 600px) {
+    .container { padding: 20px; }
+    .question-instruction { font-size: 1.05rem; }
+    .word-btn { font-size: 0.95rem; padding: 8px 12px; margin: 3px; }
+    .celebration-text { font-size: 1.3rem; }
+    select { font-size: 0.95rem; padding: 5px; }
+  }
+
+  /* --- 印刷用スタイル --- */
+  @media print {
+    @page {
+      size: A4 portrait;
+      margin: 12mm 12mm;
+    }
+
+    html, body {
+      background-color: white !important;
+      color: black !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      width: 100% !important;
+      height: auto !important;
+      overflow: visible !important;
+    }
+
+    .container, h2, .tab-container {
+      display: none !important;
+    }
+
+    #printable-sheet {
+      display: block !important;
+      position: relative !important;
+      left: 0 !important;
+      top: 0 !important;
+      width: 100% !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      font-family: "Hiragino Maru Gothic ProN", "Hiragino Maru Gothic Pro", "HGMaruGothicMPRO", sans-serif !important;
+      color: #000 !important;
+    }
+
+    .sheet-header {
+      text-align: center;
+      border-bottom: 2px solid #000;
+      margin-bottom: 15px;
+      padding-bottom: 6px;
+    }
+
+    .sheet-title {
+      font-size: 15pt;
+      font-weight: bold;
+      margin: 0 0 5px 0;
+    }
+
+    .section-title {
+      font-size: 11pt;
+      font-weight: bold;
+      margin: 14px 0 8px 0;
+      background-color: #f0f0f0 !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+      padding: 4px 8px;
+      border-left: 5px solid #000;
+      color: #000 !important;
+    }
+
+    .page-break-before {
+      page-break-before: always;
+    }
+
+    .sheet-question {
+      margin-bottom: 20px; /* 設問間の隙間を広げる */
+      page-break-inside: avoid;
+    }
+
+    .q-text {
+      font-size: 10.5pt;
+      margin-bottom: 4px;
+      line-height: 1.5;
+      color: #000 !important;
+    }
+
+    .q-line {
+      border-bottom: 1.5px dashed #000;
+      height: 28px;
+      width: 98%;
+      margin-top: 4px;
+      margin-bottom: 6px;
+    }
+
+    .choice-text-black {
+      font-size: 9.5pt;
+      color: #000 !important;
+      margin: 3px 0 4px 0;
+      line-height: 1.4;
+      font-weight: bold;
+    }
+
+    .answer-key-section {
+      page-break-before: always;
+      margin-top: 20px;
+      border-top: 2px dashed #000;
+      padding-top: 15px;
+      font-size: 9.5pt;
+      color: #000 !important;
+    }
+
+    .key-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 6px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<h2>p50 もっと！4級の重要単語・熟語③ [助動詞]</h2>
+
+<div class="container">
+  <!-- タブ領域 -->
+  <div class="tab-container" id="tabContainer">
+    <button class="tab-btn active" onclick="switchPart(1)">Part 1: 穴埋め問題 (30問)</button>
+    <button class="tab-btn" onclick="switchPart(2)">Part 2: 並べ替え問題 (10問)</button>
+  </div>
+
+  <div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+  <div class="progress-text" id="progressText">問 1 / 30</div>
+
+  <div id="game-content">
+    <!-- Part1 / Part2 の動的描画エリア -->
+  </div>
+</div>
+
+<!-- 印刷用ワークシート（印刷実行時のみ描画） -->
+<div id="printable-sheet">
+  <div class="sheet-header">
+    <h1 class="sheet-title">p50 もっと！4級の重要単語・熟語③ [助動詞]</h1>
+  </div>
+  
+  <div class="section-title">PART 1: （  ）に入る最も適切なものを語群から選びなさい</div>
+  <div id="ws-part1"></div>
+
+  <div class="section-title page-break-before">PART 2: 並べ替え問題</div>
+  <div id="ws-part2"></div>
+
+  <div class="answer-key-section">
+    <h3>【Answer Key / 解答】</h3>
+    <div id="sheet-answers" class="key-grid"></div>
+  </div>
+</div>
+
+<script>
+  function shuffle(array) {
+    let arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  // --- Part 1 データ：プルダウン形式 (30問) ---
+  const part1Data = [
+    { prefix: "I ", suffix: " speak English very well.", opts: ["can", "must", "shall", "may"], ans: "can", hint: "可能", ja: "私は英語をとても上手に話すことができます。[可能]" },
+    { prefix: "He ", suffix: " visit his grandmother tomorrow.", opts: ["will", "can't", "must not", "shall"], ans: "will", hint: "未来", ja: "彼は明日、おばあちゃんを訪問する予定です。[未来]" },
+    { prefix: "You ", suffix: " enter this room. It is dangerous!", opts: ["must not", "don't have to", "can", "shall"], ans: "must not", hint: "禁止", ja: "この部屋に入ってはいけません。危険です！[禁止]" },
+    { prefix: "Tomorrow is Sunday, so I ", suffix: " get up early.", opts: ["don't have to", "must not", "will", "can"], ans: "don't have to", hint: "不要", ja: "明日は日曜日なので、早起きしなくてもいいです。[不要]" },
+    { prefix: "You ", suffix: " take photos here. It's forbidden.", opts: ["must not", "don't have to", "may", "will"], ans: "must not", hint: "禁止", ja: "ここで写真を撮影してはいけません。[禁止]" },
+    { prefix: "We have enough time. You ", suffix: " hurry.", opts: ["don't have to", "must not", "should", "shall"], ans: "don't have to", hint: "不要", ja: "時間は十分あります。急ぐ必要はありません。[不要]" },
+    { prefix: "", suffix: " I open the window for you?", opts: ["Shall", "Will", "Must", "May"], ans: "Shall", hint: "申し出", ja: "窓を開けましょうか？[申し出]" },
+    { prefix: "You ", suffix: " eat more vegetables for your health.", opts: ["should", "may", "shall", "must not"], ans: "should", hint: "助言", ja: "健康のために、もっと野菜を食べるべきです。[助言]" },
+    { prefix: "They ", suffix: " play soccer in the park today.", opts: ["are going to", "must not", "shall", "should"], ans: "are going to", hint: "未来/予定", ja: "彼らは今日、公園でサッカーをする予定です。[未来]" },
+    { prefix: "She ", suffix: " swim fast when she was young.", opts: ["could", "must", "shall", "don't have to"], ans: "could", hint: "過去の可能", ja: "彼女は若いころ、速く泳ぐことができました。[過去の可能]" },
+
+    { prefix: "", suffix: " I use your pen, please?", opts: ["May", "Must", "Will", "Should"], ans: "May", hint: "許可", ja: "ペンをお借りしてもよろしいですか？[許可]" },
+    { prefix: "Students ", suffix: " wear a uniform at this school.", opts: ["must", "may", "shall", "are going to"], ans: "must", hint: "義務", ja: "生徒はこの学校で制服を着なければなりません。[義務]" },
+    { prefix: "You ", suffix: " stay up late at night.", opts: ["shouldn't", "don't have to", "may", "will"], ans: "shouldn't", hint: "助言/禁止", ja: "夜遅くまで起きているべきではありません。[助言/禁止]" },
+    { prefix: "I ", suffix: " study hard for the next exam.", opts: ["have to", "may", "shall", "must not"], ans: "have to", hint: "義務", ja: "私は次のテストのために一生懸命勉強しなければなりません。[義務]" },
+    { prefix: "You ", suffix: " pay for the museum. It is free today.", opts: ["don't have to", "must not", "should", "shall"], ans: "don't have to", hint: "不要", ja: "博物館の料金を払う必要はありません。今日は無料です。[不要]" },
+    { prefix: "You ", suffix: " run near the pool. It is slippery.", opts: ["must not", "don't have to", "may", "will"], ans: "must not", hint: "禁止", ja: "プール近くで走ってはいけません。滑りやすいです。[禁止]" },
+    { prefix: "", suffix: " we go to the library this afternoon?", opts: ["Shall", "Will", "May", "Must"], ans: "Shall", hint: "提案", ja: "今日の午後、図書館に行きませんか？[提案]" },
+    { prefix: "Look at the sky! It ", suffix: " rain soon.", opts: ["is going to", "must not", "don't have to", "shall"], ans: "is going to", hint: "未来の予測", ja: "空を見て！まもなく雨が降りそうです。[未来の予測]" },
+    { prefix: "He ", suffix: " come to the party because he is busy.", opts: ["cannot", "must", "shall", "should"], ans: "cannot", hint: "不可能", ja: "彼は忙しいので、パーティーに来ることができません。[不可能]" },
+    { prefix: "I ", suffix: " buy a new computer next week.", opts: ["will", "must not", "don't have to", "shall"], ans: "will", hint: "意志", ja: "私は来週、新しいコンピュータを買うつもりです。[意志]" },
+
+    { prefix: "You ", suffix: " bring an umbrella. It won't rain.", opts: ["don't have to", "must not", "shall", "are going to"], ans: "don't have to", hint: "不要", ja: "傘を持っていく必要はありません。雨は降らないでしょう。[不要]" },
+    { prefix: "You ", suffix: " touch the pictures in the museum.", opts: ["must not", "don't have to", "may", "will"], ans: "must not", hint: "禁止", ja: "美術館の絵に触れてはいけません。[禁止]" },
+    { prefix: "She ", suffix: " finish her homework before dinner.", opts: ["has to", "may", "shall", "don't have to"], ans: "has to", hint: "義務", ja: "彼女は夕食前に宿題を終わらせなければなりません。[義務]" },
+    { prefix: "You ", suffix: " read this book. It is very interesting!", opts: ["should", "must not", "don't have to", "shall"], ans: "should", hint: "おすすめ/助言", ja: "この本を読むといいですよ。とても面白いです！[おすすめ/助言]" },
+    { prefix: "", suffix: " you please turn off the TV?", opts: ["Will", "May", "Must", "Shall"], ans: "Will", hint: "依頼", ja: "テレビを消してくれませんか？[依頼]" },
+    { prefix: "We ", suffix: " clean our classroom every day.", opts: ["have to", "may", "shall", "must not"], ans: "have to", hint: "義務", ja: "私たちは毎日教室を掃除しなければなりません。[義務]" },
+    { prefix: "You ", suffix: " carry that heavy bag. I will help you.", opts: ["don't have to", "must not", "will", "may"], ans: "don't have to", hint: "不要", ja: "その重いバッグを運ぶ必要はありません。手伝いますよ。[不要]" },
+    { prefix: "Drivers ", suffix: " stop at the red light.", opts: ["must", "may", "shall", "don't have to"], ans: "must", hint: "義務", ja: "運転手は赤信号で止まらなければなりません。[義務]" },
+    { prefix: "", suffix: " I bring you a glass of water?", opts: ["Shall", "Will", "Must", "May"], ans: "Shall", hint: "申し出", ja: "水をお持ちしましょうか？[申し出]" },
+    { prefix: "I ", suffix: " clean my room this weekend.", opts: ["am going to", "must not", "don't have to", "shall"], ans: "am going to", hint: "未来/計画", ja: "私は今週末、自分の部屋を掃除する予定です。[未来/計画]" }
+  ];
+
+  // --- Part 2 データ：並べ替え (10問) ---
+  const part2Data = [
+    {
+      ja: "私は明日、公園に行く予定です。",
+      words: ["I", "am", "going", "to", "go", "to", "the", "park", "tomorrow."],
+      correct: "I am going to go to the park tomorrow.",
+      ansPrint: "I am going to go to the park tomorrow."
+    },
+    {
+      ja: "図書館で話をしてはいけません。",
+      words: ["You", "must", "not", "talk", "in", "the", "library."],
+      correct: "You must not talk in the library.",
+      ansPrint: "You must not talk in the library."
+    },
+    {
+      ja: "今日、靴を洗う必要はありません。",
+      words: ["You", "don't", "have", "to", "wash", "your", "shoes", "today."],
+      correct: "You don't have to wash your shoes today.",
+      ansPrint: "You don't have to wash your shoes today."
+    },
+    {
+      ja: "あなたを手伝いましょうか？",
+      words: ["Shall", "I", "help", "you?"],
+      correct: "Shall I help you?",
+      ansPrint: "Shall I help you?"
+    },
+    {
+      ja: "窓を開けてくれませんか？",
+      words: ["Can", "you", "open", "the", "window,", "please?"],
+      correct: "Can you open the window, please?",
+      ansPrint: "Can you open the window, please?"
+    },
+    {
+      ja: "彼女は早く寝るべきです。",
+      words: ["She", "should", "go", "to", "bed", "early."],
+      correct: "She should go to bed early.",
+      ansPrint: "She should go to bed early."
+    },
+    {
+      ja: "私たちは今すぐ出発しなければなりません。",
+      words: ["We", "have", "to", "leave", "right", "now."],
+      correct: "We have to leave right now.",
+      ansPrint: "We have to leave right now."
+    },
+    {
+      ja: "ここで走ってはいけません。",
+      words: ["You", "must", "not", "run", "here."],
+      correct: "You must not run here.",
+      ansPrint: "You must not run here."
+    },
+    {
+      ja: "明日は傘を持っていく必要はありません。",
+      words: ["You", "don't", "have", "to", "take", "an", "umbrella", "tomorrow."],
+      correct: "You don't have to take an umbrella tomorrow.",
+      ansPrint: "You don't have to take an umbrella tomorrow."
+    },
+    {
+      ja: "今日は早く出発しましょうか？",
+      words: ["Shall", "we", "leave", "early", "today?"],
+      correct: "Shall we leave early today?",
+      ansPrint: "Shall we leave early today?"
+    }
+  ];
+
+  let currentPart = 1;
+  let currentIdx = 0;
+  let userSort = [];
+
+  function switchPart(partNum) {
+    currentPart = partNum;
+    currentIdx = 0;
+    
+    const btns = document.querySelectorAll('.tab-btn');
+    btns.forEach((b, idx) => {
+      if(idx === partNum - 1) b.classList.add('active');
+      else b.classList.remove('active');
+    });
+
+    loadQuestion();
+  }
+
+  function loadQuestion() {
+    const totalQ = currentPart === 1 ? part1Data.length : part2Data.length;
+
+    document.getElementById('progressBar').style.width = `${((currentIdx + 1) / totalQ) * 100}%`;
+    document.getElementById('progressText').textContent = `問 ${currentIdx + 1} / ${totalQ}`;
+
+    if (currentPart === 1) {
+      loadPart1Question();
+    } else {
+      loadPart2Question();
+    }
+  }
+
+  /* --- Part 1 画面表示 --- */
+  function loadPart1Question() {
+    const data = part1Data[currentIdx];
+    const gameContent = document.getElementById('game-content');
+
+    let optsHtml = shuffle([...data.opts]).map(o => `<option value="${o}">${o}</option>`).join('');
+
+    gameContent.innerHTML = `
+      <div class="step-card">
+        <div class="step-header">
+          <span class="step-badge">Part 1</span>
+          <span>文脈に合う助動詞を選ぼう！</span>
+        </div>
+        <div class="question-instruction">
+          【日本語】${data.ja}
+        </div>
+        <div class="phrase-select-area">
+          ${data.prefix}
+          <select id="p1-select">
+            <option value="">--選択--</option>
+            ${optsHtml}
+          </select>
+          ${data.suffix}
+        </div>
+        <button class="action-btn" id="p1-check-btn" onclick="checkPart1()">答え合わせ</button>
+      </div>
+
+      <div id="feedback-area"></div>
+      <button class="action-btn" id="nextBtn" style="display:none; background-color: #ef6c00; box-shadow: 0 4px 0 #b33f00;" onclick="nextQuestion()">次の問題へ ➔</button>
+    `;
+  }
+
+  function checkPart1() {
+    const data = part1Data[currentIdx];
+    const val = document.getElementById('p1-select').value;
+
+    if (val === data.ans) {
+      document.getElementById('p1-check-btn').style.display = "none";
+      document.getElementById('feedback-area').innerHTML = `
+        <div class="celebration-text">
+          ✨ 正解！ PERFECT! ✨<br>
+          <span style="font-size:1.2rem; color:#333;">${data.prefix} <b>${data.ans}</b> ${data.suffix}</span>
+        </div>
+      `;
+      document.getElementById('nextBtn').style.display = "block";
+    } else {
+      alert("もう一度文脈と意味（～してはいけない / ～しなくてよい など）を確認してみよう！");
+    }
+  }
+
+  /* --- Part 2 画面表示 --- */
+  function loadPart2Question() {
+    const data = part2Data[currentIdx];
+    const gameContent = document.getElementById('game-content');
+    userSort = [];
+
+    let html = `
+      <div class="step-card">
+        <div class="step-header">
+          <span class="step-badge">Part 2</span>
+          <span>並べ替え問題</span>
+        </div>
+        <div class="question-instruction">
+          【日本語】${data.ja}
+        </div>
+
+        <div class="answer-area" id="answerArea"><span style="color:#aaa;">下の単語をタップして正しい順番に並べ替えてね</span></div>
+        <div id="wordBank" style="text-align: center;"></div>
+
+        <button class="action-btn" id="p2-sort-check-btn" style="display:none;" onclick="checkPart2Sort()">答えをチェック</button>
+      </div>
+      <div id="feedback-area"></div>
+      <button class="action-btn" id="nextBtn" style="display:none; background-color: #ef6c00; box-shadow: 0 4px 0 #b33f00;" onclick="nextQuestion()">次の問題へ ➔</button>
+    `;
+    gameContent.innerHTML = html;
+    setupPart2Sort(data);
+  }
+
+  function setupPart2Sort(sortData) {
+    userSort = [];
+    const bank = document.getElementById('wordBank');
+    if (!bank) return;
+    bank.innerHTML = "";
+
+    const shuffledWords = shuffle([...sortData.words]);
+    shuffledWords.forEach(w => {
+      const btn = document.createElement('button');
+      btn.className = 'word-btn';
+      btn.textContent = w;
+      btn.onclick = () => {
+        if (btn.classList.contains('used')) return;
+        const area = document.getElementById('answerArea');
+        if (userSort.length === 0) area.innerHTML = "";
+        userSort.push({ text: w, btn: btn });
+        btn.classList.add('used');
+        renderSort('p2-sort-check-btn', sortData.words.length);
+      };
+      bank.appendChild(btn);
+    });
+  }
+
+  function renderSort(btnId, targetLength) {
+    const area = document.getElementById('answerArea');
+    area.innerHTML = "";
+    userSort.forEach((item, idx) => {
+      const b = document.createElement('button');
+      b.className = 'word-btn';
+      b.style.margin = "2px";
+      b.textContent = item.text;
+      b.onclick = () => {
+        item.btn.classList.remove('used');
+        userSort.splice(idx, 1);
+        renderSort(btnId, targetLength);
+        if(userSort.length === 0) area.innerHTML = '<span style="color:#aaa;">下の単語をタップして正しい順番に並べ替えてね</span>';
+      };
+      area.appendChild(b);
+    });
+
+    const checkBtn = document.getElementById(btnId);
+    if (userSort.length === targetLength) {
+      if (checkBtn) checkBtn.style.display = "block";
+    } else {
+      if (checkBtn) checkBtn.style.display = "none";
+    }
+  }
+
+  function checkPart2Sort() {
+    const data = part2Data[currentIdx];
+    let userStr = userSort.map(i => i.text).join(" ");
+    let cleanUser = userStr.replace(/[.,?]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
+    let cleanAns = data.correct.replace(/[.,?]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
+
+    if (cleanUser === cleanAns) {
+      document.getElementById('p2-sort-check-btn').style.display = "none";
+      document.getElementById('feedback-area').innerHTML = `
+        <div class="celebration-text">
+          ✨ 大正解！ PERFECT! ✨<br>
+          <span style="font-size:1.3rem; color:#333; font-weight:normal;">${data.correct}</span>
+        </div>
+      `;
+      document.getElementById('nextBtn').style.display = "block";
+    } else {
+      alert("語順を確認してね！");
+    }
+  }
+
+  function nextQuestion() {
+    const totalQ = currentPart === 1 ? part1Data.length : part2Data.length;
+    currentIdx++;
+
+    if (currentIdx < totalQ) {
+      loadQuestion();
+    } else {
+      document.getElementById('game-content').innerHTML = `
+        <div class='celebration-text'>
+          🎉 Part ${currentPart} 全問クリア！素晴らしい！ 🎉<br>
+          <span style="font-size:1.2rem; color:#5d4037;">助動詞マスターに一歩近づきました！</span>
+        </div>
+      `;
+      document.getElementById('progressBar').style.width = "100%";
+      document.getElementById('progressText').textContent = `${totalQ} / ${totalQ} 完成！`;
+    }
+  }
+
+  /* --- 印刷用シート自動生成 (右端ヒント、隙間拡大、カッコ幅2.5倍) --- */
+  function generatePrintSheet() {
+    const p1Div = document.getElementById('ws-part1');
+    const p2Div = document.getElementById('ws-part2');
+    const ansDiv = document.getElementById('sheet-answers');
+
+    p1Div.innerHTML = "";
+    p2Div.innerHTML = "";
+    ansDiv.innerHTML = "";
+
+    // （  ）の幅を約2.5倍に拡大した空白文字
+    const wideBlank = "（ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ）";
+
+    // Part 1 印刷描画
+    part1Data.forEach((item, idx) => {
+      const q = document.createElement('div');
+      q.className = 'sheet-question';
+      let shuffledOpts = shuffle([...item.opts]);
+      q.innerHTML = `
+        <div class="q-text">(${idx + 1}) ${item.prefix}${wideBlank}${item.suffix} &nbsp;&nbsp;【${item.hint}】</div>
+        <div class="choice-text-black" style="margin-left: 12px;">[ ${shuffledOpts.join(' &nbsp; / &nbsp; ')} ]</div>
+      `;
+      p1Div.appendChild(q);
+    });
+
+    // Part 2 印刷描画 (上段：英単語 / 下段：日本語訳)
+    part2Data.forEach((item, idx) => {
+      const q = document.createElement('div');
+      q.className = 'sheet-question';
+      let shuffled = shuffle([...item.words]);
+      q.innerHTML = `
+        <div class="q-text">(${idx + 1}) [ ${shuffled.join(' &nbsp; / &nbsp; ')} ]</div>
+        <div class="choice-text-black">（ ${item.ja} ）</div>
+        <div class="q-line"></div>
+      `;
+      p2Div.appendChild(q);
+    });
+
+    // 解答描画
+    ansDiv.innerHTML = `
+      <div style="font-weight:bold; grid-column: 1 / -1; margin-bottom:5px;">【PART 1 解答】</div>
+      ${part1Data.map((p, i) => `<div>(${i+1}) <b>${p.ans}</b></div>`).join('')}
+
+      <div style="font-weight:bold; grid-column: 1 / -1; margin-top:12px; margin-bottom:5px;">【PART 2 解答】</div>
+      ${part2Data.map((p, i) => `<div style="grid-column: 1 / -1;">(${i+1}) <b>${p.ansPrint}</b></div>`).join('')}
+    `;
+  }
+
+  // 印刷プレビュー呼び出し前にシートを準備
+  window.onbeforeprint = function() {
+    generatePrintSheet();
+  };
+
+  window.onload = function() {
+    loadQuestion();
+  };
+</script>
+</body>
+</html>
