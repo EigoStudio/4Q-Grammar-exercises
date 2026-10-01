@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>英検4級 文法 17章 比べる言い方</title>
+<script src="auth.js"></script>
+<style>
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  :root {
+    --primary-orange: #ff9800;
+    --primary-hover: #e65100;
+    --text-brown: #5d4037;
+    --bg-color: #fff8f0;
+    --border-color: #d7ccc8;
+    --success-green: #2ecc71;
+  }
+
+  body {
+    font-family: "Hiragino Maru Gothic ProN", "Hiragino Maru Gothic Pro", "HGMaruGothicMPRO", sans-serif;
+    background-color: var(--bg-color);
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    color: #333;
+  }
+
+  .top-controls {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    gap: 10px;
+  }
+
+  .header-btn {
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: background-color 0.2s;
+  }
+  .print-launch-btn { background-color: #795548; }
+  .print-launch-btn:hover { background-color: #5d4037; }
+
+  .container {
+    background: white;
+    max-width: 850px;
+    width: 100%;
+    padding: 35px;
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+    margin-top: 40px;
+  }
+
+  h2 {
+    color: #e65100;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .progress-container {
+    width: 100%;
+    background-color: #eee;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    height: 8px;
+  }
+  .progress-bar {
+    height: 100%;
+    background-color: var(--primary-orange);
+    width: 0%;
+    transition: width 0.3s;
+  }
+
+  .progress-text {
+    text-align: right;
+    font-size: 0.9rem;
+    color: var(--text-brown);
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+
+  .image-box {
+    text-align: center;
+    margin-bottom: 25px;
+    background: #fafafa;
+    padding: 15px;
+    border-radius: 12px;
+    border: 1px dashed #ccc;
+  }
+
+  .image-box img {
+    max-width: 100%;
+    height: auto;
+    max-height: 250px;
+    border-radius: 8px;
+  }
+
+  .question-instruction {
+    font-size: 1.15rem;
+    font-weight: bold;
+    color: #e65100;
+    margin-bottom: 15px;
+  }
+
+  .sentence-box {
+    font-size: 1.2rem;
+    line-height: 2.3;
+    background-color: #fffaf0;
+    padding: 20px 25px;
+    border-radius: 12px;
+    border-left: 5px solid var(--primary-orange);
+    margin-bottom: 25px;
+  }
+
+  .q-sub-sentence {
+    margin-bottom: 12px;
+  }
+
+  .q-sub-sentence:last-child {
+    margin-bottom: 0;
+  }
+
+  select {
+    font-family: inherit;
+    font-size: 1.05rem;
+    font-weight: bold;
+    padding: 6px 10px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-brown);
+    background-color: white;
+    cursor: pointer;
+    margin: 0 4px;
+    transition: all 0.2s;
+    vertical-align: middle;
+  }
+
+  select:hover { border-color: var(--primary-orange); }
+  select:focus { outline: none; border-color: var(--primary-hover); }
+
+  select.correct-select {
+    background-color: #e8f5e9;
+    border-color: var(--success-green);
+    color: #2e7d32;
+    pointer-events: none;
+  }
+
+  .feedback-message {
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+    min-height: 35px;
+    margin-bottom: 15px;
+  }
+
+  .action-btn {
+    padding: 14px 40px;
+    font-size: 1.1rem;
+    background-color: #43a047;
+    color: white;
+    border: none;
+    border-radius: 35px;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 4px 0 #2e7d32;
+    display: block;
+    margin: 15px auto;
+    font-family: inherit;
+    transition: transform 0.1s, background-color 0.2s;
+  }
+
+  .action-btn:hover { background-color: #388e3c; }
+  .action-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #2e7d32;
+  }
+
+  .celebration-text {
+    font-size: 1.8rem;
+    color: #2e7d32;
+    font-weight: bold;
+    text-align: center;
+    padding: 40px 0;
+    line-height: 1.6;
+  }
+
+  #printable-sheet { display: none; }
+
+  @media (max-width: 600px) {
+    .container { padding: 20px; }
+    .sentence-box { font-size: 1.05rem; line-height: 2.5; padding: 15px; }
+    select { font-size: 0.95rem; padding: 4px; }
+  }
+
+  /* --- 印刷用スタイル --- */
+  @media print {
+    @page {
+      size: A4 portrait;
+      margin: 12mm 12mm;
+    }
+
+    html, body {
+      background-color: white !important;
+      color: black !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      width: 100% !important;
+      height: auto !important;
+      overflow: visible !important;
+    }
+
+    .container, h2, .top-controls {
+      display: none !important;
+    }
+
+    #printable-sheet {
+      display: block !important;
+      position: relative !important;
+      left: 0 !important;
+      top: 0 !important;
+      width: 100% !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      font-family: "Hiragino Maru Gothic ProN", "Hiragino Maru Gothic Pro", "HGMaruGothicMPRO", sans-serif !important;
+      color: #000 !important;
+    }
+
+    .sheet-header {
+      text-align: center;
+      border-bottom: 2px solid #000;
+      margin-bottom: 12px;
+      padding-bottom: 4px;
+    }
+
+    .sheet-title {
+      font-size: 15pt;
+      font-weight: bold;
+      margin: 0 0 4px 0;
+    }
+
+    .ws-instruction {
+      font-size: 10.5pt;
+      margin-bottom: 15px;
+      color: #000 !important;
+      font-weight: bold;
+    }
+
+    /* 印刷時の問題ブロック */
+    .sheet-question {
+      margin-bottom: 22px;
+      page-break-inside: avoid;
+    }
+
+    .ws-q-title {
+      font-size: 11pt;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+
+    .ws-q-body {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .ws-q-img {
+      max-width: 170px;
+      max-height: 95px;
+      object-fit: contain;
+    }
+
+    .ws-q-sentences {
+      flex: 1;
+      font-size: 12pt;
+      line-height: 2.4;
+    }
+
+    /* 書き込み用下線の指定 */
+    .ws-blank {
+      display: inline-block;
+      border-bottom: 1.5px solid #000;
+      min-width: 110px;
+      height: 1.2em;
+      margin: 0 4px;
+      vertical-align: bottom;
+    }
+
+    /* 解答欄スタイル */
+    .answer-key-section {
+      page-break-before: always;
+      margin-top: 20px;
+      border-top: 2px dashed #000;
+      padding-top: 15px;
+      font-size: 10pt;
+      color: #000 !important;
+    }
+
+    .key-grid {
+      display: grid;
+      grid-template-columns: repeat(1, 1fr);
+      gap: 12px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="top-controls">
+  <button class="header-btn print-launch-btn" onclick="triggerPrint()">🖨️ プリントを作成</button>
+</div>
+
+<h2>英検4級 文法 17章 比べる言い方</h2>
+
+<div class="container">
+  <div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+  <div class="progress-text" id="progressText">0 / 0問目</div>
+  
+  <div id="game-content">
+    <div class="image-box">
+      <img id="qImage" src="" alt="比較用イラスト">
+    </div>
+    <div class="question-instruction" id="qInstruction"></div>
+    <div class="sentence-box" id="qSentence"></div>
+    
+    <div class="feedback-message" id="feedbackField"></div>
+    
+    <button class="action-btn" id="actionBtn" onclick="handleAction()">答えをチェック</button>
+  </div>
+</div>
+
+<!-- 印刷用ワークシート -->
+<div id="printable-sheet">
+  <div class="sheet-header">
+    <h1 class="sheet-title">英検4級 文法 17章 比べる言い方 ワークシート</h1>
+  </div>
+  
+  <div class="ws-instruction">【問題】イラストを参考にして、適切な語句を書き入れ、正しい英文を完成させなさい。</div>
+
+  <div id="ws-questions"></div>
+
+  <div class="answer-key-section">
+    <h3>【Answer Key / 解答】</h3>
+    <div id="sheet-answers" class="key-grid"></div>
+  </div>
+</div>
+
+<script>
+  function shuffle(array) {
+    let arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  const quizData = [
+    {
+      img: "images-bigger/big.png",
+      instruction: "【問題1】四角形の大きさを比べて、比較級と最上級の文を完成させよう。",
+      sentence1: "1. A is [blank1] [blank2] C.",
+      sentence2: "2. B is [blank3] biggest [blank4].",
+      opts1: ["bigger", "big", "biggest", "more big"],
+      opts2: ["than", "of", "in", "as"],
+      opts3: ["the", "a", "more", "than"],
+      opts4: ["of the three", "in the three", "than the three", "at the three"],
+      ans1: "bigger",
+      ans2: "than",
+      ans3: "the",
+      ans4: "of the three",
+      printFull1: "A is bigger than C.",
+      printFull2: "B is the biggest of the three."
+    },
+    {
+      img: "images-bigger/long.png",
+      instruction: "【問題2】棒の長さを比べて、比較級と最上級の文を完成させよう。",
+      sentence1: "1. A is [blank1] [blank2] B.",
+      sentence2: "2. C is [blank3] [blank4] of the three.",
+      opts1: ["longer", "long", "longest", "more long"],
+      opts2: ["than", "of", "in", "to"],
+      opts3: ["the", "a", "more", "than"],
+      opts4: ["longest", "longer", "long", "more long"],
+      ans1: "longer",
+      ans2: "than",
+      ans3: "the",
+      ans4: "longest",
+      printFull1: "A is longer than B.",
+      printFull2: "C is the longest of the three."
+    },
+    {
+      img: "images-bigger/heavy.png",
+      instruction: "【問題3】おもりの重さを比べて、比較級と最上級の文を完成させよう。",
+      sentence1: "1. B is [blank1] [blank2] A.",
+      sentence2: "2. C is [blank3] heaviest [blank4] the three.",
+      opts1: ["heavier", "heavy", "heaviest", "more heavy"],
+      opts2: ["than", "of", "in", "to"],
+      opts3: ["the", "a", "more", "than"],
+      opts4: ["of", "in", "than", "at"],
+      ans1: "heavier",
+      ans2: "than",
+      ans3: "the",
+      ans4: "of",
+      printFull1: "B is heavier than A.",
+      printFull2: "C is the heaviest of the three."
+    },
+    {
+      img: "images-bigger/old.png",
+      instruction: "【問題4】みんなの年齢を比べて、比較級と最上級の文を完成させよう。",
+      sentence1: "1. B is [blank1] [blank2] C.",
+      sentence2: "2. A is [blank3] [blank4] of the three.",
+      opts1: ["older", "old", "oldest", "more old"],
+      opts2: ["than", "of", "in", "to"],
+      opts3: ["the", "a", "more", "than"],
+      opts4: ["oldest", "older", "old", "more old"],
+      ans1: "older",
+      ans2: "than",
+      ans3: "the",
+      ans4: "oldest",
+      printFull1: "B is older than C.",
+      printFull2: "A is the oldest of the three."
+    },
+    {
+      img: "images-bigger/more-money.png",
+      instruction: "【問題5】持っているお金の量を比べて、比較級と最上級の文を完成させよう。",
+      sentence1: "1. C has [blank1] money [blank2] A.",
+      sentence2: "2. B has [blank3] [blank4] money of the three.",
+      opts1: ["more", "most", "many", "much"],
+      opts2: ["than", "of", "in", "to"],
+      opts3: ["the", "a", "very", "than"],
+      opts4: ["most", "more", "many", "much"],
+      ans1: "more",
+      ans2: "than",
+      ans3: "the",
+      ans4: "most",
+      printFull1: "C has more money than A.",
+      printFull2: "B has the most money of the three."
+    },
+    {
+      img: "images-bigger/work-hard.png",
+      instruction: "【問題6】働く熱心さを比べて、比較級と最上級の文を完成させよう。",
+      sentence1: "1. C works [blank1] [blank2] A.",
+      sentence2: "2. B works [blank3] [blank4] of the three.",
+      opts1: ["harder", "hard", "hardest", "more hard"],
+      opts2: ["than", "of", "in", "at"],
+      opts3: ["the", "a", "more", "very"],
+      opts4: ["hardest", "harder", "hard", "more hard"],
+      ans1: "harder",
+      ans2: "than",
+      ans3: "the",
+      ans4: "hardest",
+      printFull1: "C works harder than A.",
+      printFull2: "B works the hardest of the three."
+    }
+  ];
+
+  let currentIdx = 0;
+  let isAnswered = false;
+
+  function loadQuestion() {
+    const q = quizData[currentIdx];
+    isAnswered = false;
+    
+    document.getElementById('feedbackField').textContent = "";
+    document.getElementById('feedbackField').style.color = "initial";
+    
+    const actionBtn = document.getElementById('actionBtn');
+    actionBtn.textContent = "答えをチェック";
+    actionBtn.style.backgroundColor = "#43a047";
+    actionBtn.style.boxShadow = "0 4px 0 #2e7d32";
+
+    document.getElementById('progressBar').style.width = `${(currentIdx / quizData.length) * 100}%`;
+    document.getElementById('progressText').textContent = `${currentIdx + 1} / ${quizData.length} 問目`;
+
+    document.getElementById('qImage').src = q.img;
+    document.getElementById('qInstruction').textContent = q.instruction;
+
+    let buildSelect = (id, opts) => {
+      let s = `<select id="${id}"><option value="">--選択--</option>`;
+      shuffle([...opts]).forEach(opt => { s += `<option value="${opt}">${opt}</option>`; });
+      s += `</select>`;
+      return s;
+    };
+
+    let line1 = q.sentence1.replace("[blank1]", buildSelect("select1", q.opts1)).replace("[blank2]", buildSelect("select2", q.opts2));
+    let line2 = q.sentence2.replace("[blank3]", buildSelect("select3", q.opts3)).replace("[blank4]", buildSelect("select4", q.opts4));
+
+    document.getElementById('qSentence').innerHTML = `
+      <div class="q-sub-sentence">${line1}</div>
+      <div class="q-sub-sentence">${line2}</div>
+    `;
+  }
+
+  function handleAction() {
+    if (!isAnswered) {
+      const sel1 = document.getElementById('select1');
+      const sel2 = document.getElementById('select2');
+      const sel3 = document.getElementById('select3');
+      const sel4 = document.getElementById('select4');
+
+      if (!sel1.value || !sel2.value || !sel3.value || !sel4.value) {
+        alert("すべての空欄を選んでね！");
+        return;
+      }
+
+      const q = quizData[currentIdx];
+
+      if (sel1.value === q.ans1 && sel2.value === q.ans2 && sel3.value === q.ans3 && sel4.value === q.ans4) {
+        document.getElementById('feedbackField').textContent = "✨ 正解！素晴らしい！ ✨";
+        document.getElementById('feedbackField').style.color = "#2e7d32";
+        
+        sel1.classList.add('correct-select');
+        sel2.classList.add('correct-select');
+        sel3.classList.add('correct-select');
+        sel4.classList.add('correct-select');
+        
+        const actionBtn = document.getElementById('actionBtn');
+        actionBtn.textContent = "次の問題へ ➔";
+        actionBtn.style.backgroundColor = "var(--primary-orange)";
+        actionBtn.style.boxShadow = "0 4px 0 #e65100";
+        isAnswered = true;
+      } else {
+        document.getElementById('feedbackField').textContent = "❌ もう一度画像を見直して考えてみよう！";
+        document.getElementById('feedbackField').style.color = "#c62828";
+      }
+    } else {
+      currentIdx++;
+      if (currentIdx < quizData.length) {
+        loadQuestion();
+      } else {
+        document.getElementById('game-content').innerHTML = "<div class='celebration-text'>🎉 全問クリア！4級の比較マスターだね！ 🎉</div>";
+        document.getElementById('progressBar').style.width = "100%";
+        document.getElementById('progressText').textContent = `${quizData.length} / ${quizData.length} 問目`;
+      }
+    }
+  }
+
+  /* --- 印刷用シート自動生成 (下線・画像つき・書き込み専用) --- */
+  function generatePrintSheet() {
+    const wsQuestions = document.getElementById('ws-questions');
+    const wsAnswers = document.getElementById('sheet-answers');
+
+    wsQuestions.innerHTML = "";
+    wsAnswers.innerHTML = "";
+
+    const blankHtml = '<span class="ws-blank"></span>';
+
+    quizData.forEach((q, idx) => {
+      // 問題生成
+      const qBox = document.createElement('div');
+      qBox.className = 'sheet-question';
+
+      let printSentence1 = q.sentence1.replace("[blank1]", blankHtml).replace("[blank2]", blankHtml);
+      let printSentence2 = q.sentence2.replace("[blank3]", blankHtml).replace("[blank4]", blankHtml);
+
+      qBox.innerHTML = `
+        <div class="ws-q-title">【問 ${idx + 1}】</div>
+        <div class="ws-q-body">
+          <img src="${q.img}" class="ws-q-img" alt="問題イラスト">
+          <div class="ws-q-sentences">
+            <div>${printSentence1}</div>
+            <div>${printSentence2}</div>
+          </div>
+        </div>
+      `;
+      wsQuestions.appendChild(qBox);
+
+      // 解答生成
+      const ansBox = document.createElement('div');
+      ansBox.innerHTML = `
+        <b>【問 ${idx + 1}】</b><br>
+        1. <b>${q.printFull1}</b> ( 答: ${q.ans1} / ${q.ans2} )<br>
+        2. <b>${q.printFull2}</b> ( 答: ${q.ans3} / ${q.ans4} )
+      `;
+      wsAnswers.appendChild(ansBox);
+    });
+  }
+
+  function triggerPrint() {
+    generatePrintSheet();
+    setTimeout(() => {
+      window.print();
+    }, 100);
+  }
+
+  window.onload = function() {
+    loadQuestion();
+    generatePrintSheet();
+  };
+</script>
+</body>
+</html>
