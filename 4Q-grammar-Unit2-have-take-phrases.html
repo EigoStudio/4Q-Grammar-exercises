@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2章 have, take の使い方</title>
+<script src="auth.js"></script>
+<style>
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  :root {
+    --primary-orange: #ff9800;
+    --primary-hover: #e65100;
+    --text-brown: #5d4037;
+    --bg-color: #fff8f0;
+    --border-color: #d7ccc8;
+  }
+
+  body {
+    font-family: "Hiragino Maru Gothic ProN", "Hiragino Maru Gothic Pro", "HGMaruGothicMPRO", sans-serif;
+    background-color: var(--bg-color);
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    color: #333;
+  }
+
+  .top-controls {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    gap: 10px;
+  }
+
+  .header-btn {
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: background-color 0.2s;
+  }
+  .print-launch-btn { background-color: #795548; }
+  .print-launch-btn:hover { background-color: #5d4037; }
+
+  .container {
+    background: white;
+    max-width: 900px;
+    width: 100%;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+    min-height: 550px;
+    margin-top: 40px;
+  }
+
+  h2 {
+    color: #e65100;
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  /* タブUI */
+  .tab-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+  }
+
+  .tab-btn {
+    padding: 10px 20px;
+    border: 2px solid var(--primary-orange);
+    background-color: white;
+    color: var(--text-brown);
+    font-weight: bold;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+
+  .tab-btn:hover { background-color: #fff3e0; }
+  .tab-btn.active { background-color: var(--primary-orange); color: white; }
+
+  .progress-container {
+    width: 100%;
+    background-color: #eee;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    height: 8px;
+  }
+  .progress-bar {
+    height: 100%;
+    background-color: var(--primary-orange);
+    width: 0%;
+    transition: width 0.3s;
+  }
+
+  .progress-text {
+    text-align: right;
+    font-size: 0.9rem;
+    color: var(--text-brown);
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+
+  .question-box {
+    font-size: 1.3rem;
+    line-height: 2.0;
+    margin-bottom: 30px;
+    text-align: left;
+    min-height: 100px;
+  }
+
+  select.verb-select {
+    padding: 8px 14px;
+    font-size: 1.2rem;
+    border: 2px solid var(--primary-orange);
+    border-radius: 8px;
+    background-color: #fff;
+    color: var(--text-brown);
+    font-family: inherit;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  .choice-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+
+  .choice-card-btn {
+    padding: 15px 10px;
+    border: 2px solid var(--border-color);
+    background: white;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    text-align: center;
+    color: var(--text-brown);
+    transition: all 0.2s;
+    font-family: inherit;
+    font-weight: bold;
+  }
+
+  .choice-card-btn:hover {
+    border-color: var(--primary-orange);
+    background-color: #fffaf0;
+  }
+
+  .choice-card-btn.selected {
+    border-color: var(--primary-orange);
+    background-color: #fff3e0;
+  }
+
+  .word-btn {
+    background-color: white;
+    color: var(--text-brown);
+    border: 2px solid var(--primary-orange);
+    padding: 12px 20px;
+    border-radius: 25px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin: 6px;
+    display: inline-block;
+    font-family: inherit;
+  }
+
+  .word-btn.used {
+    border-color: #eee;
+    color: #ccc;
+    pointer-events: none;
+  }
+
+  .answer-area {
+    min-height: 80px;
+    border-bottom: 2px solid #ffcc80;
+    margin-bottom: 30px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+    padding: 15px;
+    background-color: #fffafb;
+    border-radius: 10px;
+  }
+
+  .celebration-text {
+    font-size: 2.2rem;
+    color: #2e7d32;
+    font-weight: bold;
+    text-align: center;
+    animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    line-height: 1.6;
+    padding: 30px 0;
+  }
+
+  @keyframes popIn {
+    0% { transform: scale(0.6); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .action-btn {
+    padding: 18px 50px;
+    font-size: 1.2rem;
+    background-color: #43a047;
+    color: white;
+    border: none;
+    border-radius: 35px;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 4px 0 #2e7d32;
+    display: block;
+    margin: 20px auto;
+    font-family: inherit;
+    transition: transform 0.1s, background-color 0.2s;
+  }
+
+  .action-btn:hover { background-color: #388e3c; }
+  .action-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #2e7d32; }
+
+  #printable-sheet { display: none; }
+
+  @media (max-width: 600px) {
+    .container { padding: 20px; }
+    .question-box { font-size: 1.1rem; line-height: 1.6; }
+    .choice-grid { grid-template-columns: 1fr; }
+    .choice-card-btn { padding: 15px; font-size: 1rem; text-align: left; }
+    .word-btn { font-size: 1.1rem; padding: 10px 15px; margin: 4px; }
+    .celebration-text { font-size: 1.5rem; }
+  }
+
+  /* --- 印刷用スタイル（ワークシート） --- */
+  @media print {
+    @page {
+      size: A4 portrait;
+      margin: 15mm 12mm;
+    }
+
+    .container, h2, .top-controls, .tab-container { display: none !important; }
+
+    body {
+      background-color: white;
+      padding: 0;
+      margin: 0;
+      color: black;
+      font-family: "Hiragino Maru Gothic ProN", "Hiragino Maru Gothic Pro", "HGMaruGothicMPRO", sans-serif;
+      width: 100% !important;
+    }
+
+    #printable-sheet {
+      display: block !important;
+      width: 100% !important;
+    }
+
+    .sheet-header {
+      text-align: center;
+      border-bottom: 2px solid #333;
+      margin-bottom: 15px;
+      padding-bottom: 5px;
+    }
+
+    .sheet-title {
+      font-size: 16pt;
+      font-weight: bold;
+      margin: 0 0 5px 0;
+    }
+
+    .section-title {
+      font-size: 11pt;
+      font-weight: bold;
+      margin: 18px 0 10px 0;
+      background-color: #f5f5f5 !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+      padding: 5px 8px;
+      border-left: 4px solid #333;
+    }
+
+    .sheet-question {
+      margin-bottom: 16px;
+      page-break-inside: avoid;
+    }
+
+    .q-text {
+      font-size: 10.5pt;
+      margin-bottom: 4px;
+      line-height: 1.4;
+    }
+
+    .q-blank-text {
+      font-size: 11pt;
+      font-family: "Times New Roman", serif;
+      margin: 6px 0 6px 15px;
+      line-height: 1.6;
+    }
+
+    .q-line {
+      border-bottom: 1px dashed #666;
+      height: 36px;
+      width: 98%;
+      margin: 4px 0 4px 0;
+    }
+
+    .word-hint {
+      font-size: 9.5pt;
+      color: #333;
+      font-family: "Times New Roman", serif;
+      font-style: italic;
+      margin-top: 2px;
+      padding-left: 5px;
+    }
+
+    .answer-key-section {
+      page-break-before: always;
+      margin-top: 20px;
+      border-top: 2px dashed #333;
+      padding-top: 15px;
+      font-size: 10pt;
+    }
+
+    .key-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .key-item {
+      margin-bottom: 4px;
+      page-break-inside: avoid;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="top-controls">
+  <button class="header-btn print-launch-btn" onclick="window.print()">🖨️ プリントを作成</button>
+</div>
+
+<h2>2章 have, take の使い方</h2>
+
+<div class="container">
+  <!-- タブ領域 -->
+  <div class="tab-container">
+    <button class="tab-btn active" id="tab-part1" onclick="switchPart(1)">Part 1：have / take 選択 (9問)</button>
+    <button class="tab-btn" id="tab-part2" onclick="switchPart(2)">Part 2：実践テスト (16問)</button>
+  </div>
+
+  <div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+  <div class="progress-text" id="progressText">0 / 0問目</div>
+
+  <div id="game-content">
+    <div class="question-box" id="qText"></div>
+    <div id="ui-area"></div>
+    <div id="feedback-area" style="text-align:center; min-height: 50px;"></div>
+    <button class="action-btn" id="checkBtn" style="display:none;" onclick="handleCheck()">答えをチェック</button>
+    <button class="action-btn" id="nextBtn" style="display:none; background-color: #ef6c00; box-shadow: 0 4px 0 #b33f00;" onclick="nextQuestion()">次の問題へ ➔</button>
+  </div>
+</div>
+
+<!-- 印刷用ワークシート -->
+<div id="printable-sheet">
+  <div class="sheet-header">
+    <h1 class="sheet-title">2章 have, take の使い方 演習ワークシート</h1>
+  </div>
+  <div id="sheet-content"></div>
+  <div class="answer-key-section">
+    <h3>【Answer Key / 解答】</h3>
+    <div id="sheet-answers" class="key-grid"></div>
+  </div>
+</div>
+
+<script>
+  function shuffle(array) {
+    let arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  // --- Part 1 原本データ (9問) ---
+  const part1RawData = [
+    { ja: "私たちは正午に昼食を食べます。", prefix: "We ", suffix: " lunch at noon.", ans: "have", full: "We have lunch at noon." },
+    { ja: "私はかわいい猫を飼っています。", prefix: "I ", suffix: " a cat.", ans: "have", full: "I have a cat." },
+    { ja: "彼には弟が一人います。", prefix: "He ", suffix: " a brother.", ans: "has", altAns: "have", full: "He has a brother." },
+    { ja: "私は放課後にサッカーの練習があります。", prefix: "I ", suffix: " soccer practice after school.", ans: "have", full: "I have soccer practice after school." },
+    { ja: "ここで写真を撮ってもいいですか。", prefix: "Can I ", suffix: " pictures here?", ans: "take", full: "Can I take pictures here?" },
+    { ja: "私は弟を動物園に連れて行くつもりです。", prefix: "I will ", suffix: " my brother to the zoo.", ans: "take", full: "I will take my brother to the zoo." },
+    { ja: "彼らは毎日電車に乗って学校へ行きます。", prefix: "They ", suffix: " the train to school every day.", ans: "take", full: "They take the train to school every day." },
+    { ja: "宿題を終わらせるのに1時間かかります。", prefix: "It ", suffix: " an hour to finish my homework.", ans: "takes", altAns: "take", full: "It takes an hour to finish my homework." },
+    { ja: "彼女は毎週金曜日にギターのレッスンを受けています。", prefix: "She ", suffix: " guitar lessons every Friday.", ans: "takes", altAns: "has", altAns2: "have", full: "She takes guitar lessons every Friday." }
+  ];
+
+  // --- Part 2 原本データ (16問) ---
+  const part2ChoiceRaw = [
+    { type: "choice", print_text: "A: What did you ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) at the restaurant?<br>B: Beef stew. It was good.", base: "A: What did you ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) at the restaurant?<br>B: Beef stew. It was good.", choices: ["meet", "go", "play", "have"], ans: "have", full: "What did you have at the restaurant?" },
+    { type: "choice", print_text: "A: Excuse me, but can you ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) a picture for us?<br>B: Sure.", base: "A: Excuse me, but can you ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) a picture for us?<br>B: Sure.", choices: ["take", "have", "come", "play"], ans: "take", full: "Can you take a picture for us?" },
+    { type: "choice", print_text: "Our classroom ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) a big map on the wall.", base: "Our classroom ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) a big map on the wall.", choices: ["is", "takes", "has", "watches"], ans: "has", full: "Our classroom has a big map on the wall." },
+    { type: "choice", print_text: "A: What did you ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) for breakfast today?<br>B: I ate toast and eggs.", base: "A: What did you ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) for breakfast today?<br>B: I ate toast and eggs.", choices: ["have", "take", "visit", "look"], ans: "have", full: "What did you have for breakfast today?" },
+    { type: "choice", print_text: "A: Let's ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) some pictures in the garden.<br>B: That sounds like fun!", base: "A: Let's ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) some pictures in the garden.<br>B: That sounds like fun!", choices: ["have", "take", "make", "listen"], ans: "take", full: "Let's take some pictures in the garden." },
+    { type: "choice", print_text: "My living room ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) a large television.", base: "My living room ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) a large television.", choices: ["has", "takes", "looks", "does"], ans: "has", full: "My living room has a large television." },
+    { type: "choice", print_text: "Do you ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) a sister or a brother?", base: "Do you ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) a sister or a brother?", choices: ["have", "take", "make", "walk"], ans: "have", full: "Do you have a sister or a brother?" },
+    { type: "choice", print_text: "I usually ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) the bus to the shopping mall.", base: "I usually ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) the bus to the shopping mall.", choices: ["take", "have", "look", "see"], ans: "take", full: "I usually take the bus to the shopping mall." }
+  ];
+
+  const part2SortRaw = [
+    { type: "sort", ja: "私を動物園へ連れていってくれますか。", en_full: "Can you take me to the zoo?", words: ["Can", "you", "take", "me", "to", "the", "zoo?"] },
+    { type: "sort", ja: "彼を駅まで連れて行ってくれますか。", en_full: "Can you take him to the station?", words: ["Can", "you", "take", "him", "to", "the", "station?"] },
+    { type: "sort", ja: "学校へ行くのに30分かかります。", en_full: "It takes 30 minutes to go to school.", words: ["It", "takes", "30 minutes", "to", "go", "to", "school."] },
+    { type: "sort", ja: "私は毎週土曜日にピアノのレッスンを受けます。", en_full: "I have piano lessons every Saturday.", words: ["I", "have", "piano", "lessons", "every", "Saturday."] },
+    { type: "sort", ja: "私たちは昨日の夜、素晴らしい時間を過ごしました。", en_full: "We had a great time last night.", words: ["We", "had", "a", "great", "time", "last", "night."] },
+    { type: "sort", ja: "彼女は毎日公園を散歩します。", en_full: "She takes a walk in the park every day.", words: ["She", "takes", "a", "walk", "in", "the", "park", "every day."] },
+    { type: "sort", ja: "私の父は車を持っていません。", en_full: "My father does not have a car.", words: ["My", "father", "does", "not", "have", "a", "car."] },
+    { type: "sort", ja: "私の家へ行くのに1時間かかります。", en_full: "It takes an hour to go to my house.", words: ["It", "takes", "an", "hour", "to", "go", "to", "my house."] }
+  ];
+
+  let currentPart = 1;
+  let currentIdx = 0;
+  let selectedChoice = null;
+  let userSort = [];
+  let currentPartData = [];
+
+  function switchPart(partNum) {
+    currentPart = partNum;
+    currentIdx = 0;
+    
+    document.getElementById('tab-part1').classList.toggle('active', partNum === 1);
+    document.getElementById('tab-part2').classList.toggle('active', partNum === 2);
+    
+    document.getElementById('game-content').innerHTML = `
+      <div class="question-box" id="qText"></div>
+      <div id="ui-area"></div>
+      <div id="feedback-area" style="text-align:center; min-height: 50px;"></div>
+      <button class="action-btn" id="checkBtn" style="display:none;" onclick="handleCheck()">答えをチェック</button>
+      <button class="action-btn" id="nextBtn" style="display:none; background-color: #ef6c00; box-shadow: 0 4px 0 #b33f00;" onclick="nextQuestion()">次の問題へ ➔</button>
+    `;
+
+    if (currentPart === 1) {
+      currentPartData = shuffle([...part1RawData]);
+    } else {
+      currentPartData = [
+        ...shuffle([...part2ChoiceRaw]),
+        ...shuffle([...part2SortRaw])
+      ];
+    }
+    loadQuestion();
+  }
+
+  function loadQuestion() {
+    const ui = document.getElementById('ui-area');
+    const qText = document.getElementById('qText');
+    const feedback = document.getElementById('feedback-area');
+    
+    document.getElementById('progressBar').style.width = `${((currentIdx) / currentPartData.length) * 100}%`;
+    document.getElementById('progressText').textContent = `${currentIdx + 1} / ${currentPartData.length} 問目`;
+    
+    document.getElementById('nextBtn').style.display = "none";
+    document.getElementById('checkBtn').style.display = "none";
+    feedback.innerHTML = "";
+    ui.innerHTML = "";
+    selectedChoice = null;
+
+    if (currentPart === 1) {
+      const q = currentPartData[currentIdx];
+      qText.innerHTML = `<div style="color:#ef6c00; font-size:1.1rem; margin-bottom:10px; font-weight:bold;">【have / take 選択】${q.ja}</div>` +
+        `${q.prefix} <select class="verb-select" id="verbSelect" onchange="enablePart1Check()">
+          <option value="">-- 選択 --</option>
+          <option value="have">have</option>
+          <option value="has">has</option>
+          <option value="take">take</option>
+          <option value="takes">takes</option>
+        </select> ${q.suffix}`;
+    } else {
+      const q = currentPartData[currentIdx];
+      if (q.type === "choice") {
+        qText.innerHTML = `<div style="color:#ef6c00; font-size:1.1rem; margin-bottom:15px; font-weight:bold;">【穴埋め選択問題】カッコに入る最も適切なものを選ぼう！</div>` + q.base;
+        const grid = document.createElement('div');
+        grid.className = 'choice-grid';
+        const shuffledChoices = shuffle([...q.choices]);
+        shuffledChoices.forEach(c => {
+          const btn = document.createElement('button');
+          btn.className = 'choice-card-btn';
+          btn.textContent = c;
+          btn.onclick = () => {
+            document.querySelectorAll('.choice-card-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            selectedChoice = c;
+            document.getElementById('checkBtn').style.display = "block";
+          };
+          grid.appendChild(btn);
+        });
+        ui.appendChild(grid);
+      } else {
+        qText.innerHTML = `<div style="color:#e65100; font-size:1.2rem; margin-bottom:15px; font-weight:bold;">【並べ替え問題】${q.ja}</div>`;
+        const area = document.createElement('div');
+        area.className = 'answer-area';
+        area.id = 'answerArea';
+        area.innerHTML = '<span style="color:#aaa;">下のパーツをタップして並べ替えてね</span>';
+        
+        const bank = document.createElement('div');
+        bank.style.textAlign = "center";
+        
+        userSort = [];
+        const shuffledWords = shuffle([...q.words]);
+        shuffledWords.forEach(w => {
+          const btn = document.createElement('button');
+          btn.className = 'word-btn';
+          btn.textContent = w;
+          btn.onclick = () => {
+            if (btn.classList.contains('used')) return;
+            if (userSort.length === 0) area.innerHTML = "";
+            userSort.push({ text: w, btn: btn });
+            btn.classList.add('used');
+            renderSort();
+          };
+          bank.appendChild(btn);
+        });
+        ui.appendChild(area);
+        ui.appendChild(bank);
+      }
+    }
+  }
+
+  function enablePart1Check() {
+    const val = document.getElementById('verbSelect').value;
+    document.getElementById('checkBtn').style.display = val ? "block" : "none";
+  }
+
+  function renderSort() {
+    const area = document.getElementById('answerArea');
+    area.innerHTML = "";
+    userSort.forEach((item, idx) => {
+      const b = document.createElement('button');
+      b.className = 'word-btn';
+      b.style.margin = "2px";
+      b.textContent = item.text;
+      b.onclick = () => {
+        item.btn.classList.remove('used');
+        userSort.splice(idx, 1);
+        renderSort();
+        if(userSort.length === 0) area.innerHTML = '<span style="color:#aaa;">下のパーツをタップして並べ替えてね</span>';
+      };
+      area.appendChild(b);
+    });
+    
+    if (userSort.length === currentPartData[currentIdx].words.length) {
+      document.getElementById('checkBtn').style.display = "block";
+    } else {
+      document.getElementById('checkBtn').style.display = "none";
+    }
+  }
+
+  function handleCheck() {
+    if (currentPart === 1) {
+      const q = currentPartData[currentIdx];
+      const val = document.getElementById('verbSelect').value;
+      if (val === q.ans || val === q.altAns || val === q.altAns2) {
+        showCelebration(q.full);
+      } else {
+        alert("もう一度考えてみよう！");
+      }
+    } else {
+      const q = currentPartData[currentIdx];
+      if (q.type === "choice") {
+        if (selectedChoice === q.ans) {
+          showCelebration(q.full);
+        } else {
+          alert("もう一度考えてみよう！");
+        }
+      } else {
+        let userStr = userSort.map(i => i.text).join(" ");
+        let cleanUser = userStr.replace(/[\.,\?]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
+        let cleanAns = q.en_full.replace(/[\.,\?]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
+
+        if (cleanUser === cleanAns) {
+          showCelebration(q.en_full);
+        } else {
+          alert("語順を確認してね！");
+        }
+      }
+    }
+  }
+
+  function showCelebration(fullText) {
+    document.getElementById('checkBtn').style.display = "none";
+    document.getElementById('ui-area').innerHTML = `
+      <div class="celebration-text">
+        ✨ 大正解！ PERFECT! ✨<br>
+        <span style="font-size:1.5rem; color:#333;">${fullText}</span>
+      </div>
+    `;
+    document.getElementById('nextBtn').style.display = "block";
+  }
+
+  function nextQuestion() {
+    currentIdx++;
+    if (currentIdx < currentPartData.length) {
+      loadQuestion();
+    } else {
+      if (currentPart === 1) {
+        document.getElementById('game-content').innerHTML = `
+          <div class='celebration-text'>
+            🎉 Part 1 クリア！素晴らしい！ 🎉<br><br>
+            <button class="action-btn" style="font-size:1.3rem; padding:18px 50px;" onclick="switchPart(2)">Part 2（実践テスト）へ進む ➔</button>
+          </div>`;
+      } else {
+        document.getElementById('game-content').innerHTML = "<div class='celebration-text'>🎉 全問クリア！マスター達成です！ 🎉</div>";
+      }
+      document.getElementById('progressBar').style.width = "100%";
+      document.getElementById('progressText').textContent = `${currentPartData.length} / ${currentPartData.length} 問完了`;
+    }
+  }
+
+  // --- ワークシート生成ロジック（シャッフル適用） ---
+  function generatePrintSheet() {
+    const contentDiv = document.getElementById('sheet-content');
+    const answerDiv = document.getElementById('sheet-answers');
+    
+    contentDiv.innerHTML = "";
+    answerDiv.innerHTML = "";
+
+    // Part 1 印刷用（問題順をシャッフル）
+    const sec1 = document.createElement('div');
+    sec1.className = 'section-title';
+    sec1.textContent = '【Part 1】have または take を使って、英文を完成させなさい。（適切な形に変えること）';
+    contentDiv.appendChild(sec1);
+    
+    const shuffledPart1 = shuffle([...part1RawData]);
+    shuffledPart1.forEach((item, index) => {
+      const qBlock = document.createElement('div');
+      qBlock.className = 'sheet-question';
+      qBlock.innerHTML = `
+        <div class="q-text">${index + 1}. ${item.ja}</div>
+        <div class="q-blank-text">
+          ${item.prefix} ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) ${item.suffix}
+        </div>
+      `;
+      contentDiv.appendChild(qBlock);
+
+      const aBlock = document.createElement('div');
+      aBlock.className = 'key-item';
+      aBlock.innerHTML = `<b>Part1 (${index + 1})</b> ${item.ans}`;
+      answerDiv.appendChild(aBlock);
+    });
+
+    // Part 2 - A 印刷用（穴埋め：問題順をシャッフル）
+    const sec2 = document.createElement('div');
+    sec2.className = 'section-title';
+    sec2.textContent = '【Part 2 - A】have または take を使って、英文を完成させなさい。（適切な形に変えること）';
+    contentDiv.appendChild(sec2);
+
+    const shuffledPart2A = shuffle([...part2ChoiceRaw]);
+    shuffledPart2A.forEach((item, index) => {
+      const qBlock = document.createElement('div');
+      qBlock.className = 'sheet-question';
+      qBlock.innerHTML = `
+        <div class="q-blank-text">${index + 1}. ${item.print_text}</div>
+      `;
+      contentDiv.appendChild(qBlock);
+
+      const aBlock = document.createElement('div');
+      aBlock.className = 'key-item';
+      aBlock.innerHTML = `<b>Part2-A (${index + 1})</b> ${item.ans}`;
+      answerDiv.appendChild(aBlock);
+    });
+
+    // Part 2 - B 印刷用（並べ替え：問題順および語群をシャッフル）
+    const sec3 = document.createElement('div');
+    sec3.className = 'section-title';
+    sec3.textContent = '【Part 2 - B】日本語の意味に合うように、[ ] 内のパーツを並べ替えて英文を完成させなさい。';
+    contentDiv.appendChild(sec3);
+
+    const shuffledPart2B = shuffle([...part2SortRaw]);
+    shuffledPart2B.forEach((item, index) => {
+      let shuffledWords = shuffle([...item.words]);
+      const qBlock = document.createElement('div');
+      qBlock.className = 'sheet-question';
+      qBlock.innerHTML = `
+        <div class="q-text">${index + 1}. ${item.ja}</div>
+        <div class="q-line"></div>
+        <div class="word-hint">語群：[ &nbsp;${shuffledWords.join(' &nbsp; / &nbsp; ')}&nbsp; ]</div>
+      `;
+      contentDiv.appendChild(qBlock);
+
+      const aBlock = document.createElement('div');
+      aBlock.className = 'key-item';
+      aBlock.innerHTML = `<b>Part2-B (${index + 1})</b> ${item.en_full}`;
+      answerDiv.appendChild(aBlock);
+    });
+  }
+
+  window.onload = function() {
+    switchPart(1);
+    generatePrintSheet();
+  };
+</script>
+</body>
+</html>
